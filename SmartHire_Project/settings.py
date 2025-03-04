@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'candidate',
+    'employer',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,7 +62,7 @@ ROOT_URLCONF = 'SmartHire_Project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,7 +77,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SmartHire_Project.wsgi.application'
 
+# SESSION_ENGINE = "mongoengine.django.sessions"
+# SESSION_ENGINE = 'mongoengine.django.sessions'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+SESSION_CACHE_ALIAS = 'default'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -80,6 +100,54 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.dummy',  # Use a dummy database backend
+#     }
+# }
+
+# DATABASES = {}
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.auth_backends.MongoDBBackend',  # Your custom authentication
+]
+
+
+
+
+
+import pymongo
+import urllib.parse
+
+# # Your MongoDB credentials
+# username = "smarthire"  # Replace with your actual username
+# # password = "Devil@ai075907"  # Replace with your actual password
+# password = "Devilai075907"  # Replace with your actual password
+
+# Encode special characters
+# encoded_username = urllib.parse.quote_plus(username)
+# encoded_password = urllib.parse.quote_plus(password)
+# MONGO_URI = f"mongodb+srv://{encoded_username}:{encoded_password}@cluster.mongodb.net/?retryWrites=true&w=majority"
+
+
+# MongoDB connection
+ 
+import pymongo
+
+# MongoDB connection
+MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster"
+
+MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
+MONGO_DB = MONGO_CLIENT['smarthireDB']  # Database name
+USERS_COLLECTION = MONGO_DB['users']  # Collection name
+
+
+
+
+
+
+# Custom User model
+# AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -116,7 +184,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
