@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SmartHire AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">SmartHire AI</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="{% url 'logout' %}">Logout</a>
+
+      </nav>
+    </header>
+
+    <section class="dashboard">
+      <h2>Welcome, John Doe!</h2>
+      <p>Your role: {{ role }}</p>
+      <div class="cards">
+        <div class="card">
+          <h3>Schedule Interviews</h3>
+          <p>Plan and organize interviews with ease.</p>
+          <a href="interview.html" class="btn">Go</a>
+        </div>
+        <div class="card">
+          <h3>View Results</h3>
+          <p>Analyze AI-generated interview outcomes.</p>
+          <a href="results.html" class="btn">View</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2024 SmartHire AI. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

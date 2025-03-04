@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="file"] {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        .timer {
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload PDF</h1>
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+        <div id="loader" class="loader"></div>
+        <div id="timer" class="timer">Loading time: <span id="seconds">0</span> seconds</div>
+    </div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const loader = document.getElementById('loader');
+        const timer = document.getElementById('timer');
+        const secondsSpan = document.getElementById('seconds');
+        let seconds = 0;
+        let interval;
+
+        form.addEventListener('submit', (event) => {
+            loader.style.display = 'block';
+            timer.style.display = 'block';
+            seconds = 0;
+            secondsSpan.textContent = seconds;
+            interval = setInterval(() => {
+                seconds++;
+                secondsSpan.textContent = seconds;
+            }, 1000);
+        });
+
+        // Optionally, you can stop the timer and hide the loader manually:
+        // clearInterval(interval);
+        // loader.style.display = 'none';
+        // timer.style.display = 'none';
+    </script>
+</body>
+</html>

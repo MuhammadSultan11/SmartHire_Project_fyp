@@ -1,0 +1,14 @@
+<h2>Resume Analysis Results</h2>
+<h3>Extracted Text:</h3>
+<textarea rows="20" cols="80">{{ extracted_text }}</textarea>
+
+<h3>AI Response:</h3>
+<pre>{{ ai_response }}</pre>
+
+<h3>Formatted Python Dictionary:</h3>
+<pre>{{ formatted_response }}</pre>
+
+<h3>PDF Preview:</h3>
+{% for page in pdf_preview %}
+    <img src="{{ MEDIA_URL }}{{ page }}" alt="PDF Preview Page">
+{% endfor %}

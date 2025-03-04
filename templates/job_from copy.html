@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Posting Form</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .section-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: #007bff;
+      color: white;
+      font-size: 1.2rem;
+      padding: 10px;
+      border-bottom: none;
+    }
+
+    .form-control {
+      border-radius: 6px;
+    }
+
+    .sticky-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #fff;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .sticky-footer button {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <form action="/submit_job" method="POST">
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-pills mb-4" id="jobTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="job-details-tab" data-bs-toggle="tab" data-bs-target="#job-details" type="button" role="tab">Job Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="roles-responsibilities-tab" data-bs-toggle="tab" data-bs-target="#roles-responsibilities" type="button" role="tab">Roles & Responsibilities</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="requirements-tab" data-bs-toggle="tab" data-bs-target="#requirements" type="button" role="tab">Requirements</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications" type="button" role="tab">Qualifications</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="benefits-tab" data-bs-toggle="tab" data-bs-target="#benefits" type="button" role="tab">Benefits</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="job-type-tab" data-bs-toggle="tab" data-bs-target="#job-type" type="button" role="tab">Job Type</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="compensation-location-tab" data-bs-toggle="tab" data-bs-target="#compensation-location" type="button" role="tab">Compensation & Location</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="company-details-tab" data-bs-toggle="tab" data-bs-target="#company-details" type="button" role="tab">Company Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="additional-info-tab" data-bs-toggle="tab" data-bs-target="#additional-info" type="button" role="tab">Additional Information</button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content" id="jobTabContent">
+
+        <!-- Job Details -->
+        <div class="tab-pane fade show active" id="job-details" role="tabpanel">
+          <div class="section-header">Job Details</div>
+          <div class="mb-3">
+            <label for="position-title" class="form-label">Position Title</label>
+            <input type="text" class="form-control" id="position-title" name="Job_Details[Position_Title]" placeholder="e.g., Software Engineer">
+          </div>
+          <div class="mb-3">
+            <label for="job-description" class="form-label">Job Description</label>
+            <textarea class="form-control" id="job-description" name="Job_Details[Job_Description]" rows="5" placeholder="A detailed summary of the role..."></textarea>
+          </div>
+        </div>
+
+        <!-- Roles & Responsibilities -->
+        <div class="tab-pane fade" id="roles-responsibilities" role="tabpanel">
+          <div class="section-header">Roles & Responsibilities</div>
+          <div class="mb-3">
+            <label for="primary-responsibilities" class="form-label">Primary Responsibilities</label>
+            <textarea class="form-control" id="primary-responsibilities" name="Roles_Responsibilities[Primary_Responsibilities]" rows="5" placeholder="List key tasks..."></textarea>
+          </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="tab-pane fade" id="requirements" role="tabpanel">
+          <div class="section-header">Requirements</div>
+          <div class="mb-3">
+            <label for="technical-skills" class="form-label">Technical Skills</label>
+            <textarea class="form-control" id="technical-skills" name="Requirements[Technical_Skills]" rows="3" placeholder="e.g., Python, Java..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="soft-skills" class="form-label">Soft Skills</label>
+            <textarea class="form-control" id="soft-skills" name="Requirements[Soft_Skills]" rows="3" placeholder="e.g., Communication, Teamwork..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="experience" class="form-label">Experience</label>
+            <input type="text" class="form-control" id="experience" name="Requirements[Experience]" placeholder="e.g., 3-5 years in software development">
+          </div>
+        </div>
+
+        <!-- Qualifications -->
+        <div class="tab-pane fade" id="qualifications" role="tabpanel">
+          <div class="section-header">Qualifications</div>
+          <div class="mb-3">
+            <label for="education" class="form-label">Minimum Educational Requirement</label>
+            <input type="text" class="form-control" id="education" name="Qualifications[Education]" placeholder="e.g., Bachelor's in Computer Science">
+          </div>
+          <div class="mb-3">
+            <label for="certifications" class="form-label">Certifications</label>
+            <input type="text" class="form-control" id="certifications" name="Qualifications[Certifications]" placeholder="e.g., PMP, AWS Certified Solutions Architect">
+          </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="tab-pane fade" id="benefits" role="tabpanel">
+          <div class="section-header">Benefits</div>
+          <div class="mb-3">
+            <label for="benefits-offered" class="form-label">Exciting Benefits We Offer</label>
+            <textarea class="form-control" id="benefits-offered" name="Benefits[Offered]" rows="3" placeholder="e.g., Health insurance, Flexible work hours..."></textarea>
+          </div>
+        </div>
+
+        <!-- Job Type -->
+        <div class="tab-pane fade" id="job-type" role="tabpanel">
+          <div class="section-header">Job Type & Work Arrangement</div>
+          <div class="mb-3">
+            <label for="job-type" class="form-label">Job Type</label>
+            <input type="text" class="form-control" id="job-type" name="Job_Type[Type]" placeholder="e.g., Permanent, Contract, Internship">
+          </div>
+          <div class="mb-3">
+            <label for="work-arrangement" class="form-label">Work Arrangement</label>
+            <input type="text" class="form-control" id="work-arrangement" name="Job_Type[Work_Arrangement]" placeholder="e.g., Remote, Hybrid, Onsite">
+          </div>
+        </div>
+
+        <!-- Compensation & Location -->
+        <div class="tab-pane fade" id="compensation-location" role="tabpanel">
+          <div class="section-header">Compensation & Location</div>
+          <div class="mb-3">
+            <label for="salary-range" class="form-label">Salary Range</label>
+            <input type="text" class="form-control" id="salary-range" name="Compensation[Salary_Range]" placeholder="e.g., $50,000 - $80,000/year">
+          </div>
+          <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="Compensation[Location]" placeholder="e.g., City/State/Country">
+          </div>
+        </div>
+
+        <!-- Company Details -->
+        <div class="tab-pane fade" id="company-details" role="tabpanel">
+          <div class="section-header">Company Details</div>
+          <div class="mb-3">
+            <label for="company-name" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="company-name" name="Company_Details[Name]" placeholder="e.g., TechCorp Solutions">
+          </div>
+          <div class="mb-3">
+            <label for="company-overview" class="form-label">Company Overview</label>
+            <textarea class="form-control" id="company-overview" name="Company_Details[Overview]" rows="5" placeholder="Brief description of the company..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="company-website" class="form-label">Website</label>
+            <input type="url" class="form-control" id="company-website" name="Company_Details[Website]" placeholder="e.g., www.techcorp.com">
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="tab-pane fade" id="additional-info" role="tabpanel">
+          <div class="section-header">Additional Information</div>
+          <div class="mb-3">
+            <label for="application-deadline" class="form-label">Application Deadline</label>
+            <input type="text" class="form-control" id="application-deadline" name="Additional_Info[Application_Deadline]" placeholder="e.g., March 30, 2025">
+          </div>
+          <div class="mb-3">
+            <label for="start-date" class="form-label">Start Date</label>
+            <input type="text" class="form-control" id="start-date" name="Additional_Info[Start_Date]" placeholder="e.g., May 1, 2025">
+          </div>
+          <div class="mb-3">
+            <label for="contact-information" class="form-label">Contact Information</label>
+            <input type="text" class="form-control" id="contact-information" name="Additional_Info[Contact_Information]" placeholder="e.g., Email, Phone Number">
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Sticky Footer -->
+  <div class="sticky-footer">
+    <button type="submit" class="btn btn-primary">Submit Job Posting</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
