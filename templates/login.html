@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -35,5 +35,52 @@
       <p>&copy; 2024 SmartHire AI. All rights reserved.</p>
     </footer>
   </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup</title>
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">HR Login/Signup</h2>
+        <div class="flex justify-center space-x-4 mb-6">
+            <button id="loginBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Login</button>
+            <button id="signupBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Signup</button>
+        </div>
+        <form id="authForm" hx-post="#" hx-target="#authForm" hx-swap="innerHTML" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium">Email</label>
+                <input type="email" class="w-full p-2 border rounded" value="jane.doe@example.com" readonly>
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Password</label>
+                <input type="password" class="w-full p-2 border rounded" value="password123" readonly>
+            </div>
+            <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700">Login</button>
+        </form>
+        <script>
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                document.getElementById('authForm').querySelector('button').textContent = 'Login';
+            });
+            document.getElementById('signupBtn').addEventListener('click', () => {
+                document.getElementById('authForm').querySelector('button').textContent = 'Signup';
+            });
+            document.getElementById('authForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Logged in as Jane Doe');
+                window.location.href = '{% url "hr_dashboard" %}';
+            });
+        </script>
+    </div>
 </body>
 </html>

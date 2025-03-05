@@ -140,7 +140,9 @@ MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mo
 MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT['smarthireDB']  # Database name
 USERS_COLLECTION = MONGO_DB['users']  # Collection name
-
+ 
+# db = client["job_postings_db"]
+jobs_collection = MONGO_DB["jobs"]
 
 
 

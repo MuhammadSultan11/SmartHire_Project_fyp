@@ -1,44 +1,303 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - SmartHire AI</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>/* Ensure dropdown works with hover */
+      .header-dropdown:hover .dropdown-content {
+          display: block;
+      }
+      .dropdown-content {
+          display: none;
+      }</style>
 </head>
-<body>
-  <div class="container">
-    <header class="header">
-      <div class="logo">SmartHire AI</div>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a href="{% url 'logout' %}">Logout</a>
-
-      </nav>
-    </header>
-
-    <section class="dashboard">
-      <h2>Welcome, John Doe!</h2>
-      <p>Your role: {{ role }}</p>
-      <div class="cards">
-        <div class="card">
-          <h3>Schedule Interviews</h3>
-          <p>Plan and organize interviews with ease.</p>
-          <a href="interview.html" class="btn">Go</a>
+<body class="bg-gray-100 font-sans">
+<!-- Header -->
+<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md"></header>
+   <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      
+        <div class="flex items-center space-x-4">
+            <h1 class="text-2xl font-bold tracking-wide">HR Intelligence Dashboard</h1>
+            <div class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
+                Active Jobs: 6
+            </div>
         </div>
-        <div class="card">
-          <h3>View Results</h3>
-          <p>Analyze AI-generated interview outcomes.</p>
-          <a href="results.html" class="btn">View</a>
-        </div>
-      </div>
-    </section>
 
-    <footer>
-      <p>&copy; 2024 SmartHire AI. All rights reserved.</p>
-    </footer>
-  </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'job_posting' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition">
+             Post Job
+          </a>
+    
+            <!-- Job Filter -->
+            <select id="jobFilter" class="bg-white/20 text-white p-2 rounded border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
+                <option value="">All Jobs</option>
+                <option value="developer">Senior Developer</option>
+                <option value="marketing">Marketing Lead</option>
+            </select>
+
+            <!-- User Profile Dropdown -->
+            <div class="relative group">
+                <button class="flex items-center space-x-2 hover:bg-white/10 p-2 rounded transition">
+                    <img src="/api/placeholder/40/40" alt="Profile" class="w-10 h-10 rounded-full">
+                    <span class="font-medium">Jane Doe</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl z-10 hidden group-hover:block">
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
+                        Profile Settings
+                    </a>
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
+                        Help & Support
+                    </a>
+                    <a href="#" class="block px-4 py-3 hover:bg-red-50 text-red-600 hover:text-red-700 transition">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Header -->
+    <!-- <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">HR Dashboard</h1>
+        <div class="relative group">
+            <button class="flex items-center space-x-2">
+                <span>Jane Doe</span> 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+            </div>
+        </div>
+        <div>
+            <select id="jobFilter" hx-get="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" hx-vals='{"job_id": this.value}' class="ml-4 p-2 rounded text-black">
+                <option value="">All Jobs</option>
+                <option value="1">Senior Developer</option>
+                <option value="2">Marketing Lead</option>
+            </select>
+        </div>
+    </header> -->
+
+    <!-- Main Content -->
+    <div id="dashboard-content" class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Analytics Widgets -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold">Applications: 245</h2>
+            <p class="text-sm text-gray-500">+10% from last week</p>
+            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
+                <!-- Dummy bar chart -->
+                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
+                <div class="flex-1 bg-blue-500" style="height: 40%;"></div>
+                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
+                <div class="flex-1 bg-blue-500" style="height: 50%;"></div>
+                <div class="flex-1 bg-blue-500" style="height: 60%;"></div>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold">Active Jobs: 6</h2>
+            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
+        </div>
+
+        <!-- Job Stats -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
+            <div class="space-y-4">
+                <div class="border p-4 rounded flex justify-between items-center">
+                    <div>
+                        <h3 class="font-medium">Senior Developer</h3>
+                        <p class="text-sm text-gray-600">Applications: 45 | Shortlisted: 12 | Interviewed: 5</p>
+                    </div>
+                    <a href="{% url 'candidate_listing' %}" class="text-blue-500 hover:underline">View Candidates</a>
+                </div>
+                <div class="border p-4 rounded flex justify-between items-center">
+                    <div>
+                        <h3 class="font-medium">Marketing Lead</h3>
+                        <p class="text-sm text-gray-600">Applications: 30 | Shortlisted: 8 | Interviewed: 3</p>
+                    </div>
+                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtered Candidate List -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Filtered Candidates (Shortlisted)</h2>
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2">Name</th>
+                        <th class="p-2">Job</th>
+                        <th class="p-2">Score</th>
+                        <th class="p-2">Status</th>
+                        <th class="p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b">
+                        <td class="p-2">Jane Doe</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">88</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <select hx-post="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
+                                <option value="">Invite</option>
+                                <option value="24h">24 Hours</option>
+                                <option value="48h">48 Hours</option>
+                                <option value="3d">3 Days</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-2">John Smith</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">82</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <select hx-post="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
+                                <option value="">Invite</option>
+                                <option value="24h">24 Hours</option>
+                                <option value="48h">48 Hours</option>
+                                <option value="3d">3 Days</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Candidate Pipeline</h2>
+            <div class="flex space-x-2">
+                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 150px;">Applied: 150</div>
+                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 40px;">Shortlisted: 40</div>
+                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 20px;">Interview Invited: 20</div>
+                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 10px;">Interviewed: 10</div>
+                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 5px;">Hired: 5</div>
+            </div>
+        </div>
+
+        <!-- Interviewed Reports -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Interviewed Reports</h2>
+            <div class="space-y-4">
+                <div class="border p-4 rounded flex justify-between items-center">
+                    <div>
+                        <p>Jane Doe (Mar 03, 2025)</p>
+                        <p class="text-sm text-gray-600">Job: Senior Developer</p>
+                    </div>
+                    <a href="#" class="text-blue-500 hover:underline">View Report</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Notifications</h2>
+            <div class="space-y-2">
+                <p class="text-sm">New application for Senior Developer <span class="text-gray-500">(5 mins ago)</span></p>
+                <p class="text-sm">John Doe completed AI interview <span class="text-gray-500">(1 hour ago)</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTMX Simulation Script -->
+    <script>
+        // Simulate job filter (updates content with dummy data)
+        document.getElementById('jobFilter').addEventListener('change', function(e) {
+            const jobId = e.target.value;
+            let content = document.getElementById('dashboard-content');
+            if (jobId === '1') {
+                content.innerHTML = `
+                    <div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h2 class="text-lg font-semibold">Applications: 45</h2>
+                            <p class="text-sm text-gray-500">+5% from last week</p>
+                            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
+                                <div class="flex-1 bg-blue-500" style="height: 10%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 15%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 25%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h2 class="text-lg font-semibold">Active Jobs: 1</h2>
+                            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+                            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
+                            <div class="space-y-4">
+                                <div class="border p-4 rounded flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-medium">Senior Developer</h3>
+                                        <p class="text-sm text-gray-600">Applications: 45 | Shortlisted: 12 | Interviewed: 5</p>
+                                    </div>
+                                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add other sections with Senior Developer data -->
+                    </div>
+                `;
+            } else if (jobId === '2') {
+                content.innerHTML = `
+                    <div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h2 class="text-lg font-semibold">Applications: 30</h2>
+                            <p class="text-sm text-gray-500">+8% from last week</p>
+                            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
+                                <div class="flex-1 bg-blue-500" style="height: 15%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 25%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
+                                <div class="flex-1 bg-blue-500" style="height: 35%;"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h2 class="text-lg font-semibold">Active Jobs: 1</h2>
+                            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:grid-cols-2">
+                            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
+                            <div class="space-y-4">
+                                <div class="border p-4 rounded flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-medium">Marketing Lead</h3>
+                                        <p class="text-sm text-gray-600">Applications: 30 | Shortlisted: 8 | Interviewed: 3</p>
+                                    </div>
+                                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add other sections with Marketing Lead data -->
+                    </div>
+                `;
+            }
+        });
+
+        // Simulate interview invite (updates status)
+        document.querySelectorAll('select[hx-post]').forEach(select => {
+            select.addEventListener('change', function(e) {
+                const duration = e.target.value;
+                if (duration) {
+                    const row = e.target.closest('tr');
+                    row.querySelector('td:nth-child(4)').textContent = 'Interview Invited';
+                    alert(`Invite sent for ${duration}`);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

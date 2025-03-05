@@ -9,5 +9,6 @@ urlpatterns = [
     # path('logout/', user_logout, name='logout'),
     # path('dashboard/', dashboard, name='dashboard'),
     path('upload/', upload_pdf, name='upload_pdf'),
+    
 
 ]

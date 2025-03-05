@@ -1,0 +1,6 @@
+.header-dropdown:hover .dropdown-content {
+    display: block;
+}
+.dropdown-content {
+    display: none;
+}
