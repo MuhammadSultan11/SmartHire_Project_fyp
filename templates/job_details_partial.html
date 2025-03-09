@@ -1,0 +1,106 @@
+<h3>{{ selected_job.job_details.position_title }}</h3>
+<div class="detail-group">
+    <label>Company:</label>
+    <span>{{ selected_job.company_details.name }}</span>
+</div>
+<div class="detail-group">
+    <label>Department:</label>
+    <span>{{ selected_job.job_details.department|default:'Not specified' }}</span>
+</div>
+<div class="detail-group">
+    <label>Location:</label>
+    <span>{{ selected_job.compensation.location|default:'Not specified' }}</span>
+</div>
+<div class="detail-group">
+    <label>Salary Range:</label>
+    <span>{{ selected_job.compensation.currency|default:'' }} {{ selected_job.compensation.min_salary|default:0 }} - {{ selected_job.compensation.max_salary|default:0 }}</span>
+</div>
+<div class="detail-group">
+    <label>Job Type:</label>
+    <span>{{ selected_job.job_type.type|default:'Not specified' }} ({{ selected_job.job_type.work_arrangement|default:'Not specified' }})</span>
+</div>
+<div class="detail-group">
+    <label>Openings:</label>
+    <span>{{ selected_job.job_type.openings|default:0 }}</span>
+</div>
+<div class="detail-group">
+    <label>Date Posted:</label>
+    <span>{{ selected_job.additional_info.start_date|default:selected_job.created_at|default:'Not specified' }}</span>
+</div>
+<div class="detail-group">
+    <label>Posting Status:</label>
+    <span>{{ selected_job.additional_info.posting_status|default:'Not specified' }}</span>
+</div>
+<div class="list-group">
+    <label>Technical Skills:</label>
+    <ul>
+        {% if selected_job.requirements.technical_skills %}
+            {% for skill in selected_job.requirements.technical_skills %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Not specified</li>
+        {% endif %}
+    </ul>
+</div>
+<div class="list-group">
+    <label>Soft Skills:</label>
+    <ul>
+        {% if selected_job.requirements.soft_skills %}
+            {% for skill in selected_job.requirements.soft_skills %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Not specified</li>
+        {% endif %}
+    </ul>
+</div>
+<div class="list-group">
+    <label>Experience:</label>
+    <ul>
+        {% if selected_job.experience %}
+            {% for exp in selected_job.experience %}
+                <li>{{ exp.role|default:'N/A' }} - {{ exp.years|default:0 }} years in {{ exp.industry|default:'N/A' }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Not specified</li>
+        {% endif %}
+    </ul>
+</div>
+<div class="list-group">
+    <label>Education:</label>
+    <ul>
+        {% if selected_job.education %}
+            {% for edu in selected_job.education %}
+                <li>{{ edu.degree|default:'N/A' }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Not specified</li>
+        {% endif %}
+    </ul>
+</div>
+<div class="list-group">
+    <label>Certifications:</label>
+    <ul>
+        {% if selected_job.certifications %}
+            {% for cert in selected_job.certifications %}
+                <li>{{ cert.name|default:'N/A' }} ({{ cert.issuer|default:'N/A' }})</li>
+            {% endfor %}
+        {% else %}
+            <li>Not specified</li>
+        {% endif %}
+    </ul>
+</div>
+<div class="description">
+    <label>Description:</label>
+    <p>{{ selected_job.job_details.job_description|default:'Not specified' }}</p>
+</div>
+<div class="detail-group">
+    <label>Benefits:</label>
+    <span>{{ selected_job.benefits.offered|default:'Not specified' }}</span>
+</div>
+<div class="detail-group">
+    <label>Contact Information:</label>
+    <span>{{ selected_job.additional_info.contact_information|default:'Not specified' }}</span>
+</div>
+<button class="apply-btn" onclick="applyForJob('{{ selected_job.job_details.position_title|default:'Unknown Job' }}')">Apply</button>
