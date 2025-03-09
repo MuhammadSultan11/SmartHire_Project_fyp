@@ -1,3 +1,6 @@
+{% extends 'navbar.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,5 +9,442 @@
     <title>Dashboard - SmartHire AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<h1>index page</h1>
+<body>
+
+    <!-- Search Bar -->
+    <form method="GET" action="" class="search-form" onsubmit="handleSearch(event)">
+        <input type="text" name="query" placeholder="Search for jobs..." class="search-input" required>
+        <button type="submit" class="search-btn">Search</button>
+    </form>
+
+    <!-- Filter Navbar -->
+    <nav class="filter-navbar">
+        <div class="filter-group">
+            <select id="datePosted" onchange="filterJobs()">
+                <option value="">Date Posted</option>
+                <option value="last24">Last 24 hours</option>
+                <option value="last3">Last 3 days</option>
+                <option value="last7">Last 7 days</option>
+                <option value="last14">Last 14 days</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <select id="salary" onchange="filterJobs()">
+                <option value="">Salary</option>
+                <option value="30000">Rs. 30,000</option>
+                <option value="60000">Rs. 60,000</option>
+                <option value="90000">Rs. 90,000</option>
+                <option value="100000">Rs. 100,000</option>
+                <option value="150000">Rs. 150,000</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <select id="location" onchange="filterJobs()">
+                <option value="">Location</option>
+                <option value="karachi">Karachi</option>
+                <option value="islamabad">Islamabad</option>
+                <option value="lahore">Lahore</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <select id="jobType" onchange="filterJobs()">
+                <option value="">Job Type</option>
+                <option value="fulltime">Full-time</option>
+                <option value="parttime">Part-time</option>
+                <option value="internship">Internship</option>
+                <option value="contract">Contract</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <select id="company" onchange="filterJobs()">
+                <option value="">Company Name</option>
+                <option value="google">Google</option>
+                <option value="microsoft">Microsoft</option>
+                <option value="openai">OpenAI</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Jobs List -->
+        <div class="jobs-container">
+            <h2>Available Jobs</h2>
+            <div class="jobs-list" id="jobs-list">
+                <!-- Dummy Data with added Job Type and Date -->
+                <div class="job-card" data-date="2025-03-04" data-job-type="fulltime" data-salary="30000" onclick="showJobDetails(1, this)">
+                    <h3>Software Engineer</h3>
+                    <p><strong>Company:</strong> Google</p>
+                    <p><strong>Location:</strong> Karachi</p>
+                    <p><strong>Salary:</strong> Rs. 30,000</p>
+                </div>
+                <div class="job-card" data-date="2025-03-03" data-job-type="fulltime" data-salary="60000" onclick="showJobDetails(2, this)">
+                    <h3>Data Scientist</h3>
+                    <p><strong>Company:</strong> Microsoft</p>
+                    <p><strong>Location:</strong> Islamabad</p>
+                    <p><strong>Salary:</strong> Rs. 60,000</p>
+                </div>
+                <div class="job-card" data-date="2025-03-02" data-job-type="parttime" data-salary="90000" onclick="showJobDetails(3, this)">
+                    <h3>AI Researcher</h3>
+                    <p><strong>Company:</strong> OpenAI</p>
+                    <p><strong>Location:</strong> Lahore</p>
+                    <p><strong>Salary:</strong> Rs. 90,000</p>
+                </div>
+                <div class="job-card" data-date="2025-03-01" data-job-type="internship" data-salary="100000" onclick="showJobDetails(4, this)">
+                    <h3>AI Researcher</h3>
+                    <p><strong>Company:</strong> OpenAI</p>
+                    <p><strong>Location:</strong> Islamabad</p>
+                    <p><strong>Salary:</strong> Rs. 100,000</p>
+                </div>
+                <div class="job-card" data-date="2025-02-28" data-job-type="contract" data-salary="150000" onclick="showJobDetails(5, this)">
+                    <h3>Python Developer</h3>
+                    <p><strong>Company:</strong> OpenAI</p>
+                    <p><strong>Location:</strong> Karachi</p>
+                    <p><strong>Salary:</strong> Rs. 150,000</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Details -->
+        <div id="job-details">
+            <h2>Job Details</h2>
+            <div id="details-content" class="job-details-content">
+                <p>Select a job to see details...</p>
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>
+
+<style>
+    /* Overall Layout */
+    .container {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* Search Form */
+    .search-form {
+        text-align: center;
+        margin: 20px 0;
+    }
+    .search-input {
+        padding: 12px;
+        width: 600px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: #007bff;
+    }
+    .search-btn {
+        padding: 12px 20px;
+        background: linear-gradient(to right, #007bff, #00d4ff);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    .search-btn:hover {
+        background: linear-gradient(to right, #0056b3, #0099ff);
+    }
+
+    /* Jobs List Styling */
+    .jobs-container {
+        flex: 1;
+        max-width: 40%;
+        border-radius: 15px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        height: 500px;
+        overflow-y: auto;
+    }
+    .jobs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .job-card {
+        padding: 15px;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .job-card:hover {
+        background: #e3f2fd;
+        transform: scale(1.02);
+    }
+    .job-card.active {
+        background: linear-gradient(to right, #007bff, #00d4ff);
+        color: white;
+    }
+
+    /* Job Details Styling */
+    #job-details {
+        flex: 2;
+        border-radius: 15px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        height: 500px;
+        overflow-y: auto;
+    }
+
+    .job-details-content {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-details-content h3 {
+        color: #007bff;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    .job-details-content .detail-group {
+        margin-bottom: 15px;
+    }
+
+    .job-details-content .detail-group label {
+        font-weight: bold;
+        color: #333;
+        margin-right: 10px;
+        display: inline-block;
+        width: 120px;
+    }
+
+    .job-details-content .detail-group span {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .job-details-content .description {
+        margin-top: 20px;
+        color: #444;
+        line-height: 1.6;
+    }
+
+    /* Apply Button */
+    .apply-btn {
+        display: block;
+        width: 150px;
+        padding: 10px;
+        margin-top: 15px;
+        text-align: center;
+        background: linear-gradient(to right, #007bff, #00d4ff);
+        color: white;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    .apply-btn:hover {
+        background: linear-gradient(to right, #007bff, #00d4ff);
+    }
+
+    /* Filter Navbar Styling */
+    .filter-navbar {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-group select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-group select:focus {
+        outline: none;
+        border-color: #007bff;
+    }
+</style>
+
+<script>
+    function showJobDetails(jobId, element) {
+        // Remove active class from all job cards
+        document.querySelectorAll('.job-card').forEach(card => card.classList.remove('active'));
+
+        // Highlight the selected job
+        element.classList.add('active');
+
+        // Dummy job details with Job Type and Date
+        const dummyJobs = {
+            1: {
+                title: "Software Engineer",
+                company: "Google",
+                location: "Karachi, Pakistan",
+                salary: "Rs. 30,000",
+                jobType: "fulltime",
+                datePosted: "2025-03-04",
+                description: "Develop scalable web applications using modern technologies."
+            },
+            2: {
+                title: "Data Scientist",
+                company: "Microsoft",
+                location: "Islamabad, Pakistan",
+                salary: "Rs. 60,000",
+                jobType: "fulltime",
+                datePosted: "2025-03-03",
+                description: "Work on big data analytics and AI-driven insights."
+            },
+            3: {
+                title: "AI Researcher",
+                company: "OpenAI",
+                location: "Lahore, Pakistan",
+                salary: "Rs. 90,000",
+                jobType: "parttime",
+                datePosted: "2025-03-02",
+                description: "Conduct research on advanced artificial intelligence models."
+            },
+            4: {
+                title: "AI Researcher",
+                company: "OpenAI",
+                location: "Islamabad, Pakistan",
+                salary: "Rs. 100,000",
+                jobType: "internship",
+                datePosted: "2025-03-01",
+                description: "Conduct research on advanced artificial intelligence models."
+            },
+            5: {
+                title: "Python Developer",
+                company: "OpenAI",
+                location: "Karachi, Pakistan",
+                salary: "Rs. 150,000",
+                jobType: "contract",
+                datePosted: "2025-02-28",
+                description: "As an Application Developer, you will collaborate with a team of developers in the design, development, coding, testing, and debugging of applications. These applications are vital to the success of the organization and add value to our client’s experience. You will develop applications while promoting MMA (Marsh & McLennan Agency) technology standards, process, and procedures of the software development life cycle. This individual will apply logical, analytical, and problem-solving skills to design and create best in class applications. We embrace a culture that celebrates and promotes the many backgrounds, heritages and perspectives of our colleagues and clients. We are always seeking those with ethics, talent, and ambition who are interested in joining our client-focused teams. The base pay offered will be determined on factors such as experience, skills, training, location, certifications, education, and any applicable minimum wage requirements. Decisions will be determined on a case-by-case basis. In addition to the base salary, this position may be eligible for performance-based incentives. Are you a Developer Intern?Are you web coder looking to level up your game? Do you have an unnatural fondness for acronyms, including: CDN, JSX, AR, PHP? Do you hate building emails that work in decade-old Outlook-but still won't stop working on them until they're perfect? Do you argue about semantic vs. utility CSS? Does XKCD 1319 occupy a permanent space in your brain? Are you almost as focused on design as you are on ones and zeroes? Do you use inspector to fix other people's websites? Do you stay up at night thinking about how to shave 3ms off your TTFB?    This is a paid, full-time opportunity based in Indianapolis, Indiana. The selected candidate will be a college junior or senior, and will work approximately 40 hours a week from May to August 2025. Exact start and end dates are negotiable. Housing is not provided."
+            }
+        };
+
+        // Update details section
+        const job = dummyJobs[jobId];
+        document.getElementById("details-content").innerHTML = `
+            <h3>${job.title}</h3>
+            <div class="detail-group">
+                <label>Company:</label>
+                <span>${job.company}</span>
+            </div>
+            <div class="detail-group">
+                <label>Location:</label>
+                <span>${job.location}</span>
+            </div>
+            <div class="detail-group">
+                <label>Salary:</label>
+                <span>${job.salary}</span>
+            </div>
+            <div class="detail-group">
+                <label>Job Type:</label>
+                <span>${job.jobType}</span>
+            </div>
+            <div class="detail-group">
+                <label>Date Posted:</label>
+                <span>${job.datePosted}</span>
+            </div>
+            <div class="description">
+                <label>Description:</label>
+                <p>${job.description}</p>
+            </div>
+            <button class="apply-btn" onclick="applyForJob('${job.title}')">Apply</button>
+        `;
+    }
+
+    function applyForJob(jobTitle) {
+        alert("You have applied for the " + jobTitle + " position.");
+    }
+
+    function handleSearch(event) {
+        event.preventDefault();
+        const query = document.querySelector('.search-input').value.toLowerCase();
+        const jobCards = document.querySelectorAll('.job-card');
+        
+        jobCards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const company = card.querySelector('p:nth-child(2)').textContent.toLowerCase();
+            const location = card.querySelector('p:nth-child(3)').textContent.toLowerCase();
+            
+            if (title.includes(query) || company.includes(query) || location.includes(query)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function filterJobs() {
+        const datePosted = document.getElementById('datePosted').value;
+        const salary = document.getElementById('salary').value;
+        const location = document.getElementById('location').value;
+        const jobType = document.getElementById('jobType').value;
+        const company = document.getElementById('company').value;
+
+        const jobCards = document.querySelectorAll('.job-card');
+        const currentDate = new Date();
+        
+        jobCards.forEach(card => {
+            const cardCompany = card.querySelector('p:nth-child(2)').textContent.split(': ')[1].toLowerCase();
+            const cardLocation = card.querySelector('p:nth-child(3)').textContent.split(': ')[1].toLowerCase();
+            const cardSalary = parseInt(card.getAttribute('data-salary')); // Use data-salary attribute for consistent numeric value
+            const cardDate = new Date(card.getAttribute('data-date'));
+            const cardJobType = card.getAttribute('data-job-type');
+
+            let showCard = true;
+
+            if (datePosted) {
+                const daysDiff = (currentDate - cardDate) / (1000 * 60 * 60 * 24);
+                switch (datePosted) {
+                    case 'last24':
+                        if (daysDiff > 1) showCard = false;
+                        break;
+                    case 'last3':
+                        if (daysDiff > 3) showCard = false;
+                        break;
+                    case 'last7':
+                        if (daysDiff > 7) showCard = false;
+                        break;
+                    case 'last14':
+                        if (daysDiff > 14) showCard = false;
+                        break;
+                }
+            }
+            
+            if (salary && cardSalary !== parseInt(salary)) showCard = false;
+            if (location && cardLocation !== location.toLowerCase()) showCard = false;
+            if (jobType && cardJobType !== jobType) showCard = false;
+            if (company && cardCompany !== company.toLowerCase()) showCard = false;
+
+            card.style.display = showCard ? 'block' : 'none';
+        });
+    }
+</script>
+
+{% endblock %}
