@@ -9,7 +9,7 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('dashboard/', dashboard, name='dashboard'),
     path('index/', index, name='index'),
-     path('landing/', landingpage, name='landingpage'),
+     path('', landingpage, name='landingpage'),
     path('job/<str:job_id>/', job_detail, name='job_detail'),
    
 ]
