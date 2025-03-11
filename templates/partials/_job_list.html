@@ -1,0 +1,69 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0 fw-bold">{{ jobs|length }} Jobs Found</h5>
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" 
+                id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-sort-down me-1"></i> Sort
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item" href="#" 
+                   hx-get="{% url 'index' %}?sort=created_at" 
+                   hx-target="#jobListContainer" 
+                   hx-swap="outerHTML">Newest</a></li>
+            <li><a class="dropdown-item" href="#" 
+                   hx-get="{% url 'index' %}?sort=compensation.max_salary" 
+                   hx-target="#jobListContainer" 
+                   hx-swap="outerHTML">Salary (High to Low)</a></li>
+            <li><a class="dropdown-item" href="#" 
+                   hx-get="{% url 'index' %}?sort=compensation.min_salary" 
+                   hx-target="#jobListContainer" 
+                   hx-swap="outerHTML">Salary (Low to High)</a></li>
+            <li><a class="dropdown-item" href="#" 
+                   hx-get="{% url 'index' %}?sort=company_details.name" 
+                   hx-target="#jobListContainer" 
+                   hx-swap="outerHTML">Company Name (A-Z)</a></li>
+        </ul>
+    </div>
+</div>
+
+{% if jobs %}
+    <div class="job-list-items">
+        {% for job in jobs %}
+            <div class="job-list-item {% if forloop.first %}active{% endif %}" 
+                 data-job-id="{{ job.id }}"
+                 hx-get="{% url 'job_detail' job_id=job.id %}"
+                 hx-target="#jobDetailContainer"
+                 hx-swap="innerHTML"
+                 hx-trigger="click">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-1 fw-semibold">{{ job.job_details.position_title }}</h5>
+                        <p class="mb-1 text-muted">{{ job.company_details.name }}</p>
+                    </div>
+                    <small class="text-muted fw-medium">{{ job.created_at|date:"M d" }}</small>
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-primary me-1">{{ job.job_type.type }}</span>
+                    <span class="badge bg-secondary me-1">{{ job.job_type.work_arrangement }}</span>
+                    {% if job.compensation.location %}
+                        <span class="badge bg-info me-1">{{ job.compensation.location }}</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-end">
+                    <p class="mb-0 fw-medium text-success">
+                        <i class="bi bi-currency-dollar"></i> 
+                        {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                    </p>
+                    <button class="btn btn-sm btn-outline-primary d-md-none" 
+                            onclick="showJobDetailsMobile('{{ job.id }}', event)">
+                        View
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i> No job postings found. Please adjust your filters or check back later.
+    </div>
+{% endif %}

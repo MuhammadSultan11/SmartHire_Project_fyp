@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+</head>
+
+<!-- Header -->
+<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md"></header>
+   <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      
+        <div class="flex items-center space-x-4">
+            <h1 class="text-2xl font-bold tracking-wide">HR Intelligence Dashboard</h1>
+            <div class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
+                Active Jobs: 6
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'job_posting' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition">
+             Post Job
+          </a>
+    
+            <!-- Job Filter -->
+            <select id="jobFilter" class="bg-white/20 text-white p-2 rounded border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
+                <option value="">All Jobs</option>
+                <option value="developer">Senior Developer</option>
+                <option value="marketing">Marketing Lead</option>
+            </select>
+
+            <!-- User Profile Dropdown -->
+            <div class="relative group">
+                <button class="flex items-center space-x-2 hover:bg-white/10 p-2 rounded transition">
+                    <img src="/api/placeholder/40/40" alt="Profile" class="w-10 h-10 rounded-full">
+                    <span class="font-medium">Jane Doe</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl z-10 hidden group-hover:block">
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
+                        Profile Settings
+                    </a>
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
+                        Help & Support
+                    </a>
+                    <a href="#" class="block px-4 py-3 hover:bg-red-50 text-red-600 hover:text-red-700 transition">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Header -->
+    <!-- <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">HR Dashboard</h1>
+        <div class="relative group">
+            <button class="flex items-center space-x-2">
+                <span>Jane Doe</span> 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+            </div>
+        </div>
+        <div>
+            <select id="jobFilter" hx-get="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" hx-vals='{"job_id": this.value}' class="ml-4 p-2 rounded text-black">
+                <option value="">All Jobs</option>
+                <option value="1">Senior Developer</option>
+                <option value="2">Marketing Lead</option>
+            </select>
+        </div>
+    </header> -->
+
+
+    {% block content %} {% endblock %}

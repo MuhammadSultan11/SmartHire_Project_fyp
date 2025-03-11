@@ -1,0 +1,154 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">HR Dashboard</h1>
+        <div class="relative">
+            <button class="flex items-center space-x-2">
+                <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block">
+                <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                <a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+            </div>
+        </div>
+        <div>
+            <select id="jobFilter" hx-get="{% url 'hr_dashboard' %}" hx-target="#dashboard-content" hx-swap="innerHTML" class="ml-4 p-2 rounded text-black">
+                <option value="">All Jobs</option>
+                {% for job in jobs %}
+                    <option value="{{ job._id }}">{{ job.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div id="dashboard-content" class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Analytics Widgets -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold">Applications: {{ total_applications }}</h2>
+            <p class="text-sm text-gray-500">{{ trend }}% from last week</p>
+            <div class="w-full h-40 bg-gray-200 flex items-end">
+                <!-- Simple bar chart simulation -->
+                {% for value in applications_data %}
+                    <div class="flex-1 bg-blue-500" style="height: {{ value }}%;"></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold">Active Jobs: {{ active_jobs }}</h2>
+            <a href="{% url 'job_listing' %}" class="text-blue-500 hover:underline">View All Jobs</a>
+        </div>
+
+        <!-- Job Stats -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
+            <div class="space-y-4">
+                {% for job in jobs %}
+                    <div class="border p-4 rounded flex justify-between items-center">
+                        <div>
+                            <h3 class="font-medium">{{ job.title }}</h3>
+                            <p class="text-sm text-gray-600">
+                                Applications: {{ job.applications_count }} | Shortlisted: {{ job.shortlisted_count }} | Interviewed: {{ job.interviewed_count }}
+                            </p>
+                        </div>
+                        <a href="{% url 'candidates_per_job' job._id %}" class="text-blue-500 hover:underline">View Candidates</a>
+                    </div>
+                {% empty %}
+                    <p>No jobs posted yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Filtered Candidate List -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Filtered Candidates (Shortlisted)</h2>
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2">Name</th>
+                        <th class="p-2">Job</th>
+                        <th class="p-2">Score</th>
+                        <th class="p-2">Status</th>
+                        <th class="p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                        <tr class="border-b">
+                            <td class="p-2">{{ candidate.name }}</td>
+                            <td class="p-2">{{ candidate.job_title }}</td>
+                            <td class="p-2">{{ candidate.resume_score }}</td>
+                            <td class="p-2">{{ candidate.status }}</td>
+                            <td class="p-2">
+                                <select hx-post="{% url 'send_interview_invite' candidate._id %}" hx-target="#dashboard-content" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
+                                    <option value="">Invite</option>
+                                    <option value="24h">24 Hours</option>
+                                    <option value="48h">48 Hours</option>
+                                    <option value="3d">3 Days</option>
+                                </select>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="p-2">No candidates found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Candidate Pipeline</h2>
+            <div class="flex space-x-2">
+                {% for stage, count in pipeline_data.items %}
+                    <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: {{ count|multiply:2 }}px;">
+                        {{ stage }}: {{ count }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Interviewed Reports -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Interviewed Reports</h2>
+            <div class="space-y-4">
+                {% for report in interviewed_reports %}
+                    <div class="border p-4 rounded flex justify-between items-center">
+                        <div>
+                            <p>{{ report.candidate_name }} ({{ report.interview_date|date:"M d, Y" }})</p>
+                            <p class="text-sm text-gray-600">Job: {{ report.job_title }}</p>
+                        </div>
+                        <a href="{% url 'view_report' report._id %}" class="text-blue-500 hover:underline">View Report</a>
+                    </div>
+                {% empty %}
+                    <p>No interviews completed yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Notifications</h2>
+            <div class="space-y-2">
+                {% for notification in notifications %}
+                    <p class="text-sm">{{ notification.message }} <span class="text-gray-500">({{ notification.timestamp|timesince }} ago)</span></p>
+                {% empty %}
+                    <p>No new notifications.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

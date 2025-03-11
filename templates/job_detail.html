@@ -1,0 +1,194 @@
+<div class="job-detail-content" id="job-{{ job.id }}">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Mobile Back Button -->
+            <div class="d-flex d-md-none justify-content-between align-items-center mb-3">
+                <button class="btn btn-sm btn-outline-secondary" onclick="showJobList()">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-sm btn-primary">
+                    Apply Now
+                </button>
+            </div>
+
+            <!-- Job Header -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="card-title h3 mb-1">{{ job.job_details.position_title }}</h2>
+                    <h6 class="card-subtitle text-muted">{{ job.company_details.name }}</h6>
+                </div>
+                <div class="text-end d-none d-md-block">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-send me-1"></i> Apply Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Job Badges -->
+            <div class="mb-4">
+                <span class="badge bg-primary me-2">{{ job.job_type.type }}</span>
+                <span class="badge bg-secondary me-2">{{ job.job_type.work_arrangement }}</span>
+                {% if job.compensation.location %}
+                    <span class="badge bg-info me-2">{{ job.compensation.location }}</span>
+                {% endif %}
+                <span class="badge bg-success">
+                    <i class="bi bi-currency-dollar"></i> 
+                    {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                </span>
+            </div>
+            
+            <!-- Job Quick Info -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-2">
+                    <div class="d-flex">
+                        <div class="icon-circle me-2">
+                            <i class="bi bi-people text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Openings</div>
+                            <div class="fw-medium">{{ job.job_type.openings }} position{{ job.job_type.openings|pluralize }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="d-flex">
+                        <div class="icon-circle me-2">
+                            <i class="bi bi-calendar-date text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Posted On</div>
+                            <div class="fw-medium">{{ job.created_at|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="d-flex">
+                        <div class="icon-circle me-2">
+                            <i class="bi bi-geo-alt text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Location</div>
+                            <div class="fw-medium">{{ job.compensation.location|default:"Any Location" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mb-4">
+                <h5 class="section-heading">Job Description</h5>
+                <div class="job-description">{{ job.job_details.job_description|linebreaks }}</div>
+            </div>
+            
+            <!-- Skills -->
+            <div class="mb-4">
+                <h5 class="section-heading">Skills Required</h5>
+                {% if job.requirements.technical_skills %}
+                    <div class="mb-3">
+                        <h6 class="text-primary mb-2">Technical Skills</h6>
+                        <div>
+                            {% for skill in job.requirements.technical_skills %}
+                                <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if job.requirements.soft_skills %}
+                    <div class="mb-3">
+                        <h6 class="text-primary mb-2">Soft Skills</h6>
+                        <div>
+                            {% for skill in job.requirements.soft_skills %}
+                                <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Experience -->
+            {% if job.experience %}
+                <div class="mb-4">
+                    <h5 class="section-heading">Experience</h5>
+                    <div class="list-group list-group-flush">
+                        {% for exp in job.experience %}
+                            <div class="list-group-item bg-transparent px-0">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle me-3">
+                                        <i class="bi bi-briefcase text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-medium">{{ exp.role }}</h6>
+                                        <div class="text-muted small">
+                                            {{ exp.years }} year{{ exp.years|pluralize }} 
+                                            {% if exp.industry %}in {{ exp.industry }}{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Education -->
+            {% if job.education %}
+                <div class="mb-4">
+                    <h5 class="section-heading">Education</h5>
+                    <div class="list-group list-group-flush">
+                        {% for edu in job.education %}
+                            <div class="list-group-item bg-transparent px-0">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle me-3">
+                                        <i class="bi bi-mortarboard text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-medium">{{ edu.degree }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Company Info -->
+            <div class="mb-4">
+                <h5 class="section-heading">About the Company</h5>
+                <div class="d-flex align-items-start">
+                    <div class="company-logo me-3 text-primary">
+                        <i class="bi bi-building" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-semibold">{{ job.company_details.name }}</h6>
+                        {% if job.company_details.overview %}
+                            <p>{{ job.company_details.overview|linebreaks }}</p>
+                        {% endif %}
+                        {% if job.company_details.website %}
+                            <a href="{{ job.company_details.website }}" target="_blank" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-globe me-1"></i> Visit Website
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Apply Section -->
+            <div class="apply-section p-4 rounded">
+                <h5 class="fw-semibold mb-2">Interested in this position?</h5>
+                <p>{{ job.additional_info.contact_information|default:"Apply now to join our team and take the next step in your career!" }}</p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-send me-1"></i> Apply Now
+                    </a>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-bookmark me-1"></i> Save
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-share me-1"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

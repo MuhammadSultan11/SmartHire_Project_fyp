@@ -3,39 +3,6 @@
 
 {% block extra_css %}
 <style>
-    /* Add these new styles for the modal */
-    .modal-content {
-        border-radius: 0.5rem;
-        box-shadow: var(--card-shadow);
-    }
-    
-    .modal-header {
-        border-bottom: 1px solid var(--border-light);
-        padding: 1rem 1.5rem;
-    }
-    
-    .modal-body {
-        padding: 1.5rem;
-    }
-    
-    .resume-list-item {
-        padding: 0.75rem;
-        border: 1px solid var(--border-light);
-        border-radius: 0.5rem;
-        margin-bottom: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .resume-list-item:hover {
-        background-color: var(--light-bg);
-        border-color: var(--primary-color);
-    }
-    
-    .resume-list-item.selected {
-        background-color: rgba(59, 130, 246, 0.1);
-        border-color: var(--primary-color);
-    }
     :root {
         --primary-color: #3b82f6;
         --primary-hover: #2563eb;
@@ -246,100 +213,70 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Search and filters section -->
+    <!-- Search and filters section - reduced height -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card filter-box">
                 <div class="card-body py-2">
-                    <form id="searchForm" class="search-filters" method="GET" action="{% url 'index' %}">
+                    <form id="searchForm" class="search-filters">
                         <div class="row align-items-center">
                             <div class="col-md-5 form-group">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="searchInput" 
-                                        name="search" 
-                                        value="{{ filters.search }}" 
-                                        placeholder="Search jobs by title, skills, or company..."
-                                    >
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search jobs by title, skills, or company...">
                                 </div>
                             </div>
                             <div class="col-md-2 form-group">
-                                <select class="form-select" id="jobType" name="jobType">
+                                <select class="form-select" id="jobType">
                                     <option value="">All Job Types</option>
-                                    <option value="Full-time" {% if filters.jobType == "Full-time" %}selected{% endif %}>Full-time</option>
-                                    <option value="Part-time" {% if filters.jobType == "Part-time" %}selected{% endif %}>Part-time</option>
-                                    <option value="Contract" {% if filters.jobType == "Contract" %}selected{% endif %}>Contract</option>
-                                    <option value="Internship" {% if filters.jobType == "Internship" %}selected{% endif %}>Internship</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Internship">Internship</option>
                                 </select>
                             </div>
                             <div class="col-md-2 form-group">
-                                <select class="form-select" id="workArrangement" name="workArrangement">
+                                <select class="form-select" id="workArrangement">
                                     <option value="">All Work Modes</option>
-                                    <option value="Remote" {% if filters.workArrangement == "Remote" %}selected{% endif %}>Remote</option>
-                                    <option value="Hybrid" {% if filters.workArrangement == "Hybrid" %}selected{% endif %}>Hybrid</option>
-                                    <option value="Onsite" {% if filters.workArrangement == "Onsite" %}selected{% endif %}>Onsite</option>
+                                    <option value="Remote">Remote</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="Onsite">Onsite</option>
                                 </select>
                             </div>
                             <div class="col-md-2 form-group">
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="location" 
-                                    name="location" 
-                                    value="{{ filters.location }}" 
-                                    placeholder="Any location"
-                                >
+                                <input type="text" class="form-control" id="location" placeholder="Any location">
                             </div>
-                            
                             <div class="col-md-1 form-group">
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="bi bi-funnel me-1"></i> 
+                                    <i class="bi bi-filter"></i>
                                 </button>
                             </div>
-
                         </div>
                         <div id="advancedFilters" class="collapse mt-2">
                             <div class="row">
                                 <div class="col-md-3 form-group">
-                                    <select class="form-select" id="experience" name="experience">
+                                    <select class="form-select" id="experience">
                                         <option value="">Any Experience</option>
-                                        <option value="0-1" {% if filters.experience == "0-1" %}selected{% endif %}>0-1 years</option>
-                                        <option value="1-3" {% if filters.experience == "1-3" %}selected{% endif %}>1-3 years</option>
-                                        <option value="3-5" {% if filters.experience == "3-5" %}selected{% endif %}>3-5 years</option>
-                                        <option value="5-10" {% if filters.experience == "5-10" %}selected{% endif %}>5-10 years</option>
-                                        <option value="10+" {% if filters.experience == "10+" %}selected{% endif %}>10+ years</option>
+                                        <option value="0-1">0-1 years</option>
+                                        <option value="1-3">1-3 years</option>
+                                        <option value="3-5">3-5 years</option>
+                                        <option value="5-10">5-10 years</option>
+                                        <option value="10+">10+ years</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input 
-                                        type="number" 
-                                        class="form-control" 
-                                        id="salaryMin" 
-                                        name="salaryMin" 
-                                        value="{{ filters.salaryMin }}" 
-                                        placeholder="Min Salary"
-                                    >
+                                    <input type="number" class="form-control" id="salaryMin" placeholder="Min Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input 
-                                        type="number" 
-                                        class="form-control" 
-                                        id="salaryMax" 
-                                        name="salaryMax" 
-                                        value="{{ filters.salaryMax }}" 
-                                        placeholder="Max Salary"
-                                    >
+                                    <input type="number" class="form-control" id="salaryMax" placeholder="Max Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <select class="form-select" id="postedDate" name="postedDate">
+                                    <select class="form-select" id="postedDate">
                                         <option value="">Any Time</option>
-                                        <option value="1" {% if filters.postedDate == "1" %}selected{% endif %}>Last 24 hours</option>
-                                        <option value="7" {% if filters.postedDate == "7" %}selected{% endif %}>Last 7 days</option>
-                                        <option value="14" {% if filters.postedDate == "14" %}selected{% endif %}>Last 14 days</option>
-                                        <option value="30" {% if filters.postedDate == "30" %}selected{% endif %}>Last 30 days</option>
+                                        <option value="1">Last 24 hours</option>
+                                        <option value="7">Last 7 days</option>
+                                        <option value="14">Last 14 days</option>
+                                        <option value="30">Last 30 days</option>
                                     </select>
                                 </div>
                             </div>
@@ -598,9 +535,9 @@
                                 <h5 class="fw-semibold mb-2">Interested in this position?</h5>
                                 <p>{{ job.additional_info.contact_information|default:"Apply now to join our team and take the next step in your career!" }}</p>
                                 <div class="d-grid gap-2 d-md-flex">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                    <a href="#" class="btn btn-primary">
                                         <i class="bi bi-send me-1"></i> Apply Now
-                                    </button>
+                                    </a>
                                     <button class="btn btn-outline-primary">
                                         <i class="bi bi-bookmark me-1"></i> Save
                                     </button>
@@ -627,67 +564,27 @@
         </div>
     </div>
 </div>
-
-<!-- Apply Modal -->
-<div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="applyModalLabel">Apply for Job</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-4">
-                    <h6 class="mb-3">Choose an option:</h6>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary" id="uploadNewResumeBtn">
-                            <i class="bi bi-upload me-2"></i> Upload New Resume
-                        </button>
-                        <button class="btn btn-outline-primary" id="useExistingResumeBtn">
-                            <i class="bi bi-file-earmark-text me-2"></i> Use Existing Resume
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Upload New Resume Section -->
-                <div id="uploadResumeSection" class="hidden">
-                    <form id="resumeUploadForm" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="resumeFile" class="form-label">Select Resume (PDF only)</label>
-                            <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf" required>
-                        </div>
-                        <input type="hidden" id="jobIdForUpload" name="job_id">
-                        <button type="submit" class="btn btn-primary w-100">Submit Application</button>
-                    </form>
-                </div>
-
-                <!-- Existing Resumes Section -->
-                <div id="existingResumesSection" class="hidden">
-                    <h6 class="mb-3">Select a Resume:</h6>
-                    <div id="resumeList">
-                        <!-- Resumes will be populated dynamically -->
-                    </div>
-                    
-                    <button class="btn btn-primary w-100 mt-3" id="submitExistingResume" disabled>Submit Application</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
     // Function to show job details based on id
     function showJobDetails(jobId) {
+        // Hide all job detail content
         document.querySelectorAll('.job-detail-content').forEach(function(el) {
             el.classList.add('hidden');
         });
+        
+        // Show selected job detail
         document.getElementById('job-' + jobId).classList.remove('hidden');
+        
+        // Mark selected job in the list
         document.querySelectorAll('.job-list-item').forEach(function(el) {
             el.classList.remove('active');
         });
         document.querySelector('.job-list-item[data-job-id="' + jobId + '"]').classList.add('active');
+        
+        // Scroll to top of detail view
         document.getElementById('jobDetailContainer').scrollTop = 0;
     }
     
@@ -719,207 +616,16 @@
     
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
+        // Hide "when-open" text initially
         document.querySelectorAll('.when-open').forEach(function(el) {
             el.style.display = 'none';
         });
         
+        // Add smooth hover effect to buttons
         const buttons = document.querySelectorAll('.btn');
         buttons.forEach(btn => {
             btn.style.transition = 'all 0.2s ease';
         });
-
-        // Form submission handler
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            // Form submits normally via GET request
-            // Filters are handled by Django view
-        });
     });
-
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-
-    const csrfToken = getCookie('csrftoken');
-
-   document.addEventListener('DOMContentLoaded', function() {
-        // Your existing initialization code
-        document.querySelectorAll('.when-open').forEach(function(el) {
-            el.style.display = 'none';
-        });
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.style.transition = 'all 0.2s ease';
-        });
-
-        // Modal functionality
-        const applyModal = document.getElementById('applyModal');
-        const uploadNewResumeBtn = document.getElementById('uploadNewResumeBtn');
-        const useExistingResumeBtn = document.getElementById('useExistingResumeBtn');
-        const uploadResumeSection = document.getElementById('uploadResumeSection');
-        const existingResumesSection = document.getElementById('existingResumesSection');
-        const resumeUploadForm = document.getElementById('resumeUploadForm');
-        const submitExistingResumeBtn = document.getElementById('submitExistingResume');
-        let selectedResumeId = null;
-
-        applyModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const jobId = button.getAttribute('data-job-id');
-            document.getElementById('jobIdForUpload').value = jobId;
-            uploadResumeSection.classList.add('hidden');
-            existingResumesSection.classList.add('hidden');
-            submitExistingResumeBtn.disabled = true;
-            selectedResumeId = null;
-        });
-
-        uploadNewResumeBtn.addEventListener('click', function() {
-            uploadResumeSection.classList.remove('hidden');
-            existingResumesSection.classList.add('hidden');
-        });
-
-        useExistingResumeBtn.addEventListener('click', function() {
-            uploadResumeSection.classList.add('hidden');
-            existingResumesSection.classList.remove('hidden');
-            
-            fetch('/api/resumes/', {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 302 || response.status === 403) {
-                        window.location.href = '/login/';
-                        return null;
-                    }
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                const resumeList = document.getElementById('resumeList');
-                resumeList.innerHTML = '';
-                if (data.success && data.resumes && data.resumes.length > 0) {
-                    data.resumes.forEach(resume => {
-                        const div = document.createElement('div');
-                        div.className = 'resume-list-item';
-                        div.innerHTML = `
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>${resume.name}</span>
-                                <small class="text-muted">${new Date(resume.uploaded_at).toLocaleDateString()}</small>
-                            </div>
-                        `;
-                        div.dataset.resumeId = resume.id;
-                        div.addEventListener('click', function() {
-                            document.querySelectorAll('.resume-list-item').forEach(item => {
-                                item.classList.remove('selected');
-                            });
-                            this.classList.add('selected');
-                            selectedResumeId = this.dataset.resumeId;
-                            submitExistingResumeBtn.disabled = false;
-                        });
-                        resumeList.appendChild(div);
-                    });
-                } else {
-                    resumeList.innerHTML = '<p class="text-muted">No resumes found.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching resumes:', error);
-                document.getElementById('resumeList').innerHTML = '<p class="text-muted">Error loading resumes.</p>';
-            });
-        });
-
-        resumeUploadForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            fetch('/api/apply/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': csrfToken
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 302 || response.status === 403) {
-                        window.location.href = '/login/';
-                        return null;
-                    }
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                if (data.success) {
-                    alert('Application submitted successfully!');
-                    bootstrap.Modal.getInstance(applyModal).hide();
-                } else {
-                    alert('Error submitting application: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting your application.');
-            });
-        });
-
-        submitExistingResumeBtn.addEventListener('click', function() {
-            if (selectedResumeId) {
-                const jobId = document.getElementById('jobIdForUpload').value;
-                fetch('/api/apply/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({
-                        job_id: jobId,
-                        resume_id: selectedResumeId
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        if (response.status === 302 || response.status === 403) {
-                            window.location.href = '/login/';
-                            return null;
-                        }
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data) return;
-                    if (data.success) {
-                        alert('Application submitted successfully!');
-                        bootstrap.Modal.getInstance(applyModal).hide();
-                    } else {
-                        alert('Error submitting application: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while submitting your application.');
-                });
-            }
-        });
-    });
-
-
 </script>
 {% endblock %}

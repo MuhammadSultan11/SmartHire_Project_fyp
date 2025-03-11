@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Listing</title>
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Ensure dropdown works with hover */
+        /* Dropdown hover effect */
+        .header-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Candidate Listing</h1>
+        <div class="relative group">
+            <button class="flex items-center space-x-2">
+                <span>Jane Doe</span> <!-- Hardcoded HR name -->
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <!-- Filter and Batch Actions -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6 flex justify-between items-center">
+            <div>
+                <label for="jobFilter" class="mr-2">Filter by Job:</label>
+                <select id="jobFilter" hx-get="#candidate-table" hx-target="#candidate-table" hx-swap="innerHTML"
+                    hx-vals='{"job_id": this.value}' class="p-2 rounded text-black">
+                    <option value="">All Jobs</option>
+                    <option value="1">Senior Developer</option>
+                    <option value="2">Marketing Lead</option>
+                </select>
+            </div>
+            <div class="space-x-2">
+                <button id="batch-shortlist"
+                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Shortlist Selected</button>
+                <button id="batch-reject" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reject
+                    Selected</button>
+            </div>
+        </div>
+
+        <!-- Candidate Table -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-4">Candidates</h2>
+            <table id="candidate-table" class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2"><input type="checkbox" id="select-all" onchange="toggleAllCheckboxes(this)">
+                        </th>
+                        <th class="p-2">Name</th>
+                        <th class="p-2">Job</th>
+                        <th class="p-2">Score</th>
+                        <th class="p-2">Status</th>
+                        <th class="p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Candidate 1 -->
+                    <tr class="border-b" hx-target="this" hx-swap="outerHTML">
+                        <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                        <td class="p-2">Jane Doe</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">88</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <button hx-get="#expanded-1" hx-target="this" hx-swap="outerHTML"
+                                class="text-blue-500 hover:underline">Expand</button>
+                        </td>
+                    </tr>
+                    <!-- Expanded Row 1 (Hidden until clicked) -->
+                    <tr id="expanded-1" class="border-b hidden" hx-target="this" hx-swap="outerHTML">
+                        <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                        <td class="p-2">Jane Doe</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">88</td>
+                        <td class="p-2">Interviewed</td>
+                        <td class="p-2">
+                            <button hx-get="#candidate-table tr:first-child" hx-target="this" hx-swap="outerHTML"
+                                class="text-blue-500 hover:underline mr-2">Collapse</button>
+                            <select hx-post="#candidate-table" hx-target="#candidate-table" hx-swap="innerHTML"
+                                class="text-blue-500 p-1 rounded mr-2">
+                                <option value="">Invite</option>
+                                <option value="24h">24 Hours</option>
+                                <option value="48h">48 Hours</option>
+                                <option value="3d">3 Days</option>
+                            </select>
+                            <a href="#" class="text-blue-500 hover:underline">View Report</a>
+                        </td>
+                    </tr>
+                    <!-- Candidate 2 -->
+                    <tr class="border-b" hx-target="this" hx-swap="outerHTML">
+                        <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                        <td class="p-2">John Smith</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">82</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <button hx-get="#expanded-2" hx-target="this" hx-swap="outerHTML"
+                                class="text-blue-500 hover:underline">Expand</button>
+                        </td>
+                    </tr>
+                    <!-- Expanded Row 2 (Hidden until clicked) -->
+                    <tr id="expanded-2" class="border-b hidden" hx-target="this" hx-swap="outerHTML">
+                        <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                        <td class="p-2">John Smith</td>
+                        <td class="p-2">Senior Developer</td>
+                        <td class="p-2">82</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <button hx-get="#candidate-table tr:nth-child(3)" hx-target="this" hx-swap="outerHTML"
+                                class="text-blue-500 hover:underline mr-2">Collapse</button>
+                            <select hx-post="#candidate-table" hx-target="#candidate-table" hx-swap="innerHTML"
+                                class="text-blue-500 p-1 rounded">
+                                <option value="">Invite</option>
+                                <option value="24h">24 Hours</option>
+                                <option value="48h">48 Hours</option>
+                                <option value="3d">3 Days</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Pagination (Simulated) -->
+            <div class="mt-4 flex justify-between">
+                <button class="text-blue-500 hover:underline">Previous</button>
+                <span>Page 1 of 5</span>
+                <button class="text-blue-500 hover:underline">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Simulation -->
+    <script>
+        // Toggle all checkboxes
+        function toggleAllCheckboxes(checkbox) {
+            document.querySelectorAll('.candidate-checkbox').forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        // Simulate job filter
+        document.getElementById('jobFilter').addEventListener('change', function (e) {
+            const jobId = e.target.value;
+            let table = document.getElementById('candidate-table');
+            if (jobId === '1') {
+                table.innerHTML = `
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2"><input type="checkbox" id="select-all" onchange="toggleAllCheckboxes(this)"></th>
+                            <th class="p-2">Name</th>
+                            <th class="p-2">Job</th>
+                            <th class="p-2">Score</th>
+                            <th class="p-2">Status</th>
+                            <th class="p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b" hx-target="this" hx-swap="outerHTML">
+                            <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                            <td class="p-2">Jane Doe</td>
+                            <td class="p-2">Senior Developer</td>
+                            <td class="p-2">88</td>
+                            <td class="p-2">Shortlisted</td>
+                            <td class="p-2"><button hx-get="#expanded-1" hx-target="this" hx-swap="outerHTML" class="text-blue-500 hover:underline">Expand</button></td>
+                        </tr>
+                        <tr class="border-b" hx-target="this" hx-swap="outerHTML">
+                            <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                            <td class="p-2">John Smith</td>
+                            <td class="p-2">Senior Developer</td>
+                            <td class="p-2">82</td>
+                            <td class="p-2">Shortlisted</td>
+                            <td class="p-2"><button hx-get="#expanded-2" hx-target="this" hx-swap="outerHTML" class="text-blue-500 hover:underline">Expand</button></td>
+                        </tr>
+                    </tbody>
+                `;
+            } else if (jobId === '2') {
+                table.innerHTML = `
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2"><input type="checkbox" id="select-all" onchange="toggleAllCheckboxes(this)"></th>
+                            <th class="p-2">Name</th>
+                            <th class="p-2">Job</th>
+                            <th class="p-2">Score</th>
+                            <th class="p-2">Status</th>
+                            <th class="p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b" hx-target="this" hx-swap="outerHTML">
+                            <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                            <td class="p-2">Alice Brown</td>
+                            <td class="p-2">Marketing Lead</td>
+                            <td class="p-2">90</td>
+                            <td class="p-2">Shortlisted</td>
+                            <td class="p-2"><button hx-get="#expanded-3" hx-target="this" hx-swap="outerHTML" class="text-blue-500 hover:underline">Expand</button></td>
+                        </tr>
+                    </tbody>
+                `;
+                // Add expanded row for Alice Brown (hidden)
+                document.body.insertAdjacentHTML('beforeend', `
+                    <tr id="expanded-3" class="border-b hidden" hx-target="this" hx-swap="outerHTML">
+                        <td class="p-2"><input type="checkbox" class="candidate-checkbox"></td>
+                        <td class="p-2">Alice Brown</td>
+                        <td class="p-2">Marketing Lead</td>
+                        <td class="p-2">90</td>
+                        <td class="p-2">Shortlisted</td>
+                        <td class="p-2">
+                            <button hx-get="#candidate-table tr:first-child" hx-target="this" hx-swap="outerHTML" class="text-blue-500 hover:underline mr-2">Collapse</button>
+                            <select hx-post="#candidate-table" hx-target="#candidate-table" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
+                                <option value="">Invite</option>
+                                <option value="24h">24 Hours</option>
+                                <option value="48h">48 Hours</option>
+                                <option value="3d">3 Days</option>
+                            </select>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+
+        // Simulate interview invite
+        document.addEventListener('change', function (e) {
+            if (e.target.tagName === 'SELECT' && e.target.hasAttribute('hx-post')) {
+                const duration = e.target.value;
+                if (duration) {
+                    const row = e.target.closest('tr');
+                    row.querySelector('td:nth-child(5)').textContent = 'Interview Invited';
+                    alert(`Invite sent for ${duration}`);
+                }
+            }
+        });
+
+        // Simulate batch actions
+        document.getElementById('batch-shortlist').addEventListener('click', function () {
+            const selected = document.querySelectorAll('.candidate-checkbox:checked');
+            selected.forEach(cb => cb.closest('tr').querySelector('td:nth-child(5)').textContent = 'Shortlisted');
+            alert(`${selected.length} candidates shortlisted`);
+        });
+        document.getElementById('batch-reject').addEventListener('click', function () {
+            const selected = document.querySelectorAll('.candidate-checkbox:checked');
+            selected.forEach(cb => cb.closest('tr').querySelector('td:nth-child(5)').textContent = 'Rejected');
+            alert(`${selected.length} candidates rejected`);
+        });
+    </script>
+</body>
+
+</html>

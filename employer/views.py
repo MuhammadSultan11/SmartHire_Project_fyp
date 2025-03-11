@@ -190,7 +190,7 @@ def job_form_view(request):
 
 
 def hr_dashboard(request):
-    return render(request, 'hr_dashboard.html')
+    return render(request, 'employer/dashboard.html')
 
 def login_signup(request):
     return render(request, 'login_signup.html')

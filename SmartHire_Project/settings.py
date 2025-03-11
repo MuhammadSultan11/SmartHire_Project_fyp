@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'employer',
     'crispy_forms',
     'crispy_bootstrap4',
+    'django_htmx',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'SmartHire_Project.urls'
@@ -194,3 +196,32 @@ LOGOUT_REDIRECT_URL = 'login'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
+
+# Authentication
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/index/'
+
+# File storage (adjust as needed)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'resumes')
+MEDIA_URL = '/resumes/'
+
+import os
+
+# Media files (for user-uploaded files like resumes)
+MEDIA_URL = '/media/'  # This is the URL prefix to serve media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # This is where uploaded files will be stored

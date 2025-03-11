@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Profile</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-blue-600 text-white p-4"><h1 class="text-2xl">HR Profile</h1></header>
+    <div class="container mx-auto p-6">
+        <form hx-post="#" hx-target="#form-response" hx-swap="innerHTML" class="bg-white p-6 rounded-lg shadow-lg space-y-4">
+            <div>
+                <label class="block text-sm font-medium">Name</label>
+                <input type="text" class="w-full p-2 border rounded" value="Jane Doe">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Email</label>
+                <input type="email" class="w-full p-2 border rounded" value="jane.doe@example.com">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Password</label>
+                <input type="password" class="w-full p-2 border rounded" value="password123">
+            </div>
+            <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+            <div id="form-response"></div>
+        </form>
+        <script>
+            document.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                document.getElementById('form-response').innerHTML = '<p class="text-green-500">Profile updated!</p>';
+            });
+        </script>
+    </div>
+</body>
+</html>

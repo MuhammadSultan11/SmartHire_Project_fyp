@@ -750,11 +750,11 @@
         }
         return cookieValue;
     }
-    
 
     const csrfToken = getCookie('csrftoken');
 
-   document.addEventListener('DOMContentLoaded', function() {
+    
+    document.addEventListener('DOMContentLoaded', function() {
         // Your existing initialization code
         document.querySelectorAll('.when-open').forEach(function(el) {
             el.style.display = 'none';
@@ -792,7 +792,8 @@
         useExistingResumeBtn.addEventListener('click', function() {
             uploadResumeSection.classList.add('hidden');
             existingResumesSection.classList.remove('hidden');
-            
+            console.log("User session ID:", document.cookie);
+
             fetch('/api/resumes/', {
                 method: 'GET',
                 headers: {
@@ -847,36 +848,62 @@
         resumeUploadForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            // fetch('/api/apply/', {
+            //     method: 'POST',
+            //     body: formData,
+            //     headers: {
+            //         'X-CSRFToken': csrfToken
+            //     }
+            // })
+            // .then(response => {
+            //     if (!response.ok) {
+            //         if (response.status === 302 || response.status === 403) {
+            //             window.location.href = '/login/';
+            //             return null;
+            //         }
+            //         throw new Error('Network response was not ok');
+            //     }
+            //     return response.json();
+            // })
+            // .then(data => {
+            //     if (!data) return;
+            //     if (data.success) {
+            //         alert('Application submitted successfully!');
+            //         bootstrap.Modal.getInstance(applyModal).hide();
+            //     } else {
+            //         alert('Error submitting application: ' + (data.error || 'Unknown error'));
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            //     alert('An error occurred while submitting your application.');
+            // });
+        
+        
             fetch('/api/apply/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': csrfToken
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 302 || response.status === 403) {
-                        window.location.href = '/login/';
-                        return null;
-                    }
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                if (data.success) {
-                    alert('Application submitted successfully!');
-                    bootstrap.Modal.getInstance(applyModal).hide();
-                } else {
-                    alert('Error submitting application: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting your application.');
-            });
+    method: 'POST',
+    body: formData,
+    headers: {
+        'X-CSRFToken': csrfToken
+    }
+})
+.then(response => response.json().then(data => ({ status: response.status, body: data })))
+.then(result => {
+    console.log("Full Response:", result);  // ✅ Logs the full response in the browser console
+    if (result.status === 200 && result.body.success) {
+        alert('Application submitted successfully!');
+        bootstrap.Modal.getInstance(applyModal).hide();
+    } else {
+        alert('Error submitting application: ' + (result.body.error || 'Unknown error'));
+    }
+})
+.catch(error => {
+    console.error('Error:', error);  // ✅ Logs errors in the browser console
+    alert('An error occurred while submitting your application.');
+});
+
+        
+        
         });
 
         submitExistingResumeBtn.addEventListener('click', function() {
@@ -919,7 +946,5 @@
             }
         });
     });
-
-
 </script>
 {% endblock %}

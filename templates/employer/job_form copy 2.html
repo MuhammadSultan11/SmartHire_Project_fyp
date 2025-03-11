@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Posting Form</title>
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+      /* Custom styles for enhanced UI */
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+input, textarea, select {
+    transition: all 0.3s ease;
+}
+
+button[type="submit"], a.bg-gray-200 {
+    transition: all 0.3s ease;
+}
+
+.shadow-2xl {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 font-poppins min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Create a Job Posting</h1>
+            <div class="relative group">
+                <button class="flex items-center space-x-2 text-lg">
+                    <span>Jane Doe</span>
+                    <svg class="w-5 h-5 transform transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block z-10">
+                    <a href="#" class="block px-4 py-2 hover:bg-indigo-100">Profile</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-indigo-100">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Container -->
+    <div class="container mx-auto p-6 max-w-3xl">
+        <form action="/submit_job" method="POST" class="bg-white p-8 rounded-xl shadow-2xl space-y-8">
+            <!-- Progress Indicator -->
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex-1 h-2 bg-gray-200 rounded-full">
+                    <div class="h-full bg-indigo-500 rounded-full" style="width: 33%;"></div>
+                </div>
+                <span class="ml-4 text-sm text-gray-600">Step 1 of 3</span>
+            </div>
+
+            <!-- Core Job Details -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-indigo-700">Core Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="position-title" class="block text-sm font-semibold text-gray-700">Position Title</label>
+                        <input type="text" id="position-title" name="job_details[position_title]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Software Engineer" required>
+                    </div>
+                    <div>
+                        <label for="department" class="block text-sm font-semibold text-gray-700">Department</label>
+                        <input type="text" id="department" name="job_details[department]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Engineering">
+                    </div>
+                </div>
+                <div>
+                    <label for="job-description" class="block text-sm font-semibold text-gray-700">Job Description</label>
+                    <textarea id="job-description" name="job_details[job_description]" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="What does this role entail?"></textarea>
+                </div>
+                <div class="relative">
+                    <label for="keywords" class="block text-sm font-semibold text-gray-700">Keywords (AI-Suggested)</label>
+                    <input type="text" id="keywords" name="job_details[keywords]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Python, Agile" hx-get="#keyword-suggestions" hx-target="#keyword-suggestions" hx-trigger="keyup delay:500ms">
+                    <div id="keyword-suggestions" class="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg hidden z-10">
+                        <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Python</div>
+                        <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Java</div>
+                        <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Agile</div>
+                        <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">SQL</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements & Qualifications -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-indigo-700">Requirements & Qualifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="technical-skills" class="block text-sm font-semibold text-gray-700">Technical Skills</label>
+                        <textarea id="technical-skills" name="requirements[technical_skills]" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Python, Java..."></textarea>
+                    </div>
+                    <div>
+                        <label for="experience" class="block text-sm font-semibold text-gray-700">Experience</label>
+                        <input type="text" id="experience" name="requirements[experience]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., 3-5 years">
+                    </div>
+                    <div>
+                        <label for="threshold" class="block text-sm font-semibold text-gray-700">Resume Match Threshold (%)</label>
+                        <input type="number" id="threshold" name="requirements[threshold]" min="0" max="100" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., 80 (Reject < 80%)">
+                    </div>
+                    <div>
+                        <label for="education" class="block text-sm font-semibold text-gray-700">Education</label>
+                        <input type="text" id="education" name="qualifications[education]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Bachelor's in CS">
+                    </div>
+                    <div>
+                        <label for="certifications" class="block text-sm font-semibold text-gray-700">Certifications</label>
+                        <input type="text" id="certifications" name="qualifications[certifications]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., PMP, AWS">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Logistics -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-indigo-700">Job Logistics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="job-type" class="block text-sm font-semibold text-gray-700">Job Type</label>
+                        <select id="job-type" name="job_type[type]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="Permanent">Permanent</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="work-arrangement" class="block text-sm font-semibold text-gray-700">Work Arrangement</label>
+                        <select id="work-arrangement" name="job_type[work_arrangement]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="Onsite">Onsite</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="openings" class="block text-sm font-semibold text-gray-700">Number of Openings</label>
+                        <input type="number" id="openings" name="job_type[openings]" min="1" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., 2">
+                    </div>
+                    <div>
+                        <label for="salary-range" class="block text-sm font-semibold text-gray-700">Salary Range</label>
+                        <input type="text" id="salary-range" name="compensation[salary_range]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., $50k - $80k/year">
+                    </div>
+                    <div>
+                        <label for="location" class="block text-sm font-semibold text-gray-700">Location</label>
+                        <input type="text" id="location" name="compensation[location]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., New York, NY">
+                    </div>
+                    <div>
+                        <label for="application-deadline" class="block text-sm font-semibold text-gray-700">Application Deadline</label>
+                        <input type="date" id="application-deadline" name="additional_info[application_deadline]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                    </div>
+                    <div>
+                        <label for="start-date" class="block text-sm font-semibold text-gray-700">Start Date</label>
+                        <input type="date" id="start-date" name="additional_info[start_date]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-indigo-700">Additional Details</h2>
+                <div>
+                    <label for="benefits-offered" class="block text-sm font-semibold text-gray-700">Benefits</label>
+                    <textarea id="benefits-offered" name="benefits[offered]" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., Health insurance, Flexible hours..."></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="company-name" class="block text-sm font-semibold text-gray-700">Company Name</label>
+                        <input type="text" id="company-name" name="company_details[name]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., TechCorp Solutions">
+                    </div>
+                    <div>
+                        <label for="company-website" class="block text-sm font-semibold text-gray-700">Company Website</label>
+                        <input type="url" id="company-website" name="company_details[website]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., https://techcorp.com">
+                    </div>
+                </div>
+                <div>
+                    <label for="company-overview" class="block text-sm font-semibold text-gray-700">Company Overview</label>
+                    <textarea id="company-overview" name="company_details[overview]" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="Tell us about your company..."></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="application-method" class="block text-sm font-semibold text-gray-700">Application Method</label>
+                        <select id="application-method" name="additional_info[application_method]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="Email">Email</option>
+                            <option value="Online Form">Online Form</option>
+                            <option value="External Link">External Link</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="posting-status" class="block text-sm font-semibold text-gray-700">Posting Status</label>
+                        <select id="posting-status" name="additional_info[posting_status]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="Draft">Draft</option>
+                            <option value="Active">Active</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="contact-information" class="block text-sm font-semibold text-gray-700">Contact Information</label>
+                    <input type="text" id="contact-information" name="additional_info[contact_information]" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="e.g., hr@techcorp.com, (123) 456-7890">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sticky Footer -->
+    <div class="fixed bottom-0 w-full bg-white p-4 shadow-lg flex justify-center space-x-4">
+        <button type="submit" form="job-posting-form" class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-all">Submit Job</button>
+        <a href="#" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-300 transition-all">Cancel</a>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Show/hide keyword suggestions
+        const keywordsInput = document.getElementById('keywords');
+        const suggestionsDiv = document.getElementById('keyword-suggestions');
+        keywordsInput.addEventListener('focus', () => suggestionsDiv.classList.remove('hidden'));
+        keywordsInput.addEventListener('blur', () => setTimeout(() => suggestionsDiv.classList.add('hidden'), 200));
+        keywordsInput.addEventListener('keyup', function() {
+            setTimeout(() => {
+                // Simulate AI suggestions (replace with real HTMX call later)
+                suggestionsDiv.innerHTML = `
+                    <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Python</div>
+                    <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Java</div>
+                    <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">Agile</div>
+                    <div class="p-2 text-sm text-gray-600 hover:bg-indigo-50 cursor-pointer">SQL</div>
+                `;
+            }, 500);
+        });
+
+        // Add keyword to input on click
+        suggestionsDiv.addEventListener('click', function(e) {
+            if (e.target.classList.contains('cursor-pointer')) {
+                const currentValue = keywordsInput.value.split(',').map(v => v.trim()).filter(v => v);
+                currentValue.push(e.target.textContent);
+                keywordsInput.value = currentValue.join(', ');
+            }
+        });
+    </script>
+</body>
+</html>
