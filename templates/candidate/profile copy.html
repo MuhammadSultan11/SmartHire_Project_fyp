@@ -1,0 +1,1007 @@
+{% extends 'candidate/P_navbar.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container mt-5">
+    <div class="row gx-5">
+        <div class="col-lg-8">
+            <div class="card profile-section fade-in-up" id="profile">
+                <div class="profile-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="{{ profile.profile_picture|default:'https://placehold.co/150x150' }}"
+                                 alt="Profile" class="rounded-circle profile-picture" id="profile-picture-display">
+                            <input type="file" id="profile-picture-upload" accept="image/*" style="display:none;">
+                            <button class="btn btn-sm btn-outline-light mt-2"
+                                    onclick="document.getElementById('profile-picture-upload').click();"><i
+                                    class="fas fa-camera"></i> Upload</button>
+                        </div>
+                        <div class="col-md-9">
+                            <h1 class="mb-1 fw-bold" id="profile-name">{{ profile.name|default:"John Doe" }}</h1>
+                            <p class="mb-2 opacity-90" id="profile-title">{{ profile.title|default:"Software Engineer | AI Enthusiast" }}</p>
+                            <p class="mb-3" id="profile-location"><i class="fas fa-map-marker-alt me-2"></i>{{ profile.location|default:"Lahore, Pakistan" }}</p>
+                            <div class="social-links mt-2" id="profile-social-links">
+                                {% for link in profile.social_links %}
+                                <a href="{{ link }}" target="_blank" class="me-3">
+                                    {% if 'github' in link %}
+                                    <i class="fab fa-github"></i>
+                                    {% elif 'linkedin' in link %}
+                                    <i class="fab fa-linkedin"></i>
+                                    {% elif 'twitter' in link %}
+                                    <i class="fab fa-twitter"></i>
+                                    {% else %}
+                                    <i class="fas fa-globe"></i>
+                                    {% endif %}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-content p-4">
+                    <div class="section-header">
+                        <h4>About Me</h4>
+                        <button id="edit-profile-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#editProfileModal"><i class="fas fa-edit"></i></button>
+                    </div>
+                    <p id="profile-about" class="text-muted">{{ profile.about|default:"A passionate developer with 5+ years in web and AI technologies." }}</p>
+
+                    <div class="section-header mt-5">
+                        <h4>Experience</h4>
+                        <button id="add-experience-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#addExperienceModal"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="scrollable-container" id="profile-experience">
+                        {% for exp in experiences %}
+                        <div class="timeline-item" data-id="{{ exp.id }}">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="fw-semibold">{{ exp.title }}</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary edit-item" data-type="experience"
+                                            data-id="{{ exp.id }}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-item" data-type="experience"
+                                            data-id="{{ exp.id }}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="mb-1"><strong>{{ exp.company }}</strong> • {{ exp.location }}</p>
+                            <p class="text-muted mb-2">{{ exp.start_date }} - {{ exp.end_date|default:"Present" }} • {{ exp.employment_type|default:"Full-time" }}</p>
+                            <p class="text-muted">{{ exp.description }}</p>
+                            {% if exp.skills %}
+                            <div class="mt-2">
+                                <strong>Skills:</strong>
+                                {% for skill in exp.skills %}
+                                <span class="skill-badge">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="section-header mt-5">
+                        <h4>Education</h4>
+                        <button id="add-education-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#addEducationModal"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="scrollable-container" id="profile-education">
+                        {% for edu in educations %}
+                        <div class="timeline-item" data-id="{{ edu.id }}">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="fw-semibold">{{ edu.school }}</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary edit-item" data-type="education"
+                                            data-id="{{ edu.id }}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-item" data-type="education"
+                                            data-id="{{ edu.id }}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="mb-1">{{ edu.degree }}</p>
+                            <p class="text-muted">{{ edu.start_date }} - {{ edu.end_date }} • {{ edu.grade }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="section-header mt-5">
+                        <h4>Certifications</h4>
+                        <button id="add-certification-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#addCertificationModal"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="scrollable-container" id="profile-certifications">
+                        {% for cert in certifications %}
+                        <div class="timeline-item" data-id="{{ cert.id }}">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="fw-semibold">{{ cert.name }}</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary edit-item" data-type="certification"
+                                            data-id="{{ cert.id }}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-item" data-type="certification"
+                                            data-id="{{ cert.id }}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="mb-1">{{ cert.issuer }}</p>
+                            <p class="text-muted">{{ cert.issue_date }} - {{ cert.expiration_date|default:"N/A" }} • ID: {{ cert.credential_id }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="section-header mt-5">
+                        <h4>Projects</h4>
+                        <button id="add-project-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#addProjectModal"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="scrollable-container" id="profile-projects">
+                        {% for proj in projects %}
+                        <div class="timeline-item" data-id="{{ proj.id }}">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="fw-semibold">{{ proj.title }}</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary edit-item" data-type="project"
+                                            data-id="{{ proj.id }}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-item" data-type="project"
+                                            data-id="{{ proj.id }}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">{{ proj.start_date }} - {{ proj.end_date }}</p>
+                            <p class="text-muted">{{ proj.description }}</p>
+                            {% if proj.url %}
+                            <p><a href="{{ proj.url }}" class="text-primary"><i class="fas fa-link me-1"></i> GitHub</a></p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="section-header mt-5">
+                        <h4>Skills</h4>
+                        <button id="add-skill-btn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#addSkillModal"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="profile-skills" class="d-flex flex-wrap">
+                        {% for skill in skills %}
+                        <div class="skill-item m-2 p-2 border rounded" data-id="{{ skill.id }}">
+                            <span class="skill-name">{{ skill.name }}</span>
+                            <span class="skill-category text-muted"> ({{ skill.category|default:"Uncategorized" }})</span>
+                            <span class="skill-level text-muted"> - {{ skill.level|default:"Not specified" }}</span>
+                            <button class="btn btn-sm btn-outline-primary edit-item" data-type="skill"
+                                    data-id="{{ skill.id }}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-item" data-type="skill"
+                                    data-id="{{ skill.id }}"><i class="fas fa-trash"></i></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card fade-in-up">
+                <h2 class="card-header">Application Status</h2>
+                <div class="card-body p-4 scrollable-container">
+                    <div class="mb-4">
+                        <h6 class="fw-semibold">Data Engineer - I</h6>
+                        <p class="small mb-1">Applied: March 5, 2025</p>
+                        <p class="small mb-0"><strong>Status:</strong> <span class="text-warning">Pending</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card fade-in-up">
+                <h2 class="card-header">Recommended Jobs</h2>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6 class="fw-semibold">Data Engineer - I</h6>
+                        <p class="small mb-1"><i class="fas fa-building me-2"></i>Amazon</p>
+                        <p class="small mb-2"><i class="fas fa-map-marker-alt me-2"></i>Remote</p>
+                        <button class="btn btn-sm btn-primary view-details" data-bs-toggle="modal"
+                                data-bs-target="#jobModal" data-job="Data Engineer - I" data-company="Amazon">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="mb-4">
+                        <label for="edit-name" class="form-label fw-medium">Name</label>
+                        <input type="text" class="form-control" id="edit-name" value="{{ profile.name|default:'John Doe' }}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-title" class="form-label fw-medium">Title</label>
+                        <input type="text" class="form-control" id="edit-title" value="{{ profile.title|default:'Software Engineer | AI Enthusiast' }}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-location" class="form-label fw-medium">Location</label>
+                        <input type="text" class="form-control" id="edit-location" value="{{ profile.location|default:'Lahore, Pakistan' }}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-about" class="form-label fw-medium">About</label>
+                        <textarea class="form-control" id="edit-about" rows="4">{{ profile.about|default:'A passionate developer with 5+ years in web and AI technologies.' }}</textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-medium">Social Links</label>
+                        <div id="social-links-container">
+                            {% for link in profile.social_links %}
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">
+                                    {% if 'github' in link %}
+                                    <i class="fab fa-github"></i>
+                                    {% elif 'linkedin' in link %}
+                                    <i class="fab fa-linkedin"></i>
+                                    {% elif 'twitter' in link %}
+                                    <i class="fab fa-twitter"></i>
+                                    {% else %}
+                                    <i class="fas fa-globe"></i>
+                                    {% endif %}
+                                </span>
+                                <input type="text" class="form-control" value="{{ link }}">
+                                <button type="button" class="btn btn-outline-danger remove-social"><i class="fas fa-trash"></i></button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-outline-primary" id="add-social"><i class="fas fa-plus me-2"></i>Add Link</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveProfileChanges">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Experience Modal -->
+<div class="modal fade" id="addExperienceModal" tabindex="-1" aria-labelledby="addExperienceModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="addExperienceModalLabel">Add Experience</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addExperienceForm">
+                    <input type="hidden" id="experience-id">
+                    <div class="mb-4">
+                        <label for="experience-title" class="form-label fw-medium">Title</label>
+                        <input type="text" class="form-control" id="experience-title" placeholder="e.g., Software Engineer">
+                    </div>
+                    <div class="mb-4">
+                        <label for="experience-company" class="form-label fw-medium">Company</label>
+                        <input type="text" class="form-control" id="experience-company" placeholder="e.g., TechCorp">
+                    </div>
+                    <div class="mb-4">
+                        <label for="experience-location" class="form-label fw-medium">Location</label>
+                        <input type="text" class="form-control" id="experience-location" placeholder="e.g., Lahore, Pakistan">
+                    </div>
+                    <div class="mb-4">
+                        <label for="experience-employment-type" class="form-label fw-medium">Employment Type</label>
+                        <select class="form-control" id="experience-employment-type">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="experience-start-date" class="form-label fw-medium">Start Date</label>
+                            <input type="month" class="form-control" id="experience-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="experience-end-date" class="form-label fw-medium">End Date</label>
+                            <input type="month" class="form-control" id="experience-end-date">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="experience-description" class="form-label fw-medium">Description</label>
+                        <textarea class="form-control" id="experience-description" rows="3" placeholder="Describe your role and achievements..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="experience-skills" class="form-label fw-medium">Skills</label>
+                        <input type="text" class="form-control" id="experience-skills" placeholder="e.g., JavaScript, Python (comma-separated)">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveExperience">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Education Modal -->
+<div class="modal fade" id="addEducationModal" tabindex="-1" aria-labelledby="addEducationModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="addEducationModalLabel">Add Education</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEducationForm">
+                    <input type="hidden" id="education-id">
+                    <div class="mb-4">
+                        <label for="education-school" class="form-label fw-medium">School/University</label>
+                        <input type="text" class="form-control" id="education-school" placeholder="e.g., University of Punjab">
+                    </div>
+                    <div class="mb-4">
+                        <label for="education-degree" class="form-label fw-medium">Degree</label>
+                        <input type="text" class="form-control" id="education-degree" placeholder="e.g., BSc Computer Science">
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="education-start-date" class="form-label fw-medium">Start Date</label>
+                            <input type="month" class="form-control" id="education-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="education-end-date" class="form-label fw-medium">End Date</label>
+                            <input type="month" class="form-control" id="education-end-date">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="education-grade" class="form-label fw-medium">Grade</label>
+                        <input type="text" class="form-control" id="education-grade" placeholder="e.g., 3.8/4.0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveEducation">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Certification Modal -->
+<div class="modal fade" id="addCertificationModal" tabindex="-1" aria-labelledby="addCertificationModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="addCertificationModalLabel">Add Certification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCertificationForm">
+                    <input type="hidden" id="certification-id">
+                    <div class="mb-4">
+                        <label for="certification-name" class="form-label fw-medium">Name</label>
+                        <input type="text" class="form-control" id="certification-name" placeholder="e.g., AWS Certified Solutions Architect">
+                    </div>
+                    <div class="mb-4">
+                        <label for="certification-issuer" class="form-label fw-medium">Issuer</label>
+                        <input type="text" class="form-control" id="certification-issuer" placeholder="e.g., Amazon Web Services">
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="certification-issue-date" class="form-label fw-medium">Issue Date</label>
+                            <input type="month" class="form-control" id="certification-issue-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="certification-expiration-date" class="form-label fw-medium">Expiration Date</label>
+                            <input type="month" class="form-control" id="certification-expiration-date">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="certification-credential-id" class="form-label fw-medium">Credential ID</label>
+                        <input type="text" class="form-control" id="certification-credential-id" placeholder="e.g., AWS-ASA-12345">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveCertification">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Project Modal -->
+<div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="addProjectModalLabel">Add Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addProjectForm">
+                    <input type="hidden" id="project-id">
+                    <div class="mb-4">
+                        <label for="project-title" class="form-label fw-medium">Project Name</label>
+                        <input type="text" class="form-control" id="project-title" placeholder="e.g., Smart Home Automation">
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="project-start-date" class="form-label fw-medium">Start Date</label>
+                            <input type="month" class="form-control" id="project-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="project-end-date" class="form-label fw-medium">End Date</label>
+                            <input type="month" class="form-control" id="project-end-date">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="project-description" class="form-label fw-medium">Description</label>
+                        <textarea class="form-control" id="project-description" rows="3" placeholder="Describe your project..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="project-url" class="form-label fw-medium">Project URL</label>
+                        <input type="url" class="form-control" id="project-url" placeholder="e.g., https://github.com/username/project">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveProject">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Skill Modal -->
+<div class="modal fade" id="addSkillModal" tabindex="-1" aria-labelledby="addSkillModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="addSkillModalLabel">Add Skill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSkillForm">
+                    <input type="hidden" id="skill-id">
+                    <div class="mb-4">
+                        <label for="skill-name" class="form-label fw-medium">Skill Name</label>
+                        <input type="text" class="form-control" id="skill-name" placeholder="e.g., JavaScript">
+                    </div>
+                    <div class="mb-4">
+                        <label for="skill-category" class="form-label fw-medium">Category</label>
+                        <select class="form-control" id="skill-category">
+                            <option value="Technical">Technical</option>
+                            <option value="Soft Skills">Soft Skills</option>
+                            <option value="Languages">Languages</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="skill-level" class="form-label fw-medium">Proficiency Level</label>
+                        <select class="form-control" id="skill-level">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveSkill">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Job Details Modal -->
+<div class="modal fade" id="jobModal" tabindex="-1" aria-labelledby="jobModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="jobModalLabel">Job Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h4 id="jobTitle" class="fw-bold mb-3"></h4>
+                <p class="mb-2"><strong>Company:</strong> <span id="jobCompany"></span></p>
+                <p class="mb-3"><strong>Location:</strong> <span id="jobLocation"></span></p>
+                <h6 class="fw-semibold">Description</h6>
+                <p class="text-muted mb-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                <h6 class="fw-semibold">Requirements</h6>
+                <ul class="list-unstyled ms-4">
+                    <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i>Bachelor's in Computer Science</li>
+                    <li><i class="fas fa-check-circle text-primary me-2"></i>Strong problem-solving skills</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Apply Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const BASE_URL = '/candidate/api/';
+        const csrfToken = getCookie('csrftoken');
+
+        const updateFunctions = {
+            experience: updateExperiences,
+            education: updateEducation,
+            certification: updateCertifications,
+            project: updateProjects,
+            skill: updateSkills
+        };
+
+        // Update Profile UI
+        function updateProfile(data) {
+            document.getElementById('profile-name').textContent = data.name || 'John Doe';
+            document.getElementById('profile-title').textContent = data.title || 'Software Engineer | AI Enthusiast';
+            document.getElementById('profile-location').innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${data.location || 'Lahore, Pakistan'}`;
+            document.getElementById('profile-about').textContent = data.about || 'A passionate developer with 5+ years...';
+            if (data.profile_picture) {
+                document.getElementById('profile-picture-display').src = data.profile_picture;
+            }
+            const socialContainer = document.getElementById('profile-social-links');
+            socialContainer.innerHTML = '';
+            (data.social_links || []).forEach(link => {
+                const a = document.createElement('a');
+                a.href = link;
+                a.target = '_blank';
+                a.className = 'me-3';
+                a.innerHTML = link.includes('github') ? '<i class="fab fa-github"></i>' :
+                    link.includes('linkedin') ? '<i class="fab fa-linkedin"></i>' :
+                    link.includes('twitter') ? '<i class="fab fa-twitter"></i>' :
+                    '<i class="fas fa-globe"></i>';
+                socialContainer.appendChild(a);
+            });
+        }
+
+        // Update Experiences UI
+        function updateExperiences(data) {
+            const container = document.getElementById('profile-experience');
+            container.innerHTML = '';
+            (data.experiences || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.dataset.id = item.id;
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-semibold">${item.title}</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary edit-item" data-type="experience" data-id="${item.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-item" data-type="experience" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="mb-1"><strong>${item.company}</strong> • ${item.location}</p>
+                    <p class="text-muted mb-2">${item.start_date} - ${item.end_date || 'Present'} • ${item.employment_type || 'Full-time'}</p>
+                    <p class="text-muted">${item.description}</p>
+                    ${item.skills && item.skills.length ? `
+                        <div class="mt-2">
+                            <strong>Skills:</strong>
+                            ${item.skills.map(skill => `<span class="skill-badge">${skill}</span>`).join(' ')}
+                        </div>` : ''}
+                `;
+                container.appendChild(div);
+            });
+            bindEventListeners();
+        }
+
+        // Update Education UI
+        function updateEducation(data) {
+            const container = document.getElementById('profile-education');
+            container.innerHTML = '';
+            (data.educations || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.dataset.id = item.id;
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-semibold">${item.school}</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary edit-item" data-type="education" data-id="${item.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-item" data-type="education" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="mb-1">${item.degree}</p>
+                    <p class="text-muted">${item.start_date} - ${item.end_date} • ${item.grade}</p>
+                `;
+                container.appendChild(div);
+            });
+            bindEventListeners();
+        }
+
+        // Update Certifications UI
+        function updateCertifications(data) {
+            const container = document.getElementById('profile-certifications');
+            container.innerHTML = '';
+            (data.certifications || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.dataset.id = item.id;
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-semibold">${item.name}</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary edit-item" data-type="certification" data-id="${item.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-item" data-type="certification" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="mb-1">${item.issuer}</p>
+                    <p class="text-muted">${item.issue_date} - ${item.expiration_date || 'N/A'} • ID: ${item.credential_id}</p>
+                `;
+                container.appendChild(div);
+            });
+            bindEventListeners();
+        }
+
+        // Update Projects UI
+        function updateProjects(data) {
+            const container = document.getElementById('profile-projects');
+            container.innerHTML = '';
+            (data.projects || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.dataset.id = item.id;
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-semibold">${item.title}</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary edit-item" data-type="project" data-id="${item.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger delete-item" data-type="project" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-2">${item.start_date} - ${item.end_date}</p>
+                    <p class="text-muted">${item.description}</p>
+                    ${item.url ? `<p><a href="${item.url}" class="text-primary"><i class="fas fa-link me-1"></i>GitHub</a></p>` : ''}
+                `;
+                container.appendChild(div);
+            });
+            bindEventListeners();
+        }
+
+        // Update Skills UI
+        function updateSkills(data) {
+            const container = document.getElementById('profile-skills');
+            container.innerHTML = '';
+            (data.skills || []).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'skill-item m-2 p-2 border rounded';
+                div.dataset.id = item.id;
+                div.innerHTML = `
+                    <span class="skill-name">${item.name}</span>
+                    <span class="skill-category text-muted"> (${item.category || 'Uncategorized'})</span>
+                    <span class="skill-level text-muted"> - ${item.level || 'Not specified'}</span>
+                    <button class="btn btn-sm btn-outline-primary edit-item" data-type="skill" data-id="${item.id}"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger delete-item" data-type="skill" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                `;
+                container.appendChild(div);
+            });
+            bindEventListeners();
+        }
+
+        // Bind Event Listeners
+        function bindEventListeners() {
+            document.querySelectorAll('.edit-item').forEach(button => {
+                button.removeEventListener('click', editItemHandler);
+                button.addEventListener('click', editItemHandler);
+            });
+            document.querySelectorAll('.delete-item').forEach(button => {
+                button.removeEventListener('click', deleteItemHandler);
+                button.addEventListener('click', deleteItemHandler);
+            });
+        }
+
+        function editItemHandler() {
+            const type = this.dataset.type;
+            const id = this.dataset.id;
+            fetch(`${BASE_URL}${type}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const items = data[`${type}s`];
+                    const item = items.find(i => i.id === id);
+                    const modal = new bootstrap.Modal(document.getElementById(`add${type.charAt(0).toUpperCase() + type.slice(1)}Modal`));
+                    document.getElementById(`${type}-id`).value = id;
+                    for (const [key, value] of Object.entries(item)) {
+                        const input = document.getElementById(`${type}-${key}`);
+                        if (input) {
+                            if (key === 'skills' && Array.isArray(value)) {
+                                input.value = value.join(', ');
+                            } else if (key !== 'id') {
+                                input.value = value || '';
+                            }
+                        }
+                    }
+                    document.getElementById(`add${type.charAt(0).toUpperCase() + type.slice(1)}ModalLabel`).textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    modal.show();
+                })
+                .catch(error => console.error(`Error fetching ${type} for edit:`, error));
+        }
+
+        function deleteItemHandler() {
+            const type = this.dataset.type;
+            const id = this.dataset.id;
+            if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                fetch(`${BASE_URL}${type}/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': csrfToken }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return fetch(`${BASE_URL}${type}/`).then(res => res.json());
+                    })
+                    .then(data => updateFunctions[type](data))
+                    .catch(error => console.error(`Error deleting ${type}:`, error));
+            }
+        }
+
+        // Profile Picture Upload
+        document.getElementById('profile-picture-upload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('profile_picture', file);
+                fetch(`${BASE_URL}profile/picture/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken },
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('profile-picture-display').src = data.profile_picture;
+                    })
+                    .catch(error => console.error('Error uploading picture:', error));
+            }
+        });
+
+        // Save Profile Changes
+        document.getElementById('saveProfileChanges').addEventListener('click', function () {
+            const data = {
+                name: document.getElementById('edit-name').value,
+                title: document.getElementById('edit-title').value,
+                location: document.getElementById('edit-location').value,
+                about: document.getElementById('edit-about').value,
+                social_links: Array.from(document.querySelectorAll('#social-links-container input')).map(input => input.value)
+            };
+            fetch(`${BASE_URL}profile/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+                    modal.hide();
+                    updateProfile(data);
+                })
+                .catch(error => console.error('Error saving profile:', error));
+        });
+
+        // Save Experience
+        document.getElementById('saveExperience').addEventListener('click', function () {
+            const id = document.getElementById('experience-id').value;
+            const data = {
+                title: document.getElementById('experience-title').value,
+                company: document.getElementById('experience-company').value,
+                location: document.getElementById('experience-location').value,
+                employment_type: document.getElementById('experience-employment-type').value,
+                start_date: document.getElementById('experience-start-date').value,
+                end_date: document.getElementById('experience-end-date').value || null,
+                description: document.getElementById('experience-description').value,
+                skills: document.getElementById('experience-skills').value.split(',').map(s => s.trim()).filter(s => s)
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${BASE_URL}experience/${id}/` : `${BASE_URL}experience/`;
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addExperienceModal'));
+                    modal.hide();
+                    document.getElementById('addExperienceForm').reset();
+                    document.getElementById('experience-id').value = '';
+                    document.getElementById('addExperienceModalLabel').textContent = 'Add Experience';
+                    fetch(`${BASE_URL}experience/`).then(res => res.json()).then(updateExperiences);
+                })
+                .catch(error => console.error('Error saving experience:', error));
+        });
+
+        // Save Education
+        document.getElementById('saveEducation').addEventListener('click', function () {
+            const id = document.getElementById('education-id').value;
+            const data = {
+                school: document.getElementById('education-school').value,
+                degree: document.getElementById('education-degree').value,
+                start_date: document.getElementById('education-start-date').value,
+                end_date: document.getElementById('education-end-date').value,
+                grade: document.getElementById('education-grade').value
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${BASE_URL}education/${id}/` : `${BASE_URL}education/`;
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addEducationModal'));
+                    modal.hide();
+                    document.getElementById('addEducationForm').reset();
+                    document.getElementById('education-id').value = '';
+                    document.getElementById('addEducationModalLabel').textContent = 'Add Education';
+                    fetch(`${BASE_URL}education/`).then(res => res.json()).then(updateEducation);
+                })
+                .catch(error => console.error('Error saving education:', error));
+        });
+
+        // Save Certification
+        document.getElementById('saveCertification').addEventListener('click', function () {
+            const id = document.getElementById('certification-id').value;
+            const data = {
+                name: document.getElementById('certification-name').value,
+                issuer: document.getElementById('certification-issuer').value,
+                issue_date: document.getElementById('certification-issue-date').value,
+                expiration_date: document.getElementById('certification-expiration-date').value || null,
+                credential_id: document.getElementById('certification-credential-id').value
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${BASE_URL}certification/${id}/` : `${BASE_URL}certification/`;
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addCertificationModal'));
+                    modal.hide();
+                    document.getElementById('addCertificationForm').reset();
+                    document.getElementById('certification-id').value = '';
+                    document.getElementById('addCertificationModalLabel').textContent = 'Add Certification';
+                    fetch(`${BASE_URL}certification/`).then(res => res.json()).then(updateCertifications);
+                })
+                .catch(error => console.error('Error saving certification:', error));
+        });
+
+        // Save Project
+        document.getElementById('saveProject').addEventListener('click', function () {
+            const id = document.getElementById('project-id').value;
+            const data = {
+                title: document.getElementById('project-title').value,
+                start_date: document.getElementById('project-start-date').value,
+                end_date: document.getElementById('project-end-date').value,
+                description: document.getElementById('project-description').value,
+                url: document.getElementById('project-url').value || null
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${BASE_URL}project/${id}/` : `${BASE_URL}project/`;
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addProjectModal'));
+                    modal.hide();
+                    document.getElementById('addProjectForm').reset();
+                    document.getElementById('project-id').value = '';
+                    document.getElementById('addProjectModalLabel').textContent = 'Add Project';
+                    fetch(`${BASE_URL}project/`).then(res => res.json()).then(updateProjects);
+                })
+                .catch(error => console.error('Error saving project:', error));
+        });
+
+        // Save Skill
+        document.getElementById('saveSkill').addEventListener('click', function () {
+            const id = document.getElementById('skill-id').value;
+            const data = {
+                name: document.getElementById('skill-name').value,
+                category: document.getElementById('skill-category').value,
+                level: document.getElementById('skill-level').value
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${BASE_URL}skill/${id}/` : `${BASE_URL}skill/`;
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addSkillModal'));
+                    modal.hide();
+                    document.getElementById('addSkillForm').reset();
+                    document.getElementById('skill-id').value = '';
+                    document.getElementById('addSkillModalLabel').textContent = 'Add Skill';
+                    fetch(`${BASE_URL}skill/`).then(res => res.json()).then(updateSkills);
+                })
+                .catch(error => console.error('Error saving skill:', error));
+        });
+
+        // Add Social Link
+        document.getElementById('add-social').addEventListener('click', () => {
+            const container = document.getElementById('social-links-container');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-3';
+            div.innerHTML = `
+                <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                <input type="text" class="form-control" placeholder="Profile URL">
+                <button type="button" class="btn btn-outline-danger remove-social"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+            div.querySelector('.remove-social').addEventListener('click', () => div.remove());
+        });
+
+        document.querySelectorAll('.remove-social').forEach(btn => {
+            btn.addEventListener('click', () => btn.parentElement.remove());
+        });
+
+        // Initial Data Load
+        fetch(`${BASE_URL}profile/`).then(res => res.json()).then(updateProfile);
+        fetch(`${BASE_URL}experience/`).then(res => res.json()).then(updateExperiences);
+        fetch(`${BASE_URL}education/`).then(res => res.json()).then(updateEducation);
+        fetch(`${BASE_URL}certification/`).then(res => res.json()).then(updateCertifications);
+        fetch(`${BASE_URL}project/`).then(res => res.json()).then(updateProjects);
+        fetch(`${BASE_URL}skill/`).then(res => res.json()).then(updateSkills);
+    });
+</script>
+{% endblock %}
