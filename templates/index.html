@@ -3,21 +3,167 @@
 
 {% block extra_css %}
 <style>
-    /* Add these new styles for the modal */
+body.no-scroll {
+        overflow: hidden; /* Prevent scrolling when modal is open */
+    }
+
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: opacity 0.3s ease;
+    }
+
+    .modal.fade .modal-dialog {
+        transform: translateY(-50px);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .progress-circle {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 20px auto;
+    }
+
+    .progress-circle svg {
+        transform: rotate(-90deg);
+    }
+
+    .progress-circle .circle-bg {
+        fill: none;
+        stroke: #e2e8f0;
+        stroke-width: 10;
+    }
+
+    .progress-circle .circle-progress {
+        fill: none;
+        stroke: var(--primary-color);
+        stroke-width: 10;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .progress-circle span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .stage-item {
+        transition: opacity 0.5s ease, transform 0.3s ease;
+    }
+
+    .stage-item.active {
+        transform: scale(1.05);
+    }
+
+    .progress-container {
+        position: relative;
+    }
+
+    .progress-stages {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .stage-item {
+        text-align: center;
+        width: 23%;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    .stage-item.active {
+        opacity: 1;
+    }
+
+    .stage-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .stage-item span {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .scan-animation {
+        position: relative;
+        height: 80px;
+    }
+
+    .document-icon {
+        position: relative;
+        display: inline-block;
+    }
+
+    .scan-beam {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        animation: scan 2s infinite;
+        opacity: 0;
+    }
+
+    .scan-beam.active {
+        opacity: 1;
+    }
+
+    .stage-item.active .stage-icon {
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+    @keyframes scan {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(3rem); }
+        100% { transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+    /* Modal styles */
     .modal-content {
         border-radius: 0.5rem;
         box-shadow: var(--card-shadow);
     }
-    
+
     .modal-header {
         border-bottom: 1px solid var(--border-light);
         padding: 1rem 1.5rem;
     }
-    
+
     .modal-body {
         padding: 1.5rem;
     }
-    
+
     .resume-list-item {
         padding: 0.75rem;
         border: 1px solid var(--border-light);
@@ -26,16 +172,17 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    
+
     .resume-list-item:hover {
         background-color: var(--light-bg);
         border-color: var(--primary-color);
     }
-    
+
     .resume-list-item.selected {
         background-color: rgba(59, 130, 246, 0.1);
         border-color: var(--primary-color);
     }
+
     :root {
         --primary-color: #3b82f6;
         --primary-hover: #2563eb;
@@ -43,14 +190,14 @@
         --border-light: #e2e8f0;
         --text-dark: #1e293b;
         --text-muted: #64748b;
-        --card-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
-    
+
     body {
         color: var(--text-dark);
         background-color: #f1f5f9;
     }
-    
+
     .job-list-item {
         cursor: pointer;
         transition: all 0.2s ease;
@@ -61,152 +208,169 @@
         background-color: white;
         box-shadow: var(--card-shadow);
     }
-    
+
     .job-list-item:hover {
         background-color: rgba(59, 130, 246, 0.05);
         transform: translateY(-2px);
     }
-    
+
     .job-list-item.active {
         background-color: rgba(59, 130, 246, 0.1);
         border-left: 3px solid var(--primary-color);
     }
-    
+
     .job-list {
         max-height: calc(100vh - 150px);
         overflow-y: auto;
         padding-right: 0.5rem;
     }
-    
+
     .job-detail {
         max-height: calc(100vh - 150px);
         overflow-y: auto;
     }
-    
+
     .hidden {
         display: none;
     }
-    
-    @media (max-width: 767.98px) {
+
+    /* @media (max-width: 767.98px) {
         .job-list.mobile-hidden {
             display: none;
         }
+
         .job-detail.mobile-hidden {
             display: none;
         }
+    } */
+
+    @media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: 100%;
     }
-    
+    .stage-item {
+        width: 48%;
+    }
+    .btn {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+}
+
     .badge {
         font-weight: 500;
         font-size: 0.75rem;
         padding: 0.35rem 0.65rem;
         border-radius: 1rem;
     }
-    
+
     .search-filters .form-group {
         margin-bottom: 0.5rem;
     }
-    
+
     .filter-box {
         border-radius: 0.5rem;
         box-shadow: var(--card-shadow);
         background-color: white;
     }
-    
-    .form-control, .form-select {
+
+    .form-control,
+    .form-select {
         padding: 0.5rem 0.75rem;
         border-color: var(--border-light);
     }
-    
-    .form-control:focus, .form-select:focus {
+
+    .form-control:focus,
+    .form-select:focus {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
     }
-    
+
     .input-group-text {
         background-color: white;
         border-color: var(--border-light);
     }
-    
+
     .btn-primary {
         background-color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    
+
     .btn-primary:hover {
         background-color: var(--primary-hover);
         border-color: var(--primary-hover);
     }
-    
+
     .btn-outline-primary {
         color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    
+
     .btn-outline-primary:hover {
         background-color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    
+
     .btn-outline-secondary {
         color: var(--text-muted);
         border-color: var(--border-light);
     }
-    
+
     .btn-outline-secondary:hover {
         background-color: var(--light-bg);
         color: var(--text-dark);
         border-color: var(--border-light);
     }
-    
+
     .list-group-item {
         border-color: var(--border-light);
     }
-    
+
     .badge.bg-primary {
-        background-color: rgba(59, 130, 246, 0.1)!important;
+        background-color: rgba(59, 130, 246, 0.1) !important;
         color: var(--primary-color);
     }
-    
+
     .badge.bg-secondary {
-        background-color: rgba(100, 116, 139, 0.1)!important;
+        background-color: rgba(100, 116, 139, 0.1) !important;
         color: var(--text-muted);
     }
-    
+
     .badge.bg-info {
-        background-color: rgba(6, 182, 212, 0.1)!important;
+        background-color: rgba(6, 182, 212, 0.1) !important;
         color: #0891b2;
     }
-    
+
     .badge.bg-success {
-        background-color: rgba(16, 185, 129, 0.1)!important;
+        background-color: rgba(16, 185, 129, 0.1) !important;
         color: #059669;
     }
-    
+
     .badge.bg-light {
-        background-color: var(--light-bg)!important;
+        background-color: var(--light-bg) !important;
         color: var(--text-dark);
     }
-    
+
     h2, h3, h4, h5, h6 {
         color: var(--text-dark);
         font-weight: 600;
     }
-    
+
     .card {
         border: none;
         box-shadow: var(--card-shadow);
         border-radius: 0.5rem;
     }
-    
+
     .card-body {
         padding: 1.5rem;
     }
-    
+
     .text-muted {
-        color: var(--text-muted)!important;
+        color: var(--text-muted) !important;
     }
-    
+
     .icon-circle {
         width: 36px;
         height: 36px;
@@ -216,7 +380,7 @@
         border-radius: 50%;
         background-color: var(--light-bg);
     }
-    
+
     .company-logo {
         width: 60px;
         height: 60px;
@@ -226,7 +390,7 @@
         border-radius: 0.5rem;
         background-color: var(--light-bg);
     }
-    
+
     .section-heading {
         font-size: 1.1rem;
         font-weight: 600;
@@ -235,7 +399,7 @@
         border-bottom: 1px solid var(--border-light);
         color: var(--text-dark);
     }
-    
+
     .apply-section {
         background-color: rgba(59, 130, 246, 0.05);
         border-radius: 0.5rem;
@@ -256,14 +420,7 @@
                             <div class="col-md-5 form-group">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="searchInput" 
-                                        name="search" 
-                                        value="{{ filters.search }}" 
-                                        placeholder="Search jobs by title, skills, or company..."
-                                    >
+                                    <input type="text" class="form-control" id="searchInput" name="search" value="{{ filters.search }}" placeholder="Search jobs by title, skills, or company...">
                                 </div>
                             </div>
                             <div class="col-md-2 form-group">
@@ -284,22 +441,13 @@
                                 </select>
                             </div>
                             <div class="col-md-2 form-group">
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="location" 
-                                    name="location" 
-                                    value="{{ filters.location }}" 
-                                    placeholder="Any location"
-                                >
+                                <input type="text" class="form-control" id="location" name="location" value="{{ filters.location }}" placeholder="Any location">
                             </div>
-                            
                             <div class="col-md-1 form-group">
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="bi bi-funnel me-1"></i> 
+                                    <i class="bi bi-funnel me-1"></i>
                                 </button>
                             </div>
-
                         </div>
                         <div id="advancedFilters" class="collapse mt-2">
                             <div class="row">
@@ -314,24 +462,10 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input 
-                                        type="number" 
-                                        class="form-control" 
-                                        id="salaryMin" 
-                                        name="salaryMin" 
-                                        value="{{ filters.salaryMin }}" 
-                                        placeholder="Min Salary"
-                                    >
+                                    <input type="number" class="form-control" id="salaryMin" name="salaryMin" value="{{ filters.salaryMin }}" placeholder="Min Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input 
-                                        type="number" 
-                                        class="form-control" 
-                                        id="salaryMax" 
-                                        name="salaryMax" 
-                                        value="{{ filters.salaryMax }}" 
-                                        placeholder="Max Salary"
-                                    >
+                                    <input type="number" class="form-control" id="salaryMax" name="salaryMax" value="{{ filters.salaryMax }}" placeholder="Max Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <select class="form-select" id="postedDate" name="postedDate">
@@ -375,258 +509,255 @@
             </div>
 
             {% if jobs %}
-                <div class="job-list-items">
-                    {% for job in jobs %}
-                        <div class="job-list-item {% if forloop.first %}active{% endif %}" 
-                             data-job-id="{{ job.id }}" 
-                             onclick="showJobDetails('{{ job.id }}')">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="mb-1 fw-semibold">{{ job.job_details.position_title }}</h5>
-                                    <p class="mb-1 text-muted">{{ job.company_details.name }}</p>
-                                </div>
-                                <small class="text-muted fw-medium">{{ job.created_at|date:"M d" }}</small>
-                            </div>
-                            <div class="mb-2">
-                                <span class="badge bg-primary me-1">{{ job.job_type.type }}</span>
-                                <span class="badge bg-secondary me-1">{{ job.job_type.work_arrangement }}</span>
-                                {% if job.compensation.location %}
-                                    <span class="badge bg-info me-1">{{ job.compensation.location }}</span>
-                                {% endif %}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <p class="mb-0 fw-medium text-success">
-                                    <i class="bi bi-currency-dollar"></i> 
-                                    {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
-                                </p>
-                                <button class="btn btn-sm btn-outline-primary d-md-none" onclick="showJobDetailsMobile('{{ job.id }}', event)">
-                                    View
-                                </button>
-                            </div>
+            <div class="job-list-items">
+                {% for job in jobs %}
+                <div class="job-list-item {% if forloop.first %}active{% endif %}" data-job-id="{{ job.id }}" onclick="showJobDetails('{{ job.id }}')">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1 fw-semibold">{{ job.job_details.position_title }}</h5>
+                            <p class="mb-1 text-muted">{{ job.company_details.name }}</p>
                         </div>
-                    {% endfor %}
+                        <small class="text-muted fw-medium">{{ job.created_at|date:"M d" }}</small>
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-primary me-1">{{ job.job_type.type }}</span>
+                        <span class="badge bg-secondary me-1">{{ job.job_type.work_arrangement }}</span>
+                        {% if job.compensation.location %}
+                        <span class="badge bg-info me-1">{{ job.compensation.location }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <p class="mb-0 fw-medium text-success">
+                            <i class="bi bi-currency-dollar"></i>
+                            {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                        </p>
+                        <button class="btn btn-sm btn-outline-primary d-md-none" onclick="showJobDetailsMobile('{{ job.id }}', event)">
+                            View
+                        </button>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i> No job postings found. Please check back later.
-                </div>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> No job postings found. Please check back later.
+            </div>
             {% endif %}
         </div>
-        
+
         <!-- Job Details - Right Side -->
         <div class="col-md-8 col-lg-8 job-detail mobile-hidden" id="jobDetailContainer">
             {% for job in jobs %}
-                <div class="job-detail-content {% if not forloop.first %}hidden{% endif %}" id="job-{{ job.id }}">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="d-flex d-md-none justify-content-between align-items-center mb-3">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="showJobList()">
-                                    <i class="bi bi-arrow-left"></i> Back
-                                </button>
-                                <button class="btn btn-sm btn-primary">
-                                    Apply Now
-                                </button>
-                            </div>
+            <div class="job-detail-content {% if not forloop.first %}hidden{% endif %}" id="job-{{ job.id }}">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex d-md-none justify-content-between align-items-center mb-3">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="showJobList()">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                <i class="bi bi-send me-1"></i> Apply Now
+                            </button>
+                        </div>
 
-                            <!-- Job Header -->
-                            <div class="d-flex justify-content-between align-items-start mb-4">
-                                <div>
-                                    <h2 class="card-title h3 mb-1">{{ job.job_details.position_title }}</h2>
-                                    <h6 class="card-subtitle text-muted">{{ job.company_details.name }}</h6>
-                                </div>
-                                <div class="text-end d-none d-md-block">
-                                    <a href="#" class="btn btn-primary">
-                                        <i class="bi bi-send me-1"></i> Apply Now
-                                    </a>
-                                </div>
+                        <!-- Job Header -->
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h2 class="card-title h3 mb-1">{{ job.job_details.position_title }}</h2>
+                                <h6 class="card-subtitle text-muted">{{ job.company_details.name }}</h6>
                             </div>
-                            
-                            <!-- Job Badges -->
-                            <div class="mb-4">
-                                <span class="badge bg-primary me-2">{{ job.job_type.type }}</span>
-                                <span class="badge bg-secondary me-2">{{ job.job_type.work_arrangement }}</span>
-                                {% if job.compensation.location %}
-                                    <span class="badge bg-info me-2">{{ job.compensation.location }}</span>
-                                {% endif %}
-                                <span class="badge bg-success">
-                                    <i class="bi bi-currency-dollar"></i> 
-                                    {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
-                                </span>
+                            <div class="text-end d-none d-md-block">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                    <i class="bi bi-send me-1"></i> Apply Now
+                                </button>
                             </div>
-                            
-                            <!-- Job Quick Info -->
-                            <div class="row mb-4">
-                                <div class="col-md-4 mb-2">
-                                    <div class="d-flex">
-                                        <div class="icon-circle me-2">
-                                            <i class="bi bi-people text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">Openings</div>
-                                            <div class="fw-medium">{{ job.job_type.openings }} position{{ job.job_type.openings|pluralize }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <div class="d-flex">
-                                        <div class="icon-circle me-2">
-                                            <i class="bi bi-calendar-date text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">Posted On</div>
-                                            <div class="fw-medium">{{ job.created_at|date:"F d, Y" }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <div class="d-flex">
-                                        <div class="icon-circle me-2">
-                                            <i class="bi bi-geo-alt text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">Location</div>
-                                            <div class="fw-medium">{{ job.compensation.location|default:"Any Location" }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Description -->
-                            <div class="mb-4">
-                                <h5 class="section-heading">Job Description</h5>
-                                <div class="job-description">{{ job.job_details.job_description|linebreaks }}</div>
-                            </div>
-                            
-                            <!-- Skills -->
-                            <div class="mb-4">
-                                <h5 class="section-heading">Skills Required</h5>
-                                
-                                {% if job.requirements.technical_skills %}
-                                    <div class="mb-3">
-                                        <h6 class="text-primary mb-2">Technical Skills</h6>
-                                        <div>
-                                            {% for skill in job.requirements.technical_skills %}
-                                                <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                
-                                {% if job.requirements.soft_skills %}
-                                    <div class="mb-3">
-                                        <h6 class="text-primary mb-2">Soft Skills</h6>
-                                        <div>
-                                            {% for skill in job.requirements.soft_skills %}
-                                                <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- Experience -->
-                            {% if job.experience %}
-                                <div class="mb-4">
-                                    <h5 class="section-heading">Experience</h5>
-                                    <div class="list-group list-group-flush">
-                                        {% for exp in job.experience %}
-                                            <div class="list-group-item bg-transparent px-0">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="icon-circle me-3">
-                                                        <i class="bi bi-briefcase text-primary"></i>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0 fw-medium">{{ exp.role }}</h6>
-                                                        <div class="text-muted small">
-                                                            {{ exp.years }} year{{ exp.years|pluralize }} 
-                                                            {% if exp.industry %}
-                                                                in {{ exp.industry }}
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                        </div>
+
+                        <!-- Job Badges -->
+                        <div class="mb-4">
+                            <span class="badge bg-primary me-2">{{ job.job_type.type }}</span>
+                            <span class="badge bg-secondary me-2">{{ job.job_type.work_arrangement }}</span>
+                            {% if job.compensation.location %}
+                            <span class="badge bg-info me-2">{{ job.compensation.location }}</span>
                             {% endif %}
-                            
-                            <!-- Education -->
-                            {% if job.education %}
-                                <div class="mb-4">
-                                    <h5 class="section-heading">Education</h5>
-                                    <div class="list-group list-group-flush">
-                                        {% for edu in job.education %}
-                                            <div class="list-group-item bg-transparent px-0">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="icon-circle me-3">
-                                                        <i class="bi bi-mortarboard text-primary"></i>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0 fw-medium">{{ edu.degree }}</h6>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Company Info -->
-                            <div class="mb-4">
-                                <h5 class="section-heading">About the Company</h5>
-                                <div class="d-flex align-items-start">
-                                    <div class="company-logo me-3 text-primary">
-                                        <i class="bi bi-building" style="font-size: 2rem;"></i>
+                            <span class="badge bg-success">
+                                <i class="bi bi-currency-dollar"></i>
+                                {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                            </span>
+                        </div>
+
+                        <!-- Job Quick Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex">
+                                    <div class="icon-circle me-2">
+                                        <i class="bi bi-people text-primary"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-semibold">{{ job.company_details.name }}</h6>
-                                        {% if job.company_details.overview %}
-                                            <p>{{ job.company_details.overview|linebreaks }}</p>
-                                        {% endif %}
-                                        {% if job.company_details.website %}
-                                            <a href="{{ job.company_details.website }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-globe me-1"></i> Visit Website
-                                            </a>
-                                        {% endif %}
+                                        <div class="text-muted small">Openings</div>
+                                        <div class="fw-medium">{{ job.job_type.openings }} position{{ job.job_type.openings|pluralize }}</div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Apply Section -->
-                            <div class="apply-section p-4 rounded">
-                                <h5 class="fw-semibold mb-2">Interested in this position?</h5>
-                                <p>{{ job.additional_info.contact_information|default:"Apply now to join our team and take the next step in your career!" }}</p>
-                                <div class="d-grid gap-2 d-md-flex">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
-                                        <i class="bi bi-send me-1"></i> Apply Now
-                                    </button>
-                                    <button class="btn btn-outline-primary">
-                                        <i class="bi bi-bookmark me-1"></i> Save
-                                    </button>
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="bi bi-share me-1"></i> Share
-                                    </button>
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex">
+                                    <div class="icon-circle me-2">
+                                        <i class="bi bi-calendar-date text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Posted On</div>
+                                        <div class="fw-medium">{{ job.created_at|date:"F d, Y" }}</div>
+                                    </div>
                                 </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex">
+                                    <div class="icon-circle me-2">
+                                        <i class="bi bi-geo-alt text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small">Location</div>
+                                        <div class="fw-medium">{{ job.compensation.location|default:"Any Location" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <h5 class="section-heading">Job Description</h5>
+                            <div class="job-description">{{ job.job_details.job_description|linebreaks }}</div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="mb-4">
+                            <h5 class="section-heading">Skills Required</h5>
+                            {% if job.requirements.technical_skills %}
+                            <div class="mb-3">
+                                <h6 class="text-primary mb-2">Technical Skills</h6>
+                                <div>
+                                    {% for skill in job.requirements.technical_skills %}
+                                    <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if job.requirements.soft_skills %}
+                            <div class="mb-3">
+                                <h6 class="text-primary mb-2">Soft Skills</h6>
+                                <div>
+                                    {% for skill in job.requirements.soft_skills %}
+                                    <span class="badge bg-light text-dark me-2 mb-2 py-2">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Experience -->
+                        {% if job.experience %}
+                        <div class="mb-4">
+                            <h5 class="section-heading">Experience</h5>
+                            <div class="list-group list-group-flush">
+                                {% for exp in job.experience %}
+                                <div class="list-group-item bg-transparent px-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3">
+                                            <i class="bi bi-briefcase text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-medium">{{ exp.role }}</h6>
+                                            <div class="text-muted small">
+                                                {{ exp.years }} year{{ exp.years|pluralize }}
+                                                {% if exp.industry %}
+                                                in {{ exp.industry }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Education -->
+                        {% if job.education %}
+                        <div class="mb-4">
+                            <h5 class="section-heading">Education</h5>
+                            <div class="list-group list-group-flush">
+                                {% for edu in job.education %}
+                                <div class="list-group-item bg-transparent px-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3">
+                                            <i class="bi bi-mortarboard text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-medium">{{ edu.degree }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Company Info -->
+                        <div class="mb-4">
+                            <h5 class="section-heading">About the Company</h5>
+                            <div class="d-flex align-items-start">
+                                <div class="company-logo me-3 text-primary">
+                                    <i class="bi bi-building" style="font-size: 2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold">{{ job.company_details.name }}</h6>
+                                    {% if job.company_details.overview %}
+                                    <p>{{ job.company_details.overview|linebreaks }}</p>
+                                    {% endif %}
+                                    {% if job.company_details.website %}
+                                    <a href="{{ job.company_details.website }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-globe me-1"></i> Visit Website
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apply Section -->
+                        <div class="apply-section p-4 rounded">
+                            <h5 class="fw-semibold mb-2">Interested in this position?</h5>
+                            <p>{{ job.additional_info.contact_information|default:"Apply now to join our team and take the next step in your career!" }}</p>
+                            <div class="d-grid gap-2 d-md-flex">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                    <i class="bi bi-send me-1"></i> Apply Now
+                                </button>
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-bookmark me-1"></i> Save
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-share me-1"></i> Share
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             {% endfor %}
-            
+
             {% if not jobs %}
-                <div class="card h-100">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <div class="text-center text-muted">
-                            <i class="bi bi-list-ul mb-3" style="font-size: 2rem;"></i>
-                            <p>Please select a job from the list to view details</p>
-                        </div>
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <div class="text-center text-muted">
+                        <i class="bi bi-list-ul mb-3" style="font-size: 2rem;"></i>
+                        <p>Please select a job from the list to view details</p>
                     </div>
                 </div>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
+ 
 
 <!-- Apply Modal -->
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
@@ -664,19 +795,58 @@
                 <!-- Existing Resumes Section -->
                 <div id="existingResumesSection" class="hidden">
                     <h6 class="mb-3">Select a Resume:</h6>
-                    <div id="resumeList">
-                        <!-- Resumes will be populated dynamically -->
-                    </div>
-                    
+                    <div id="resumeList"></div>
                     <button class="btn btn-primary w-100 mt-3" id="submitExistingResume" disabled>Submit Application</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+
+<!-- Progress Modal -->
+<div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <h5 class="text-center mb-4">Processing Your Resume</h5>
+                <div class="progress-container">
+                    <div class="progress-circle">
+                        <svg width="100" height="100">
+                            <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="circle-progress" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283" id="progressCircle"></circle>
+                        </svg>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-stages mt-4">
+                        <div class="stage-item" data-stage="scanning">
+                            <div class="stage-icon"><i class="bi bi-file-earmark-binary"></i></div>
+                            <span>Scanning</span>
+                        </div>
+                        <div class="stage-item" data-stage="extracting">
+                            <div class="stage-icon"><i class="bi bi-text-paragraph"></i></div>
+                            <span>Extracting</span>
+                        </div>
+                        <div class="stage-item" data-stage="analyzing">
+                            <div class="stage-icon"><i class="bi bi-gear"></i></div>
+                            <span>Analyzing</span>
+                        </div>
+                        <div class="stage-item" data-stage="preparing">
+                            <div class="stage-icon"><i class="bi bi-check2-circle"></i></div>
+                            <span>Preparing</span>
+                        </div>
+                    </div>
+                    <p class="text-center mt-3 text-muted" id="progressMessage">Starting resume processing...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+<!-- 
+ block extra_js 
 <script>
     // Function to show job details based on id
     function showJobDetails(jobId) {
@@ -690,7 +860,7 @@
         document.querySelector('.job-list-item[data-job-id="' + jobId + '"]').classList.add('active');
         document.getElementById('jobDetailContainer').scrollTop = 0;
     }
-    
+
     // Mobile view functions
     function showJobDetailsMobile(jobId, event) {
         if (event) {
@@ -700,12 +870,12 @@
         document.getElementById('jobListContainer').classList.add('mobile-hidden');
         document.getElementById('jobDetailContainer').classList.remove('mobile-hidden');
     }
-    
+
     function showJobList() {
         document.getElementById('jobListContainer').classList.remove('mobile-hidden');
         document.getElementById('jobDetailContainer').classList.add('mobile-hidden');
     }
-    
+
     // Toggle advanced filters
     document.querySelector('[data-bs-toggle="collapse"]').addEventListener('click', function() {
         const isExpanded = this.getAttribute('aria-expanded') === 'true';
@@ -716,13 +886,13 @@
             el.style.display = isExpanded ? 'none' : 'inline-block';
         });
     });
-    
+
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.when-open').forEach(function(el) {
             el.style.display = 'none';
         });
-        
+
         const buttons = document.querySelectorAll('.btn');
         buttons.forEach(btn => {
             btn.style.transition = 'all 0.2s ease';
@@ -734,7 +904,6 @@
             // Filters are handled by Django view
         });
     });
-
 
     function getCookie(name) {
         let cookieValue = null;
@@ -750,12 +919,10 @@
         }
         return cookieValue;
     }
-    
 
     const csrfToken = getCookie('csrftoken');
 
-   document.addEventListener('DOMContentLoaded', function() {
-        // Your existing initialization code
+    document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.when-open').forEach(function(el) {
             el.style.display = 'none';
         });
@@ -764,7 +931,6 @@
             btn.style.transition = 'all 0.2s ease';
         });
 
-        // Modal functionality
         const applyModal = document.getElementById('applyModal');
         const uploadNewResumeBtn = document.getElementById('uploadNewResumeBtn');
         const useExistingResumeBtn = document.getElementById('useExistingResumeBtn');
@@ -792,8 +958,8 @@
         useExistingResumeBtn.addEventListener('click', function() {
             uploadResumeSection.classList.add('hidden');
             existingResumesSection.classList.remove('hidden');
-            
-            fetch('/api/resumes/', {
+
+            fetch('/candidate/resumes/', {
                 method: 'GET',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -844,15 +1010,472 @@
             });
         });
 
-        resumeUploadForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            fetch('/api/apply/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': csrfToken
+
+        // function showProgressModal() {
+        //     const progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
+        //         backdrop: 'static',
+        //         keyboard: false
+        //     });
+        //     progressModal.show();
+        //     return progressModal;
+        // }
+
+        
+        function showProgressModal() {
+        const progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        document.body.classList.add('no-scroll');
+        progressModal.show();
+        return progressModal;
+        }
+
+
+        function updateProgress(stage, percentage, message) {
+            const progressBar = document.getElementById('progressBar');
+            const progressMessage = document.getElementById('progressMessage');
+            const stageItems = document.querySelectorAll('.stage-item');
+            const scanBeam = document.querySelector('.scan-beam');
+
+
+            const circumference = 283; // 2 * π * 45
+            const offset = circumference - (percentage / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+            progressPercent.textContent = `${percentage}%`;
+            progressMessage.textContent = message;
+
+            stageItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.stage === stage) {
+                    item.classList.add('active');
                 }
+            });
+
+            scanBeam.classList.toggle('active', stage === 'scanning');
+        }
+
+         const progressModalInstance = null;
+ 
+
+    // resumeUploadForm.addEventListener('submit', function(e) {
+    //     e.preventDefault();
+    //     const formData = new FormData(this);
+    //     const progressModal = showProgressModal();
+
+    //     fetch('/candidate/apply/', {
+    //         method: 'POST',
+    //         body: formData,
+    //         headers: {
+    //             'X-CSRFToken': csrfToken
+    //         }
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.success) {
+    //             const resumeId = data.resume_id;
+    //             const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
+
+    //             eventSource.onmessage = function(event) {
+    //                 const data = JSON.parse(event.data);
+    //                 if (data.error) {
+    //                     alert('Error: ' + data.error);
+    //                     eventSource.close();
+    //                     progressModal.hide();
+    //                     bootstrap.Modal.getInstance(applyModal).hide();
+    //                 } else if (data.complete) {
+    //                     eventSource.close();
+    //                     progressModal.hide();
+    //                     bootstrap.Modal.getInstance(applyModal).hide();
+    //                     window.location.href = `/candidate/process_resume/${data.resume_id}/`;
+    //                 } else {
+    //                     updateProgress(data.stage, data.progress, data.message);
+    //                 }
+    //             };
+
+    //             eventSource.onerror = function() {
+    //                 alert('An error occurred while processing your resume');
+    //                 eventSource.close();
+    //                 progressModal.hide();
+    //                 bootstrap.Modal.getInstance(applyModal).hide();
+    //             };
+    //         } else {
+    //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
+    //             progressModal.hide();
+    //             bootstrap.Modal.getInstance(applyModal).hide();
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error submitting resume:', error);
+    //         alert('Error submitting resume: ' + error.message);
+    //         progressModal.hide();
+    //         bootstrap.Modal.getInstance(applyModal).hide();
+    //     });
+    // });
+
+    // submitExistingResumeBtn.addEventListener('click', function() {
+    //     if (selectedResumeId) {
+    //         const jobId = document.getElementById('jobIdForUpload').value;
+    //         const progressModal = showProgressModal();
+
+    //         fetch('/candidate/apply/', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-CSRFToken': csrfToken
+    //             },
+    //             body: JSON.stringify({
+    //                 job_id: jobId,
+    //                 resume_id: selectedResumeId
+    //             })
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.success) {
+    //                 const resumeId = selectedResumeId;
+    //                 const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
+
+    //                 eventSource.onmessage = function(event) {
+    //                     const data = JSON.parse(event.data);
+    //                     if (data.error) {
+    //                         alert('Error: ' + data.error);
+    //                         eventSource.close();
+    //                         progressModal.hide();
+    //                         bootstrap.Modal.getInstance(applyModal).hide();
+    //                     } else if (data.complete) {
+    //                         eventSource.close();
+    //                         progressModal.hide();
+    //                         bootstrap.Modal.getInstance(applyModal).hide();
+    //                         window.location.href = `/candidate/process_resume/${data.resume_id}/`;
+    //                     } else {
+    //                         updateProgress(data.stage, data.progress, data.message);
+    //                     }
+    //                 };
+
+    //                 eventSource.onerror = function() {
+    //                     alert('An error occurred while processing your resume');
+    //                     eventSource.close();
+    //                     progressModal.hide();
+    //                     bootstrap.Modal.getInstance(applyModal).hide();
+    //                 };
+    //             } else {
+    //                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
+    //                 progressModal.hide();
+    //                 bootstrap.Modal.getInstance(applyModal).hide();
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error submitting with existing resume:', error);
+    //             alert('Error: ' + error.message);
+    //             progressModal.hide();
+    //             bootstrap.Modal.getInstance(applyModal).hide();
+    //         });
+    //     }
+    // });
+   
+
+
+    resumeUploadForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const progressModal = showProgressModal();
+
+    fetch('/candidate/apply/', {
+        method: 'POST',
+        body: formData,
+        headers: {'X-CSRFToken': csrfToken}
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            bootstrap.Modal.getInstance(applyModal).hide();
+            window.location.href = `/candidate/process_resume/${data.resume_id}/`;  // Redirect to processing page
+        } else {
+            alert('Error submitting application: ' + (data.error || 'Unknown error'));
+            progressModal.hide();
+            bootstrap.Modal.getInstance(applyModal).hide();
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting resume:', error);
+        alert('Error submitting resume: ' + error.message);
+        progressModal.hide();
+        bootstrap.Modal.getInstance(applyModal).hide();
+    });
+});
+
+
+    // resumeUploadForm.addEventListener('submit', function(e) {
+    //     e.preventDefault();
+    //     const formData = new FormData(this);
+    //     const progressModal = showProgressModal();
+
+    //     fetch('/candidate/apply/', {
+    //         method: 'POST',
+    //         body: formData,
+    //         headers: {'X-CSRFToken': csrfToken}
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.success) {
+    //             const resumeId = data.resume_id;
+    //             bootstrap.Modal.getInstance(applyModal).hide(); // Close apply modal immediately
+    //             const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
+
+    //             eventSource.onmessage = function(event) {
+    //                 const data = JSON.parse(event.data);
+    //                 if (data.error) {
+    //                     alert('Error: ' + data.error);
+    //                     eventSource.close();
+    //                     progressModal.hide();
+    //                 } else if (data.complete) {
+    //                     eventSource.close();
+    //                     progressModal.hide();
+    //                     window.location.href = `/candidate/process_resume/${data.resume_id}/`; // Redirect instantly
+    //                 } else {
+    //                     updateProgress(data.stage, data.progress, data.message);
+    //                 }
+    //             };
+
+    //             eventSource.onerror = function() {
+    //                 alert('An error occurred while processing your resume');
+    //                 eventSource.close();
+    //                 progressModal.hide();
+    //             };
+    //         } else {
+    //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
+    //             progressModal.hide();
+    //             bootstrap.Modal.getInstance(applyModal).hide();
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error submitting resume:', error);
+    //         alert('Error submitting resume: ' + error.message);
+    //         progressModal.hide();
+    //         bootstrap.Modal.getInstance(applyModal).hide();
+    //     });
+    // });
+
+
+
+    
+    submitExistingResumeBtn.addEventListener('click', function() {
+        if (selectedResumeId) {
+            const jobId = document.getElementById('jobIdForUpload').value;
+            const progressModal = showProgressModal();
+
+            fetch('/candidate/apply/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const resumeId = selectedResumeId;
+                    bootstrap.Modal.getInstance(applyModal).hide(); // Close apply modal immediately
+                    const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
+
+                    eventSource.onmessage = function(event) {
+                        const data = JSON.parse(event.data);
+                        if (data.error) {
+                            alert('Error: ' + data.error);
+                            eventSource.close();
+                            progressModal.hide();
+                        } else if (data.complete) {
+                            eventSource.close();
+                            progressModal.hide();
+                            window.location.href = `/candidate/process_resume/${data.resume_id}/`; // Redirect instantly
+                        } else {
+                            updateProgress(data.stage, data.progress, data.message);
+                        }
+                    };
+
+                    eventSource.onerror = function() {
+                        alert('An error occurred while processing your resume');
+                        eventSource.close();
+                        progressModal.hide();
+                    };
+                } else {
+                    alert('Error submitting application: ' + (data.error || 'Unknown error'));
+                    progressModal.hide();
+                    bootstrap.Modal.getInstance(applyModal).hide();
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting with existing resume:', error);
+                alert('Error: ' + error.message);
+                progressModal.hide();
+                bootstrap.Modal.getInstance(applyModal).hide();
+            });
+        }
+    });
+
+
+
+
+
+
+   });
+
+ 
+
+
+</script>
+endblock  -->
+
+
+{% block extra_js %}
+<script>
+    // Utility function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrfToken = getCookie('csrftoken');
+
+    // Show progress modal and lock scroll
+    function showProgressModal() {
+        const progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        document.body.classList.add('no-scroll'); // Prevent page scrolling
+        progressModal.show();
+        return progressModal;
+    }
+
+    // Update progress UI with smooth transitions
+    function updateProgress(stage, percentage, message) {
+        const progressCircle = document.getElementById('progressCircle');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressMessage = document.getElementById('progressMessage');
+        const stageItems = document.querySelectorAll('.stage-item');
+
+        const circumference = 283; // 2 * π * 45 (radius of circle)
+        const offset = circumference - (percentage / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        progressPercent.textContent = `${percentage}%`;
+        progressMessage.textContent = message;
+
+        stageItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.stage === stage) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    // Poll task status and handle completion
+    function pollTaskStatus(taskId, resumeId, progressModal) {
+        fetch(`/candidate/task_status/${taskId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.state === 'PROGRESS') {
+                    updateProgress(data.info.stage, data.info.progress, data.info.message);
+                    setTimeout(() => pollTaskStatus(taskId, resumeId, progressModal), 1000); // Poll every 1s
+                } else if (data.state === 'SUCCESS') {
+                    progressModal.hide();
+                    document.body.classList.remove('no-scroll'); // Restore scroll
+                    window.location.href = `/candidate/process_resume/${data.resume_id}/`;
+                } else if (data.state === 'FAILURE') {
+                    alert('Error: ' + data.error);
+                    progressModal.hide();
+                    document.body.classList.remove('no-scroll');
+                }
+            })
+            .catch(error => {
+                console.error('Error polling task status:', error);
+                alert('An error occurred while processing your resume: ' + error.message);
+                progressModal.hide();
+                document.body.classList.remove('no-scroll');
+            });
+    }
+
+    // Main event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Job navigation functions (unchanged from original)
+        function showJobDetails(jobId) {
+            document.querySelectorAll('.job-detail-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('job-' + jobId).classList.remove('hidden');
+            document.querySelectorAll('.job-list-item').forEach(el => el.classList.remove('active'));
+            document.querySelector('.job-list-item[data-job-id="' + jobId + '"]').classList.add('active');
+            document.getElementById('jobDetailContainer').scrollTop = 0;
+        }
+
+        function showJobDetailsMobile(jobId, event) {
+            if (event) event.stopPropagation();
+            showJobDetails(jobId);
+            document.getElementById('jobListContainer').classList.add('mobile-hidden');
+            document.getElementById('jobDetailContainer').classList.remove('mobile-hidden');
+        }
+
+        function showJobList() {
+            document.getElementById('jobListContainer').classList.remove('mobile-hidden');
+            document.getElementById('jobDetailContainer').classList.add('mobile-hidden');
+        }
+
+        // Toggle advanced filters (unchanged)
+        document.querySelector('[data-bs-toggle="collapse"]').addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            document.querySelectorAll('.when-closed').forEach(el => {
+                el.style.display = isExpanded ? 'inline-block' : 'none';
+            });
+            document.querySelectorAll('.when-open').forEach(el => {
+                el.style.display = isExpanded ? 'none' : 'inline-block';
+            });
+        });
+
+        // Initialize UI elements
+        document.querySelectorAll('.when-open').forEach(el => el.style.display = 'none');
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => btn.style.transition = 'all 0.2s ease');
+
+        // Apply modal logic
+        const applyModal = document.getElementById('applyModal');
+        const uploadNewResumeBtn = document.getElementById('uploadNewResumeBtn');
+        const useExistingResumeBtn = document.getElementById('useExistingResumeBtn');
+        const uploadResumeSection = document.getElementById('uploadResumeSection');
+        const existingResumesSection = document.getElementById('existingResumesSection');
+        const resumeUploadForm = document.getElementById('resumeUploadForm');
+        const submitExistingResumeBtn = document.getElementById('submitExistingResume');
+        let selectedResumeId = null;
+
+        applyModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const jobId = button.getAttribute('data-job-id');
+            document.getElementById('jobIdForUpload').value = jobId;
+            uploadResumeSection.classList.add('hidden');
+            existingResumesSection.classList.add('hidden');
+            submitExistingResumeBtn.disabled = true;
+            selectedResumeId = null;
+        });
+
+        uploadNewResumeBtn.addEventListener('click', function() {
+            uploadResumeSection.classList.remove('hidden');
+            existingResumesSection.classList.add('hidden');
+        });
+
+        useExistingResumeBtn.addEventListener('click', function() {
+            uploadResumeSection.classList.add('hidden');
+            existingResumesSection.classList.remove('hidden');
+            fetch('/candidate/resumes/', {
+                method: 'GET',
+                headers: {'X-CSRFToken': csrfToken}
             })
             .then(response => {
                 if (!response.ok) {
@@ -866,60 +1489,361 @@
             })
             .then(data => {
                 if (!data) return;
-                if (data.success) {
-                    alert('Application submitted successfully!');
-                    bootstrap.Modal.getInstance(applyModal).hide();
+                const resumeList = document.getElementById('resumeList');
+                resumeList.innerHTML = '';
+                if (data.success && data.resumes && data.resumes.length > 0) {
+                    data.resumes.forEach(resume => {
+                        const div = document.createElement('div');
+                        div.className = 'resume-list-item';
+                        div.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>${resume.name}</span>
+                                <small class="text-muted">${new Date(resume.uploaded_at).toLocaleDateString()}</small>
+                            </div>
+                        `;
+                        div.dataset.resumeId = resume.id;
+                        div.addEventListener('click', function() {
+                            document.querySelectorAll('.resume-list-item').forEach(item => item.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedResumeId = this.dataset.resumeId;
+                            submitExistingResumeBtn.disabled = false;
+                        });
+                        resumeList.appendChild(div);
+                    });
                 } else {
-                    alert('Error submitting application: ' + (data.error || 'Unknown error'));
+                    resumeList.innerHTML = '<p class="text-muted">No resumes found.</p>';
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting your application.');
+                console.error('Error fetching resumes:', error);
+                document.getElementById('resumeList').innerHTML = '<p class="text-muted">Error loading resumes.</p>';
             });
         });
 
-        submitExistingResumeBtn.addEventListener('click', function() {
-            if (selectedResumeId) {
-                const jobId = document.getElementById('jobIdForUpload').value;
-                fetch('/api/apply/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({
-                        job_id: jobId,
-                        resume_id: selectedResumeId
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        if (response.status === 302 || response.status === 403) {
-                            window.location.href = '/login/';
-                            return null;
-                        }
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data) return;
-                    if (data.success) {
-                        alert('Application submitted successfully!');
-                        bootstrap.Modal.getInstance(applyModal).hide();
-                    } else {
-                        alert('Error submitting application: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while submitting your application.');
+
+        // resumeUploadForm.addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     const formData = new FormData(this);
+        //     const progressModal = showProgressModal();
+
+        //     fetch('/candidate/apply/', {
+        //         method: 'POST',
+        //         body: formData,
+        //         headers: {'X-CSRFToken': csrfToken}
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             bootstrap.Modal.getInstance(applyModal).hide();
+        //             pollTaskStatus(data.task_id, data.resume_id, progressModal);
+        //         } else {
+        //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
+        //             progressModal.hide();
+        //             document.body.classList.remove('no-scroll');
+        //             bootstrap.Modal.getInstance(applyModal).hide();
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error submitting resume:', error);
+        //         alert('Error submitting resume: ' + error.message);
+        //         progressModal.hide();
+        //         document.body.classList.remove('no-scroll');
+        //         bootstrap.Modal.getInstance(applyModal).hide();
+        //     });
+        // });
+
+        // submitExistingResumeBtn.addEventListener('click', function() {
+        //     if (selectedResumeId) {
+        //         const jobId = document.getElementById('jobIdForUpload').value;
+        //         const progressModal = showProgressModal();
+
+        //         fetch('/candidate/apply/', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRFToken': csrfToken
+        //             },
+        //             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
+        //         })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 bootstrap.Modal.getInstance(applyModal).hide();
+        //                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
+        //             } else {
+        //                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
+        //                 progressModal.hide();
+        //                 document.body.classList.remove('no-scroll');
+        //                 bootstrap.Modal.getInstance(applyModal).hide();
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error submitting with existing resume:', error);
+        //             alert('Error: ' + error.message);
+        //             progressModal.hide();
+        //             document.body.classList.remove('no-scroll');
+        //             bootstrap.Modal.getInstance(applyModal).hide();
+        //         });
+        //     }
+        // });
+  
+
+
+  
+//      resumeUploadForm.addEventListener('submit', function(e) {
+//     e.preventDefault();
+//     const formData = new FormData(this);
+//     const progressModal = showProgressModal();
+
+//     fetch('/candidate/apply/', {
+//         method: 'POST',
+//         body: formData,
+//         headers: {'X-CSRFToken': csrfToken}
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             return response.text().then(text => {
+//                 throw new Error(`Server returned ${response.status}: ${text}`);
+//             });
+//         }
+//         const contentType = response.headers.get('content-type');
+//         if (!contentType || !contentType.includes('application/json')) {
+//             return response.text().then(text => {
+//                 throw new Error('Invalid response format: Expected JSON, got ' + text);
+//             });
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         if (data.success) {
+//             bootstrap.Modal.getInstance(applyModal).hide();
+//             pollTaskStatus(data.task_id, data.resume_id, progressModal);
+//         } else {
+//             alert('Error submitting application: ' + (data.error || 'Unknown error'));
+//             progressModal.hide();
+//             document.body.classList.remove('no-scroll');
+//             bootstrap.Modal.getInstance(applyModal).hide();
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error submitting resume:', error);
+//         alert('Error submitting resume: ' + error.message);
+//         progressModal.hide();
+//         document.body.classList.remove('no-scroll');
+//         bootstrap.Modal.getInstance(applyModal).hide();
+//     });
+// });
+
+// submitExistingResumeBtn.addEventListener('click', function() {
+//     if (selectedResumeId) {
+//         const jobId = document.getElementById('jobIdForUpload').value;
+//         const progressModal = showProgressModal();
+
+//         fetch('/candidate/apply/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': csrfToken
+//             },
+//             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
+//         })
+//         .then(response => {
+//             if (!response.ok) {
+//                 return response.text().then(text => {
+//                     throw new Error(`Server returned ${response.status}: ${text}`);
+//                 });
+//             }
+//             const contentType = response.headers.get('content-type');
+//             if (!contentType || !contentType.includes('application/json')) {
+//                 return response.text().then(text => {
+//                     throw new Error('Invalid response format: Expected JSON, got ' + text);
+//                 });
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             if (data.success) {
+//                 bootstrap.Modal.getInstance(applyModal).hide();
+//                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
+//             } else {
+//                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
+//                 progressModal.hide();
+//                 document.body.classList.remove('no-scroll');
+//                 bootstrap.Modal.getInstance(applyModal).hide();
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error submitting with existing resume:', error);
+//             alert('Error: ' + error.message);
+//             progressModal.hide();
+//             document.body.classList.remove('no-scroll');
+//             bootstrap.Modal.getInstance(applyModal).hide();
+//         });
+//     }
+// });
+  
+
+resumeUploadForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const progressModal = showProgressModal();
+
+    fetch('/candidate/apply/', {
+        method: 'POST',
+        body: formData,
+        headers: {'X-CSRFToken': csrfToken}
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server returned ${response.status}: ${text}`);
+            });
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                throw new Error('Invalid response format: Expected JSON, got ' + text);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
+            document.activeElement.blur(); // Remove focus from any element in applyModal
+            applyModalInstance.hide();
+            pollTaskStatus(data.task_id, data.resume_id, progressModal);
+        } else {
+            alert('Error submitting application: ' + (data.error || 'Unknown error'));
+            progressModal.hide();
+            document.body.classList.remove('no-scroll');
+            bootstrap.Modal.getInstance(applyModal).hide();
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting resume:', error);
+        alert('Error submitting resume: ' + error.message);
+        progressModal.hide();
+        document.body.classList.remove('no-scroll');
+        bootstrap.Modal.getInstance(applyModal).hide();
+    });
+});
+
+
+
+// submitExistingResumeBtn.addEventListener('click', function() {
+//     if (selectedResumeId) {
+//         const jobId = document.getElementById('jobIdForUpload').value;
+//         const progressModal = showProgressModal();
+
+//         fetch('/candidate/apply/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': csrfToken
+//             },
+//             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
+//         })
+//         .then(response => {
+//             if (!response.ok) {
+//                 return response.text().then(text => {
+//                     throw new Error(`Server returned ${response.status}: ${text}`);
+//                 });
+//             }
+//             const contentType = response.headers.get('content-type');
+//             if (!contentType || !contentType.includes('application/json')) {
+//                 return response.text().then(text => {
+//                     throw new Error('Invalid response format: Expected JSON, got ' + text);
+//                 });
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             if (data.success) {
+//                 const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
+//                 document.activeElement.blur(); // Remove focus before hiding
+//                 applyModalInstance.hide();
+//                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
+//             } else {
+//                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
+//                 progressModal.hide();
+//                 document.body.classList.remove('no-scroll');
+//                 bootstrap.Modal.getInstance(applyModal).hide();
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error submitting with existing resume:', error);
+//             alert('Error: ' + error.message);
+//             progressModal.hide();
+//             document.body.classList.remove('no-scroll');
+//             bootstrap.Modal.getInstance(applyModal).hide();
+//         });
+//     }
+// });
+
+
+
+submitExistingResumeBtn.addEventListener('click', function() {
+    if (selectedResumeId) {
+        const jobId = document.getElementById('jobIdForUpload').value;
+        const progressModal = showProgressModal();
+
+        fetch('/candidate/apply/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned ${response.status}: ${text}`);
                 });
             }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    throw new Error('Invalid response format: Expected JSON, got ' + text);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
+                document.activeElement.blur();
+                applyModalInstance.hide();
+                if (data.task_id) {
+                    // Resume needs processing
+                    pollTaskStatus(data.task_id, data.resume_id, progressModal);
+                } else {
+                    // Resume already processed, skip to result
+                    progressModal.hide();
+                    document.body.classList.remove('no-scroll');
+                    window.location.href = `/candidate/process_resume/${data.resume_id}/`;
+                }
+            } else {
+                alert('Error submitting application: ' + (data.error || 'Unknown error'));
+                progressModal.hide();
+                document.body.classList.remove('no-scroll');
+                bootstrap.Modal.getInstance(applyModal).hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting with existing resume:', error);
+            alert('Error: ' + error.message);
+            progressModal.hide();
+            document.body.classList.remove('no-scroll');
+            bootstrap.Modal.getInstance(applyModal).hide();
         });
-    });
+    }
+});
 
 
+
+  
+  });
 </script>
 {% endblock %}
