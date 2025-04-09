@@ -1,0 +1,418 @@
+also this:{% extends 'navbar.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Editor</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Arial', sans-serif;
+    }
+    .container {
+      max-width: 960px;
+      margin: auto;
+      padding: 20px;
+      padding-bottom: 80px; /* Space for sticky footer */
+    }
+    .section-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    .card-header {
+      background-color: #007bff;
+      color: white;
+      font-size: 1.2rem;
+      padding: 10px;
+      border-bottom: none;
+    }
+    .form-control {
+      border-radius: 6px;
+    }
+    .scrollable-section {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .add-btn {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .add-btn button {
+      margin-top: 10px;
+    }
+    .sticky-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #fff;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .sticky-footer button {
+      width: 200px;
+    }
+    .tab-content > .tab-pane {
+      transition: opacity 0.3s ease;
+    }
+    .tab-content > .tab-pane:not(.show) {
+      opacity: 0;
+    }
+    .tab-content > .tab-pane.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form action="/candidate/submit_resume/" method="POST">
+      {% csrf_token %}
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-pills mb-4" id="resumeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab"><i class="bi bi-person"></i> Personal Info</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab"><i class="bi bi-file-text"></i> Summary</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab"><i class="bi bi-tools"></i> Skills</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab"><i class="bi bi-briefcase"></i> Experience</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab"><i class="bi bi-mortarboard"></i> Education</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab"><i class="bi bi-folder"></i> Projects</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="additional-tab" data-bs-toggle="tab" data-bs-target="#additional" type="button" role="tab"><i class="bi bi-info-circle"></i> Additional Info</button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content" id="resumeTabContent">
+
+        <!-- Personal Information -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+          <div class="section-header">Personal Information</div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" name="Personal_Information[Name]" value="{{ resume.Personal_Information.Name|default:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="role" class="form-label">Role</label>
+              <input type="text" class="form-control" id="role" name="Personal_Information[Role]" value="{{ resume.Personal_Information.Role|default:'' }}" placeholder="e.g., Software Engineer">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="Personal_Information[Email]" value="{{ resume.Personal_Information.Email|default:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="phone" class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="phone" name="Personal_Information[Phone_number]" value="{{ resume.Personal_Information.Phone_number|default:'' }}" placeholder="+1 123 456 7890">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="linkedin" class="form-label">LinkedIn</label>
+            <input type="text" class="form-control" id="linkedin" name="Personal_Information[LinkedIn]" value="{{ resume.Personal_Information.LinkedIn|default:'' }}" placeholder="https://linkedin.com/in/username">
+          </div>
+        </div>
+
+        <!-- Professional Summary -->
+        <div class="tab-pane fade" id="summary" role="tabpanel">
+          <div class="section-header">Professional Summary</div>
+          <textarea class="form-control" name="Professional_Summary" rows="5" placeholder="Write a brief professional summary">{{ resume.Professional_Summary|default:'' }}</textarea>
+        </div>
+
+        <!-- Skills -->
+        <div class="tab-pane fade" id="skills" role="tabpanel">
+          <div class="section-header">Skills</div>
+          <textarea class="form-control" name="Skills" rows="5" placeholder="e.g., JavaScript, Python, Agile">{{ resume.Skills|default:'' }}</textarea>
+        </div>
+
+        <!-- Experience -->
+        <div class="tab-pane fade" id="experience" role="tabpanel">
+          <div class="section-header">Experience</div>
+          <div class="scrollable-section" id="experience-container">
+            {% for experience in resume.Experience %}
+            <div class="card">
+              <div class="card-header">Job {{ forloop.counter }}</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="job_title_{{ forloop.counter }}" class="form-label">Job Title</label>
+                  <input type="text" class="form-control" id="job_title_{{ forloop.counter }}" name="Experience[{{ forloop.counter0 }}][Job_Title]" value="{{ experience.Job_Title|default:'' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="company_name_{{ forloop.counter }}" class="form-label">Company</label>
+                  <input type="text" class="form-control" id="company_name_{{ forloop.counter }}" name="Experience[{{ forloop.counter0 }}][Company_Name]" value="{{ experience.Company_Name|default:'' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="dates_duration_{{ forloop.counter }}" class="form-label">Duration</label>
+                  <input type="text" class="form-control" id="dates_duration_{{ forloop.counter }}" name="Experience[{{ forloop.counter0 }}][Dates_Duration]" value="{{ experience.Dates_Duration|default:'' }}" placeholder="e.g., Jan 2020 - Dec 2022">
+                </div>
+                <div class="mb-3">
+                  <label for="job_description_{{ forloop.counter }}" class="form-label">Job Description</label>
+                  <textarea class="form-control" id="job_description_{{ forloop.counter }}" name="Experience[{{ forloop.counter0 }}][Job_Description]" rows="3">{{ experience.Job_Description|default:'' }}</textarea>
+                </div>
+                <button type="button" class="btn btn-danger remove-experience">Remove</button>
+              </div>
+            </div>
+            {% empty %}
+            <p>No experience entries found.</p>
+            {% endfor %}
+          </div>
+          <div class="add-btn">
+            <button type="button" class="btn btn-success" id="add-experience">Add Experience</button>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="tab-pane fade" id="education" role="tabpanel">
+          <div class="section-header">Education</div>
+          <div class="scrollable-section" id="education-container">
+            {% for education in resume.Education %}
+            <div class="card">
+              <div class="card-header">Education {{ forloop.counter }}</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="degree_{{ forloop.counter }}" class="form-label">Degree</label>
+                  <input type="text" class="form-control" id="degree_{{ forloop.counter }}" name="Education[{{ forloop.counter0 }}][Degree]" value="{{ education.Degree_Name|default:'' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="institution_{{ forloop.counter }}" class="form-label">Institution</label>
+                  <input type="text" class="form-control" id="institution_{{ forloop.counter }}" name="Education[{{ forloop.counter0 }}][Institution]" value="{{ education.Institution_Name|default:'' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="dates_{{ forloop.counter }}" class="form-label">Graduation Date</label>
+                  <input type="text" class="form-control" id="dates_{{ forloop.counter }}" name="Education[{{ forloop.counter0 }}][Dates]" value="{{ education.Years_of_Study|default:'' }}" placeholder="e.g., May 2020">
+                </div>
+                <button type="button" class="btn btn-danger remove-education">Remove</button>
+              </div>
+            </div>
+            {% empty %}
+            <p>No education entries found.</p>
+            {% endfor %}
+          </div>
+          <div class="add-btn">
+            <button type="button" class="btn btn-success" id="add-education">Add Education</button>
+          </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="tab-pane fade" id="projects" role="tabpanel">
+          <div class="section-header">Projects</div>
+          <div class="scrollable-section" id="projects-container">
+            {% for project in resume.Projects %}
+            <div class="card">
+              <div class="card-header">Project {{ forloop.counter }}</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="project_name_{{ forloop.counter }}" class="form-label">Project Name</label>
+                  <input type="text" class="form-control" id="project_name_{{ forloop.counter }}" name="Projects[{{ forloop.counter0 }}][Name]" value="{{ project.Project_Title|default:'' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="project_description_{{ forloop.counter }}" class="form-label">Project Description</label>
+                  <textarea class="form-control" id="project_description_{{ forloop.counter }}" name="Projects[{{ forloop.counter0 }}][Description]" rows="3">{{ project.Project_Description|default:'' }}</textarea>
+                </div>
+                <button type="button" class="btn btn-danger remove-project">Remove</button>
+              </div>
+            </div>
+            {% empty %}
+            <p>No project entries found.</p>
+            {% endfor %}
+          </div>
+          <div class="add-btn">
+            <button type="button" class="btn btn-success" id="add-project">Add Project</button>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="tab-pane fade" id="additional" role="tabpanel">
+          <div class="section-header">Additional Information</div>
+          <textarea class="form-control" name="Additional_Information" rows="5" placeholder="Any additional information you want to include">{{ resume.Additional_Information|default:'' }}</textarea>
+        </div>
+
+      </div>
+
+      <!-- Sticky Footer -->
+      <div class="sticky-footer">
+        <button type="submit" class="btn btn-primary">Save Resume</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Templates for Dynamic Addition -->
+  <div id="experience-template" style="display: none;">
+    <div class="card">
+      <div class="card-header">Job <span class="job-number"></span></div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="job_title_" class="form-label">Job Title</label>
+          <input type="text" class="form-control" id="job_title_" name="Experience[][Job_Title]">
+        </div>
+        <div class="mb-3">
+          <label for="company_name_" class="form-label">Company</label>
+          <input type="text" class="form-control" id="company_name_" name="Experience[][Company_Name]">
+        </div>
+        <div class="mb-3">
+          <label for="dates_duration_" class="form-label">Duration</label>
+          <input type="text" class="form-control" id="dates_duration_" name="Experience[][Dates_Duration]" placeholder="e.g., Jan 2020 - Dec 2022">
+        </div>
+        <div class="mb-3">
+          <label for="job_description_" class="form-label">Job Description</label>
+          <textarea class="form-control" id="job_description_" name="Experience[][Job_Description]" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-danger remove-experience">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="education-template" style="display: none;">
+    <div class="card">
+      <div class="card-header">Education <span class="education-number"></span></div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="degree_" class="form-label">Degree</label>
+          <input type="text" class="form-control" id="degree_" name="Education[][Degree]">
+        </div>
+        <div class="mb-3">
+          <label for="institution_" class="form-label">Institution</label>
+          <input type="text" class="form-control" id="institution_" name="Education[][Institution]">
+        </div>
+        <div class="mb-3">
+          <label for="dates_" class="form-label">Graduation Date</label>
+          <input type="text" class="form-control" id="dates_" name="Education[][Dates]" placeholder="e.g., May 2020">
+        </div>
+        <button type="button" class="btn btn-danger remove-education">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="project-template" style="display: none;">
+    <div class="card">
+      <div class="card-header">Project <span class="project-number"></span></div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="project_name_" class="form-label">Project Name</label>
+          <input type="text" class="form-control" id="project_name_" name="Projects[][Name]">
+        </div>
+        <div class="mb-3">
+          <label for="project_description_" class="form-label">Project Description</label>
+          <textarea class="form-control" id="project_description_" name="Projects[][Description]" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-danger remove-project">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Experience Section
+      let experienceIndex = {{ resume.Experience|length }};
+      const addExperienceBtn = document.querySelector('#add-experience');
+      const experienceContainer = document.querySelector('#experience-container');
+
+      addExperienceBtn.addEventListener('click', function() {
+        const template = document.querySelector('#experience-template').cloneNode(true);
+        template.style.display = 'block';
+        const jobNumber = experienceIndex + 1;
+        template.querySelector('.card-header').textContent = `Job ${jobNumber}`;
+        template.querySelectorAll('input, textarea').forEach(input => {
+          input.id = input.id.replace('_', `_${experienceIndex}`);
+          input.name = input.name.replace('[]', `[${experienceIndex}]`);
+        });
+        template.querySelector('.remove-experience').addEventListener('click', function() {
+          template.remove();
+        });
+        experienceContainer.appendChild(template);
+        experienceIndex++;
+      });
+
+      document.querySelectorAll('#experience-container .remove-experience').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+        });
+      });
+
+      // Education Section
+      let educationIndex = {{ resume.Education|length }};
+      const addEducationBtn = document.querySelector('#add-education');
+      const educationContainer = document.querySelector('#education-container');
+
+      addEducationBtn.addEventListener('click', function() {
+        const template = document.querySelector('#education-template').cloneNode(true);
+        template.style.display = 'block';
+        const educationNumber = educationIndex + 1;
+        template.querySelector('.card-header').textContent = `Education ${educationNumber}`;
+        template.querySelectorAll('input').forEach(input => {
+          input.id = input.id.replace('_', `_${educationIndex}`);
+          input.name = input.name.replace('[]', `[${educationIndex}]`);
+        });
+        template.querySelector('.remove-education').addEventListener('click', function() {
+          template.remove();
+        });
+        educationContainer.appendChild(template);
+        educationIndex++;
+      });
+
+      document.querySelectorAll('#education-container .remove-education').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+        });
+      });
+
+      // Projects Section
+      let projectIndex = {{ resume.Projects|length }};
+      const addProjectBtn = document.querySelector('#add-project');
+      const projectContainer = document.querySelector('#projects-container');
+
+      addProjectBtn.addEventListener('click', function() {
+        const template = document.querySelector('#project-template').cloneNode(true);
+        template.style.display = 'block';
+        const projectNumber = projectIndex + 1;
+        template.querySelector('.card-header').textContent = `Project ${projectNumber}`;
+        template.querySelectorAll('input, textarea').forEach(input => {
+          input.id = input.id.replace('_', `_${projectIndex}`);
+          input.name = input.name.replace('[]', `[${projectIndex}]`);
+        });
+        template.querySelector('.remove-project').addEventListener('click', function() {
+          template.remove();
+        });
+        projectContainer.appendChild(template);
+        projectIndex++;
+      });
+
+      document.querySelectorAll('#projects-container .remove-project').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+{% endblock %}

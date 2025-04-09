@@ -1,0 +1,186 @@
+<!-- candidate/templates/candidate/processing.html -->
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .progress-container {
+        position: relative;
+    }
+
+    .progress-stages {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .stage-item {
+        text-align: center;
+        width: 23%;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    .stage-item.active {
+        opacity: 1;
+    }
+
+    .stage-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .stage-item span {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .scan-animation {
+        position: relative;
+        height: 80px;
+    }
+
+    .document-icon {
+        position: relative;
+        display: inline-block;
+    }
+
+    .scan-beam {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        animation: scan 2s infinite;
+        opacity: 0;
+    }
+
+    .scan-beam.active {
+        opacity: 1;
+    }
+
+    .stage-item.active .stage-icon {
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+    @keyframes scan {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(3rem); }
+        100% { transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+    /* Modal styles */
+    .modal-content {
+        border-radius: 0.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-light);
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Processing Resume{% endblock %}
+
+
+{% block content %}
+<div class="modal fade show" id="progressModal" tabindex="-1" aria-hidden="true" style="display: block;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <h5 class="text-center mb-4">Processing Your Resume</h5>
+                <div class="progress-container">
+                    <div class="progress-stages mb-3">
+                        <div class="stage-item" data-stage="scanning">
+                            <div class="stage-icon"><i class="bi bi-file-earmark-binary"></i></div>
+                            <span>Scanning Document</span>
+                        </div>
+                        <div class="stage-item" data-stage="extracting">
+                            <div class="stage-icon"><i class="bi bi-text-paragraph"></i></div>
+                            <span>Extracting Text</span>
+                        </div>
+                        <div class="stage-item" data-stage="analyzing">
+                            <div class="stage-icon"><i class="bi bi-gear"></i></div>
+                            <span>Analyzing Content</span>
+                        </div>
+                        <div class="stage-item" data-stage="preparing">
+                            <div class="stage-icon"><i class="bi bi-check2-circle"></i></div>
+                            <span>Preparing Form</span>
+                        </div>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" id="progressBar"></div>
+                    </div>
+                    <p class="text-center mt-3 text-muted" id="progressMessage">Please wait while we process your resume...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateProgress(stage, percentage, message) {
+        const progressBar = document.getElementById('progressBar');
+        const progressMessage = document.getElementById('progressMessage');
+        const stageItems = document.querySelectorAll('.stage-item');
+
+        progressBar.style.width = `${percentage}%`;
+        progressMessage.textContent = message;
+
+        stageItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.stage === stage) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    function pollTaskStatus(taskId, pdfId) {
+        fetch(`/candidate/task_status/${taskId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.state === 'PROGRESS') {
+                    updateProgress(data.info.stage, data.info.progress, data.info.message);
+                    setTimeout(() => pollTaskStatus(taskId, pdfId), 1000);  // Poll every second
+                } else if (data.state === 'SUCCESS') {
+                    window.location.href = `/candidate/process_resume/${data.resume_id}/`;
+                } else if (data.state === 'FAILURE') {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error polling task status:', error);
+                alert('An error occurred while processing your resume');
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskId = "{{ task_id }}";
+        const pdfId = "{{ pdf_id }}";
+        pollTaskStatus(taskId, pdfId);
+    });
+</script>
+{% endblock %}

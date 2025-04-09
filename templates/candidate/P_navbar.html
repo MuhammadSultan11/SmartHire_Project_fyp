@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hire - {% block title %}Candidate Profile{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <!-- FontAwesome (for profile page compatibility) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: var(--light);
+            padding-top: 70px; /* Adjust for navbar height */
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            position: relative;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            color: white !important;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            left: 0;
+            bottom: -5px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover:after {
+            width: 100%;
+        }
+
+        .btn-outline-light {
+            border-width: 2px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .notification-dropdown,
+        .profile-dropdown .dropdown-menu {
+            min-width: 300px;
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: none;
+        }
+
+        .notification-item,
+        .profile-dropdown .dropdown-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover,
+        .profile-dropdown .dropdown-item:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        /* Profile-specific styles */
+        .skill-badge {
+            background-color: #f0f2f5;
+            color: #495057;
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .skill-badge:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.93rem;
+            top: 1rem;
+            width: 2px;
+            height: calc(100% - 1rem);
+            background: #e9ecef;
+        }
+
+        .scrollable-container {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .profile-picture {
+            width: 160px;
+            height: 160px;
+            border: 5px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.05);
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #fff;
+            transform: skewY(-2deg);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Unified Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="bi bi-briefcase-fill me-2"></i>Smart Hire
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Left Navigation Links -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href=" url 'jobs' ">Find Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" url 'companies' ">Companies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" url 'about' ">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" url 'contact' ">Contact</a>
+                    </li>
+                </ul>
+                <!-- Right Actions -->
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    {% if request.session.mongo_session_id %}
+                    <!-- Notifications Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell"></i>
+                            <span class="badge bg-danger rounded-pill" id="notification-count">3</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+                            <li class="notification-item">
+                                <strong>Interview Invite:</strong> Microsoft<br>
+                                <small>March 15 • 2 mins ago</small>
+                            </li>
+                            <li class="notification-item">
+                                <strong>Job Update:</strong> Data Engineer<br>
+                                <small>5 mins ago</small>
+                            </li>
+                            <li class="notification-item">
+                                <strong>Profile:</strong> 2 new views<br>
+                                <small>Yesterday</small>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Profile Dropdown -->
+                    <li class="nav-item dropdown profile-dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5 me-2"></i>
+                            <span class="d-none d-md-inline">My Account</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="{% url 'candidate_profile' %}"><i class="bi bi-person"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href=""><i class="bi bi-file-earmark-text"></i> My Applications</a></li>
+                            <li><a class="dropdown-item" href=""><i class="bi bi-bookmark"></i> Saved Jobs</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <!-- Login/Sign Up Buttons -->
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'register' %}" class="btn btn-light">Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
