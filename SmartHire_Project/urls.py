@@ -23,9 +23,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
     # path('', include('candidate.urls')),
-    path('api/', include('candidate.urls')),  # Handles /api/apply/, /api/resumes/
+    # path('api/', include('candidate.urls')),  # Handles /api/apply/, /api/resumes/
+    # path('', include('candidate.urls')),  # Handles /api/apply/, /api/resumes/
+    path('candidate/', include('candidate.urls')),  # Prefix candidate app URLs
+
     path('', include('employer.urls')),
-    
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-print("Root URL patterns:", urlpatterns)  # Debug print
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

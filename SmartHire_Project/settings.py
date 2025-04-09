@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'django_htmx',
+    'channels',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -78,6 +79,32 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SmartHire_Project.wsgi.application'
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True  # Add this
+CELERY_BROKER_HEARTBEAT = 10  # Send heartbeat every 10s
+CELERY_BROKER_CONNECTION_MAX_RETRIES = None  # Retry indefinitely
+CELERY_TASK_TRACK_STARTED = True
+
+# Ensure ASGI_APPLICATION is set for Channels
+ASGI_APPLICATION = 'SmartHire_Project.asgi.application'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],  # Default Redis port
+        },
+    },
+}
 
 # SESSION_ENGINE = "mongoengine.django.sessions"
 # SESSION_ENGINE = 'mongoengine.django.sessions'
@@ -135,11 +162,43 @@ import urllib.parse
 # MongoDB connection
  
 import pymongo
+ 
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&readPreference=primaryPreferred&appName=SmartHireCluster"
 
-# MongoDB connection
-MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster"
+# MONGO_URI = "mongodb+srv://smarthireuser:NEW_PASSWORD@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&readPreference=primary&appName=SmartHireCluster"
 
-MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
+# from pymongo.mongo_client import MongoClient
+# from pymongo.server_api import ServerApi
+
+# uri = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster"
+
+# # Create a new client and connect to the server
+# client = MongoClient(uri, server_api=ServerApi('1'))
+
+# # Send a ping to confirm a successful connection
+# try:
+#     client.admin.command('ping')
+#     print("Pinged your deployment. You successfully connected to MongoDB!")
+# except Exception as e:
+#     print(e)
+# MongoDB connection 
+MONGO_URI = "mongodb+srv://smarthireu1:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster"
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=secondaryPreferred"
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=secondaryPreferred&connectTimeoutMS=30000&serverSelectionTimeoutMS=5000"
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=secondaryPreferred&connectTimeoutMS=30000&serverSelectionTimeoutMS=5000&minPoolSize=5&maxPoolSize=50"
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=primary&connectTimeoutMS=30000&serverSelectionTimeoutMS=5000&minPoolSize=5&maxPoolSize=50"
+# MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=primary"
+
+
+MONGO_CLIENT = pymongo.MongoClient(
+    MONGO_URI,
+    maxPoolSize=50,  # Maximum number of connections
+    minPoolSize=5,   # Minimum number of connections
+    serverSelectionTimeoutMS=5000,  # Reduce timeout to fail fast
+    connectTimeoutMS=30000  # Increase connection timeout
+)
+
+# MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT['smarthireDB']  # Database name
 USERS_COLLECTION = MONGO_DB['users']  # Collection name
  
@@ -188,7 +247,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),           # Project-level static directory
+    # os.path.join(BASE_DIR, 'candidate/static'), # Candidate app static directory
+]
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
@@ -217,8 +282,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/index/'
 
 # File storage (adjust as needed)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'resumes')
-MEDIA_URL = '/resumes/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'resumes')
+# MEDIA_URL = '/resumes/'
 
 import os
 

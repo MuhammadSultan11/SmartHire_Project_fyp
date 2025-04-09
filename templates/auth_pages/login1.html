@@ -50,10 +50,15 @@
         .btn:hover {
             background-color: #0056b3;
         }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
         .error {
             color: red;
             font-size: 0.8em;
             margin-top: 5px;
+            text-align: center;
         }
         .register-link {
             text-align: center;
@@ -63,11 +68,14 @@
             color: #007bff;
             text-decoration: none;
         }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <form method="post">
+        <form id="loginForm" method="post">
             {% csrf_token %}
             <h2 style="text-align: center;">Login</h2>
             
@@ -78,7 +86,7 @@
             {% endif %}
             
             <div class="form-group">
-                <label for="{{ form.Email.id_for_label }}">Email</label>
+                <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email }}
                 {% if form.email.errors %}
                     <div class="error">{{ form.email.errors }}</div>
@@ -93,12 +101,76 @@
                 {% endif %}
             </div>
             
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn" id="loginButton">Login</button>
             
             <div class="register-link">
-                Don't have an account? <a href=" register ">Register</a>
+                Don't have an account? <a href="/register/candidate/">Register</a>
             </div>
         </form>
+        <div id="errorMessage" class="error" style="display: none;"></div>
     </div>
+
+    <script>
+        // Utility function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrfToken = getCookie('csrftoken');
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const loginButton = document.getElementById('loginButton');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Disable button to prevent multiple submissions
+            loginButton.disabled = true;
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            fetch('/login/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Login failed');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    errorMessage.textContent = data.error || 'An unknown error occurred';
+                    errorMessage.style.display = 'block';
+                    loginButton.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+                loginButton.disabled = false;
+            });
+        });
+    </script>
 </body>
 </html>

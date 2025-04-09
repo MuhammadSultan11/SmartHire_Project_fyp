@@ -181,14 +181,6 @@ def job_form_view(request):
 
 
 
-
-
-
-
-
-
-
-
 def hr_dashboard(request):
     return render(request, 'employer/dashboard.html')
 
