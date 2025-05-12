@@ -45,7 +45,7 @@ resume_data_template = {
 
     "Skills": [
         # Example: "C++", "Java", "Android Studio", "MySQL"
-    ],
+        ],
 
     "Certifications_and_Licenses": [
         # Example: "Certified Android Developer"
@@ -180,6 +180,7 @@ resume_prompt1 = """
   {resume_text}
 """
 
+
 resume_prompt = """
   You are a highly skilled resume scanner. The following text contains a resume, and your task is 
   to extract the complete information into clearly defined categories. Ensure all extracted details 
@@ -302,128 +303,4 @@ resume_prompt = """
         #     f"Recheck if some details are missing, then add them and convert this:\n{response1}\ninto a Python dictionary format."
         # )
         # response4 = get_genai_response("recheck if some details are mising then add and Convert this:"+response3+" into python dict code format")
-
-
-
-# resume_data = {
-        #     "Personal_Information": {
-        #         "Name": "Ali Ameer",
-        #         "Role": "Mobile Application Developer",
-        #         "Email": "aliameer633@gmail.com",
-        #         "Phone_number": "+923006337616",
-        #         "LinkedIn": "linkedin.com/in/aliameer633."
-        #     },
-        
-        #     "Professional_Summary": "Self-directed and motivated Mobile Application Developer with a solid understanding of the software development life cycle and Agile methodologies. Dedicated to continuously learning, developing, and implementing new technologies to maximize development efficiency and produce innovative applications.",
-            
-        #     "Experience": [
-        #         {
-        #             "Job_Title": "Android Developer",
-        #             "Company_Name": "Visio Byte",
-        #             "Dates_Duration": "05/2017- 07/2017",
-        #             "Job_Description": "o Designing and developing advanced applications for the Android platform.\n o Collaborate with cross-functional teams to define, design, and ship new features\n o Bug fixing and improving application performance."
-        #         },
-        #         {
-        #             "Job_Title": "Hybrid Mobile Application developer",
-        #             "Company_Name": "Vozax Technology",
-        #             "Dates_Duration": "06/2018 - 07/2018",
-        #             "Job_Description": "o Develop and enhance Mobile Application using Javascript and CSS3.\n o Ability to project estimates, timelines, feasibility and alternative solutions."
-        #         },
-        #         {
-        #             "Job_Title": "Mobile Application Developer",
-        #             "Company_Name": "Crafter Softs",
-        #             "Dates_Duration": "07/2018 - 06/2019",
-        #             "Job_Description": "o Translate designs and wireframes into high quality code.\n o Design, build, and maintain high performance, reusable, and reliable Java code.\n o Work with outside data sources and API's.."
-        #         }
-        #     ],
-
-        #     "Contextual_Career_Experience": [
-        #         {
-        #             "Job_Title": "Android Contextual_Career_Experience",
-        #             "Company_Name": "Visio Byte",
-        #             "Dates_Duration": "05/2017- 07/2017",
-        #             "Job_Description": "o Designing and developing advanced applications for the Android platform.\n o Collaborate with cross-functional teams to define, design, and ship new features\n o Bug fixing and improving application performance."
-        #         },
-        #         {
-        #             "Job_Title": "Hybrid Mobile Contextual_Career_Experience developer",
-        #             "Company_Name": "Vozax Technology",
-        #             "Dates_Duration": "06/2018 - 07/2018",
-        #             "Job_Description": "o Develop and enhance Mobile Application using Javascript and CSS3.\n o Ability to project estimates, timelines, feasibility and alternative solutions."
-        #         },
-        #     ],
-        #     "Education": [
-        #         {
-        #             "Degree_Name": "BS (Computer Science)",
-        #             "Institution_Name": "Air University",
-        #             "Years_of_Study": "10/2013 - 05/2018",
-        #             "GPA": "Not provided",
-        #             "Academic_Honors": "Not provided"
-        #         }
-        #     ],
-        #     "Skills": [
-        #         "C++",
-        #         "OOP",
-        #         "Android Studio",
-        #         "Java",
-        #         "C#",
-        #         "Firebase",
-        #         "HTML",
-        #         "XML",
-        #         "CSS",
-        #         "MySQL",
-        #         "GIT"
-        #     ],
-        #     "Certifications_and_Licenses": [],
-        #     "Projects": [
-        #         {
-        #             "Project_Title": "Hello Doctor",
-        #             "Project_Description": "Nearest doctor finder and appointment application using google map integration (Final Year Project).",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Chat application",
-        #             "Project_Description": "Not provided",
-        #             "Technologies Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Personal information sharing application",
-        #             "Project_Description": "Not provided",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Customization of AdForest Classified Native Android App with WordPress",
-        #             "Project_Description": "Not provided",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Customization of Go-Taxi android app like uber according to client requirment",
-        #             "Project_Description": "Not provided",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Customization of watsapp clone application according to client",
-        #             "Project_Description": "Not provided",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "ECG Cloud",
-        #             "Project_Description": "An IOT base project, which gets the values from ECG sensors and show a graph on android application",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "Real Estate Finder",
-        #             "Project_Description": "An application in which user can search property for sale or rent.",
-        #             "Technologies_Used": "Not provided"
-        #         },
-        #         {
-        #             "Project_Title": "FoodFinder",
-        #             "Project_Description": "Food delivery application. The user can order food from different restaurants.",
-        #             "Technologies_Used": "Not provided"
-        #         }
-        #     ],
-        #     "References": [],
-        #     "Additional_Information": "Not provided"  # This field was missing in the original resume, so I have added it here with a value of "Not provided".
-            
-        #     }
-
 
