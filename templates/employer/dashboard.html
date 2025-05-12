@@ -1,301 +1,816 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Dashboard</title>
+    <title>SmartHire | HR Interview Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>/* Ensure dropdown works with hover */
-      .header-dropdown:hover .dropdown-content {
-          display: block;
-      }
-      .dropdown-content {
-          display: none;
-      }</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .candidate-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .match-excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .match-good {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .match-fair {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .interview-report {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+        
+        .interview-report.open {
+            max-height: 1000px;
+        }
+        
+        .checkbox-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .bulk-actions {
+            transition: all 0.3s ease;
+            transform: translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .bulk-actions.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-<!-- Header -->
-<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md"></header>
-   <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      
-        <div class="flex items-center space-x-4">
-            <h1 class="text-2xl font-bold tracking-wide">HR Intelligence Dashboard</h1>
-            <div class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
-                Active Jobs: 6
+<body class="text-gray-800">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 bg-white shadow-lg z-10">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">SH</div>
+                    <h1 class="text-xl font-bold text-gray-800">SmartHire</h1>
+                </div>
             </div>
+            
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg">
+                                <i class="fas fa-users w-5 text-center"></i>
+                                <span>Candidates</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                                <i class="fas fa-briefcase w-5 text-center"></i>
+                                <span>Jobs</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                                <i class="fas fa-file-alt w-5 text-center"></i>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <h4 class="text-sm font-medium mb-2">Post New Job</h4>
+                    
+                    <p class="text-xs text-gray-500 mb-3">Create job with AI filtering criteria</p>
+                    <a  href="{% url 'job_posting' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center justify-center transition">
+                        <i class="fas fa-plus mr-2"></i> New Job
+                    </a>
+                </div>
+            </nav>
         </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white border-b border-gray-200">
+                <div class="flex justify-between items-center px-6 py-4">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-xl font-semibold">Candidate Interview Management</h2>
+                        <div class="relative">
+                            <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option>All Jobs</option>
+                                <option>Senior Developer</option>
+                                <option>Marketing Lead</option>
+                                <option>UX Designer</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
+                                <i class="fas fa-bell"></i>
+                                <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                        
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 focus:outline-none">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
+                                <span class="text-sm font-medium">Jane Doe</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                <div class="border-t border-gray-200"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Candidate Tabs -->
+                <div class="flex border-b border-gray-200 px-6">
+                    <button id="resumeTab" class="tab-active px-4 py-3 text-sm font-medium">AI-Filtered Resumes (48)</button>
+                    <button id="interviewTab" class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700">Interview-Completed (15)</button>
+                </div>
+            </header>
+            
+            <!-- Bulk Actions Bar -->
+            <div id="bulkActions" class="bulk-actions bg-blue-50 border-b border-blue-200 px-6 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <span id="selectedCount" class="text-sm font-medium text-blue-700">0 candidates selected</span>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="bulkInvite" class="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+                        <i class="fas fa-calendar-plus mr-2"></i> Invite Selected
+                    </button>
+                    <button id="bulkReject" class="text-sm px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition flex items-center">
+                        <i class="fas fa-times mr-2"></i> Reject Selected
+                    </button>
+                    <button id="clearSelection" class="text-sm px-4 py-2 text-gray-500 hover:text-gray-700 transition flex items-center">
+                        <i class="fas fa-times-circle mr-2"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- AI-Filtered Resumes Section -->
+                <div id="resumeSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-5">
+                        <div>
+                            <h3 class="font-semibold">AI-Filtered Candidates</h3>
+                            <p class="text-sm text-gray-500">Candidates whose resumes match job requirements</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <option>Sort by: Match Score</option>
+                                    <option>Sort by: Experience</option>
+                                    <option>Sort by: Education</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                            <button class="text-sm text-blue-600 hover:underline">Export List</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Candidate Card 1 -->
+                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
+                            <div class="checkbox-container">
+                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="123">
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-excellent">89</div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Jane Doe</h4>
+                                            <p class="text-sm text-gray-500">Senior Frontend Developer</p>
+                                        </div>
+                                        <span class="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">New</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <div class="text-xs mb-2">
+                                    <span class="font-medium text-gray-700">Score: 89.35%</span>
+                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
+                                </div>
+                                <div class="text-xs space-y-2">
+                                    <p><span class="font-medium">Skills:</span> All required skills (Python, JavaScript, SQL, Django) matched. Strong technical fit.</p>
+                                    <p><span class="font-medium">Experience:</span> 1 year of highly relevant, recent experience. Meets job requirements.</p>
+                                    <p><span class="font-medium">Education:</span> Bachelor's in Computer Science. Perfect field relevance.</p>
+                                    <p><span class="font-medium">Projects:</span> Django/JavaScript project aligns well. Demonstrates key skills.</p>
+                                    <p><span class="font-medium">Soft skills:</span> No soft skills listed. Add Communication, Teamwork to improve.</p>
+                                    <p><span class="font-medium">Additional info:</span> Python certification adds value. Relevant to role.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-between">
+                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> View Resume
+                                </button>
+                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
+                                        data-candidate-id="123"
+                                        data-candidate-name="Jane Doe"
+                                        data-candidate-position="Senior Frontend Developer">
+                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Candidate Card 2 -->
+                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
+                            <div class="checkbox-container">
+                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="124">
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">AS</div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-good">85</div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Alex Smith</h4>
+                                            <p class="text-sm text-gray-500">Marketing Lead</p>
+                                        </div>
+                                        <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-full">Profile</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <div class="text-xs mb-2">
+                                    <span class="font-medium text-gray-700">Score: 85.20%</span>
+                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
+                                </div>
+                                <div class="text-xs space-y-2">
+                                    <p><span class="font-medium">Skills:</span> Strong match with required marketing skills (SEO, PPC, Content Strategy).</p>
+                                    <p><span class="font-medium">Experience:</span> 2 years in similar role. Agency background adds value.</p>
+                                    <p><span class="font-medium">Education:</span> Marketing degree from top university. Excellent academic record.</p>
+                                    <p><span class="font-medium">Projects:</span> Successful campaign examples provided. Demonstrated ROI.</p>
+                                    <p><span class="font-medium">Soft skills:</span> Leadership and communication skills evident in work history.</p>
+                                    <p><span class="font-medium">Additional info:</span> Google Ads certified. Active in marketing communities.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-between">
+                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> View Resume
+                                </button>
+                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
+                                        data-candidate-id="124"
+                                        data-candidate-name="Alex Smith"
+                                        data-candidate-position="Marketing Lead">
+                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Candidate Card 3 -->
+                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
+                            <div class="checkbox-container">
+                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="125">
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-medium">MR</div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-good">87</div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Michael Rodriguez</h4>
+                                            <p class="text-sm text-gray-500">UX Designer</p>
+                                        </div>
+                                        <span class="text-xs px-2 py-1 bg-yellow-50 text-yellow-600 rounded-full">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <div class="text-xs mb-2">
+                                    <span class="font-medium text-gray-700">Score: 87.15%</span>
+                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
+                                </div>
+                                <div class="text-xs space-y-2">
+                                    <p><span class="font-medium">Skills:</span> Excellent UX/UI skills (Figma, Sketch, Adobe XD). Strong portfolio.</p>
+                                    <p><span class="font-medium">Experience:</span> 3 years at reputable tech company. Worked on major products.</p>
+                                    <p><span class="font-medium">Education:</span> Design degree with focus on human-computer interaction.</p>
+                                    <p><span class="font-medium">Projects:</span> Case studies show thorough design process and measurable impact.</p>
+                                    <p><span class="font-medium">Soft skills:</span> Collaborative approach evident from references.</p>
+                                    <p><span class="font-medium">Additional info:</span> Active in design community. Conference speaker.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-between">
+                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> View Resume
+                                </button>
+                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
+                                        data-candidate-id="125"
+                                        data-candidate-name="Michael Rodriguez"
+                                        data-candidate-position="UX Designer">
+                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-center">
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
+                            Load More Candidates
+                        </button>
+                    </div>
+                </div>
 
-        <div class="flex items-center space-x-4">
-          <a href="{% url 'job_posting' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition">
-             Post Job
-          </a>
+                 <!-- Interview-Completed Section (Hidden by default) -->
+                 <div id="interviewSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hidden">
+                    <div class="flex justify-between items-center mb-5">
+                        <div>
+                            <h3 class="font-semibold">Interview-Completed Candidates</h3>
+                            <p class="text-sm text-gray-500">Candidates who have completed AI interviews</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <option>Sort by: Interview Score</option>
+                                    <option>Sort by: Completion Date</option>
+                                    <option>Sort by: Resume Match</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                            <button class="text-sm text-blue-600 hover:underline">Export Reports</button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Interview Report 1 -->
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <div class="p-4 bg-gray-50 flex justify-between items-center cursor-pointer interview-header">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
+                                    <div>
+                                        <h4 class="font-medium">Jane Doe</h4>
+                                        <p class="text-sm text-gray-500">Senior Frontend Developer</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-center">
+                                        <div class="text-xs text-gray-500">Overall Score</div>
+                                        <div class="text-lg font-bold text-green-600">89%</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-xs text-gray-500">Completed</div>
+                                        <div class="text-sm font-medium">May 15, 2023</div>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="interview-report">
+                                <div class="p-4 border-t border-gray-200">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-medium text-sm mb-3">Technical Skills Evaluation</h5>
+                                            <div class="space-y-3">
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>JavaScript</span>
+                                                        <span>92%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 92%"></div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>React</span>
+                                                        <span>88%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 88%"></div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>CSS/HTML</span>
+                                                        <span>85%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 85%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-medium text-sm mb-3">Behavioral Assessment</h5>
+                                            <div class="space-y-3">
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>Communication</span>
+                                                        <span>87%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 87%"></div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>Problem Solving</span>
+                                                        <span>91%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 91%"></div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="flex justify-between text-xs mb-1">
+                                                        <span>Teamwork</span>
+                                                        <span>83%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 83%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-medium text-sm mb-3">AI Recommendations</h5>
+                                            <div class="space-y-2">
+                                                <div class="flex items-start">
+                                                    <div class="flex-shrink-0 mt-0.5">
+                                                        <i class="fas fa-check-circle text-green-500"></i>
+                                                    </div>
+                                                    <p class="ml-2 text-xs">Strong technical skills match with job requirements</p>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <div class="flex-shrink-0 mt-0.5">
+                                                        <i class="fas fa-check-circle text-green-500"></i>
+                                                    </div>
+                                                    <p class="ml-2 text-xs">Excellent problem-solving abilities demonstrated</p>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <div class="flex-shrink-0 mt-0.5">
+                                                        <i class="fas fa-info-circle text-blue-500"></i>
+                                                    </div>
+                                                    <p class="ml-2 text-xs">Could improve on knowledge of newer React features</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 pt-3 border-t border-gray-200">
+                                                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Strong Hire</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h5 class="font-medium text-sm mb-2">Interview Transcript Highlights</h5>
+                                        <div class="bg-gray-50 p-3 rounded-lg text-xs">
+                                            <div class="mb-2">
+                                                <p class="font-medium">AI Interviewer:</p>
+                                                <p class="text-gray-700">Can you describe your approach to optimizing React component performance?</p>
+                                            </div>
+                                            <div class="mb-2">
+                                                <p class="font-medium">Candidate:</p>
+                                                <p class="text-gray-700">I prioritize using React.memo for components that don't need to re-render often, implement useCallback for event handlers, and leverage useMemo for expensive calculations. I also analyze performance with React DevTools...</p>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">AI Analysis:</p>
+                                                <p class="text-gray-700">Candidate demonstrated deep understanding of React optimization techniques (Score: 94%)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-end space-x-3">
+                                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
+                                            <i class="fas fa-download mr-2"></i> Download Full Report
+                                        </button>
+                                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+                                            <i class="fas fa-user-check mr-2"></i> Move to Next Round
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Interview Report 2 -->
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <div class="p-4 bg-gray-50 flex justify-between items-center cursor-pointer interview-header">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">AS</div>
+                                    <div>
+                                        <h4 class="font-medium">Alex Smith</h4>
+                                        <p class="text-sm text-gray-500">Marketing Lead</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-center">
+                                        <div class="text-xs text-gray-500">Overall Score</div>
+                                        <div class="text-lg font-bold text-blue-600">76%</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-xs text-gray-500">Completed</div>
+                                        <div class="text-sm font-medium">May 14, 2023</div>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="interview-report">
+                                <!-- Similar report content structure as above -->
+                                <div class="p-4 border-t border-gray-200">
+                                    <p class="text-sm text-gray-500">Detailed interview report would appear here...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </main>
+        </div>
+    </div>
     
-            <!-- Job Filter -->
-            <select id="jobFilter" class="bg-white/20 text-white p-2 rounded border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
-                <option value="">All Jobs</option>
-                <option value="developer">Senior Developer</option>
-                <option value="marketing">Marketing Lead</option>
-            </select>
-
-            <!-- User Profile Dropdown -->
-            <div class="relative group">
-                <button class="flex items-center space-x-2 hover:bg-white/10 p-2 rounded transition">
-                    <img src="/api/placeholder/40/40" alt="Profile" class="w-10 h-10 rounded-full">
-                    <span class="font-medium">Jane Doe</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+    <!-- Interview Invite Modal -->
+    <div id="inviteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+            <div class="p-5 border-b border-gray-200">
+                <h3 class="font-semibold text-lg">Schedule AI Interview</h3>
+                <p class="text-sm text-gray-500">Invite candidate to complete interview with AI chatbot</p>
+            </div>
+            
+            <div class="p-5">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Candidate</label>
+                    <input type="text" id="modalCandidateName" class="w-full px-3 py-2 border border-gray-300 rounded-lg" readonly>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                    <input type="text" id="modalCandidatePosition" class="w-full px-3 py-2 border border-gray-300 rounded-lg" readonly>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Interview Duration</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>30 minutes</option>
+                        <option>45 minutes</option>
+                        <option>60 minutes</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Completion Deadline</label>
+                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Custom Message (Optional)</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3" placeholder="Add a personal note to the invitation..."></textarea>
+                </div>
+            </div>
+            
+            <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancelInvite" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
                 </button>
-                <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl z-10 hidden group-hover:block">
-                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
-                        Profile Settings
-                    </a>
-                    <a href="#" class="block px-4 py-3 hover:bg-gray-100 transition">
-                        Help & Support
-                    </a>
-                    <a href="#" class="block px-4 py-3 hover:bg-red-50 text-red-600 hover:text-red-700 transition">
-                        Logout
-                    </a>
-                </div>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+                    <i class="fas fa-paper-plane mr-2"></i> Send Invitation
+                </button>
             </div>
         </div>
     </div>
-</header>
-
-
-    <!-- Header -->
-    <!-- <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">HR Dashboard</h1>
-        <div class="relative group">
-            <button class="flex items-center space-x-2">
-                <span>Jane Doe</span> 
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </button>
-            <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg hidden group-hover:block">
-                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+    
+    <!-- Bulk Invite Modal -->
+    <div id="bulkInviteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+            <div class="p-5 border-b border-gray-200">
+                <h3 class="font-semibold text-lg">Schedule Bulk Interviews</h3>
+                <p class="text-sm text-gray-500">Invite selected candidates to complete interviews</p>
             </div>
-        </div>
-        <div>
-            <select id="jobFilter" hx-get="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" hx-vals='{"job_id": this.value}' class="ml-4 p-2 rounded text-black">
-                <option value="">All Jobs</option>
-                <option value="1">Senior Developer</option>
-                <option value="2">Marketing Lead</option>
-            </select>
-        </div>
-    </header> -->
-
-    <!-- Main Content -->
-    <div id="dashboard-content" class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Analytics Widgets -->
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-lg font-semibold">Applications: 245</h2>
-            <p class="text-sm text-gray-500">+10% from last week</p>
-            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
-                <!-- Dummy bar chart -->
-                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
-                <div class="flex-1 bg-blue-500" style="height: 40%;"></div>
-                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
-                <div class="flex-1 bg-blue-500" style="height: 50%;"></div>
-                <div class="flex-1 bg-blue-500" style="height: 60%;"></div>
-            </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-lg font-semibold">Active Jobs: 6</h2>
-            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
-        </div>
-
-        <!-- Job Stats -->
-        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
-            <div class="space-y-4">
-                <div class="border p-4 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="font-medium">Senior Developer</h3>
-                        <p class="text-sm text-gray-600">Applications: 45 | Shortlisted: 12 | Interviewed: 5</p>
-                    </div>
-                    <a href="{% url 'candidate_listing' %}" class="text-blue-500 hover:underline">View Candidates</a>
+            
+            <div class="p-5">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Number of Candidates</label>
+                    <input type="text" id="bulkCandidateCount" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
                 </div>
-                <div class="border p-4 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="font-medium">Marketing Lead</h3>
-                        <p class="text-sm text-gray-600">Applications: 30 | Shortlisted: 8 | Interviewed: 3</p>
-                    </div>
-                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Interview Duration</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>30 minutes</option>
+                        <option>45 minutes</option>
+                        <option>60 minutes</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Completion Deadline</label>
+                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Custom Message (Optional)</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3" placeholder="Add a personal note to the invitation..."></textarea>
                 </div>
             </div>
-        </div>
-
-        <!-- Filtered Candidate List -->
-        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Filtered Candidates (Shortlisted)</h2>
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-2">Name</th>
-                        <th class="p-2">Job</th>
-                        <th class="p-2">Score</th>
-                        <th class="p-2">Status</th>
-                        <th class="p-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b">
-                        <td class="p-2">Jane Doe</td>
-                        <td class="p-2">Senior Developer</td>
-                        <td class="p-2">88</td>
-                        <td class="p-2">Shortlisted</td>
-                        <td class="p-2">
-                            <select hx-post="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
-                                <option value="">Invite</option>
-                                <option value="24h">24 Hours</option>
-                                <option value="48h">48 Hours</option>
-                                <option value="3d">3 Days</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="p-2">John Smith</td>
-                        <td class="p-2">Senior Developer</td>
-                        <td class="p-2">82</td>
-                        <td class="p-2">Shortlisted</td>
-                        <td class="p-2">
-                            <select hx-post="#dashboard-content" hx-target="#dashboard-content" hx-swap="innerHTML" class="text-blue-500 p-1 rounded">
-                                <option value="">Invite</option>
-                                <option value="24h">24 Hours</option>
-                                <option value="48h">48 Hours</option>
-                                <option value="3d">3 Days</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pipeline -->
-        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Candidate Pipeline</h2>
-            <div class="flex space-x-2">
-                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 150px;">Applied: 150</div>
-                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 40px;">Shortlisted: 40</div>
-                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 20px;">Interview Invited: 20</div>
-                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 10px;">Interviewed: 10</div>
-                <div class="flex-1 bg-blue-500 text-white p-2 text-center" style="height: 5px;">Hired: 5</div>
-            </div>
-        </div>
-
-        <!-- Interviewed Reports -->
-        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Interviewed Reports</h2>
-            <div class="space-y-4">
-                <div class="border p-4 rounded flex justify-between items-center">
-                    <div>
-                        <p>Jane Doe (Mar 03, 2025)</p>
-                        <p class="text-sm text-gray-600">Job: Senior Developer</p>
-                    </div>
-                    <a href="#" class="text-blue-500 hover:underline">View Report</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications -->
-        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Notifications</h2>
-            <div class="space-y-2">
-                <p class="text-sm">New application for Senior Developer <span class="text-gray-500">(5 mins ago)</span></p>
-                <p class="text-sm">John Doe completed AI interview <span class="text-gray-500">(1 hour ago)</span></p>
+            
+            <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancelBulkInvite" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button id="confirmBulkInvite" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+                    <i class="fas fa-paper-plane mr-2"></i> Send Invitations
+                </button>
             </div>
         </div>
     </div>
-
-    <!-- HTMX Simulation Script -->
+    
     <script>
-        // Simulate job filter (updates content with dummy data)
-        document.getElementById('jobFilter').addEventListener('change', function(e) {
-            const jobId = e.target.value;
-            let content = document.getElementById('dashboard-content');
-            if (jobId === '1') {
-                content.innerHTML = `
-                    <div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h2 class="text-lg font-semibold">Applications: 45</h2>
-                            <p class="text-sm text-gray-500">+5% from last week</p>
-                            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
-                                <div class="flex-1 bg-blue-500" style="height: 10%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 15%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 25%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h2 class="text-lg font-semibold">Active Jobs: 1</h2>
-                            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-                            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
-                            <div class="space-y-4">
-                                <div class="border p-4 rounded flex justify-between items-center">
-                                    <div>
-                                        <h3 class="font-medium">Senior Developer</h3>
-                                        <p class="text-sm text-gray-600">Applications: 45 | Shortlisted: 12 | Interviewed: 5</p>
-                                    </div>
-                                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Add other sections with Senior Developer data -->
-                    </div>
-                `;
-            } else if (jobId === '2') {
-                content.innerHTML = `
-                    <div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h2 class="text-lg font-semibold">Applications: 30</h2>
-                            <p class="text-sm text-gray-500">+8% from last week</p>
-                            <div class="w-full h-40 bg-gray-200 flex items-end space-x-1">
-                                <div class="flex-1 bg-blue-500" style="height: 15%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 25%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 20%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 30%;"></div>
-                                <div class="flex-1 bg-blue-500" style="height: 35%;"></div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <h2 class="text-lg font-semibold">Active Jobs: 1</h2>
-                            <a href="#" class="text-blue-500 hover:underline">View All Jobs</a>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow col-span-1 md:grid-cols-2">
-                            <h2 class="text-lg font-semibold mb-4">Job Stats</h2>
-                            <div class="space-y-4">
-                                <div class="border p-4 rounded flex justify-between items-center">
-                                    <div>
-                                        <h3 class="font-medium">Marketing Lead</h3>
-                                        <p class="text-sm text-gray-600">Applications: 30 | Shortlisted: 8 | Interviewed: 3</p>
-                                    </div>
-                                    <a href="#" class="text-blue-500 hover:underline">View Candidates</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Add other sections with Marketing Lead data -->
-                    </div>
-                `;
+        // Tab switching functionality
+        document.getElementById('resumeTab').addEventListener('click', function() {
+            this.classList.add('tab-active');
+            document.getElementById('interviewTab').classList.remove('tab-active');
+            document.getElementById('resumeSection').classList.remove('hidden');
+            document.getElementById('interviewSection').classList.add('hidden');
+        });
+        
+        document.getElementById('interviewTab').addEventListener('click', function() {
+            this.classList.add('tab-active');
+            document.getElementById('resumeTab').classList.remove('tab-active');
+            document.getElementById('interviewSection').classList.remove('hidden');
+            document.getElementById('resumeSection').classList.add('hidden');
+        });
+        
+        // Interview invite modal
+        document.querySelectorAll('.invite-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const candidateId = this.getAttribute('data-candidate-id');
+                const candidateName = this.getAttribute('data-candidate-name');
+                const candidatePosition = this.getAttribute('data-candidate-position');
+                
+                document.getElementById('modalCandidateName').value = candidateName;
+                document.getElementById('modalCandidatePosition').value = candidatePosition;
+                document.getElementById('inviteModal').classList.remove('hidden');
+            });
+        });
+        
+        document.getElementById('cancelInvite').addEventListener('click', function() {
+            document.getElementById('inviteModal').classList.add('hidden');
+        });
+        
+        // Interview report accordion
+        document.querySelectorAll('.interview-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const report = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                report.classList.toggle('open');
+                icon.classList.toggle('transform');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+        
+        // Multi-select functionality
+        let selectedCandidates = [];
+        
+        document.querySelectorAll('.candidate-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const candidateId = this.getAttribute('data-candidate-id');
+                
+                if (this.checked) {
+                    if (!selectedCandidates.includes(candidateId)) {
+                        selectedCandidates.push(candidateId);
+                    }
+                } else {
+                    selectedCandidates = selectedCandidates.filter(id => id !== candidateId);
+                }
+                
+                updateBulkActions();
+            });
+        });
+        
+        function updateBulkActions() {
+            const count = selectedCandidates.length;
+            const bulkActions = document.getElementById('bulkActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            selectedCount.textContent = `${count} candidate${count !== 1 ? 's' : ''} selected`;
+            
+            if (count > 0) {
+                bulkActions.classList.add('show');
+            } else {
+                bulkActions.classList.remove('show');
+            }
+        }
+        
+        // Bulk invite modal
+        document.getElementById('bulkInvite').addEventListener('click', function() {
+            const count = selectedCandidates.length;
+            if (count === 0) return;
+            
+            document.getElementById('bulkCandidateCount').value = `${count} candidate${count !== 1 ? 's' : ''}`;
+            document.getElementById('bulkInviteModal').classList.remove('hidden');
+        });
+        
+        document.getElementById('cancelBulkInvite').addEventListener('click', function() {
+            document.getElementById('bulkInviteModal').classList.add('hidden');
+        });
+        
+        document.getElementById('confirmBulkInvite').addEventListener('click', function() {
+            alert(`Interview invitations sent to ${selectedCandidates.length} candidates!`);
+            document.getElementById('bulkInviteModal').classList.add('hidden');
+            clearSelection();
+        });
+        
+        // Bulk reject action
+        document.getElementById('bulkReject').addEventListener('click', function() {
+            const count = selectedCandidates.length;
+            if (count === 0) return;
+            
+            if (confirm(`Are you sure you want to reject ${count} candidate${count !== 1 ? 's' : ''}?`)) {
+                alert(`${count} candidate${count !== 1 ? 's' : ''} rejected successfully.`);
+                clearSelection();
             }
         });
-
-        // Simulate interview invite (updates status)
-        document.querySelectorAll('select[hx-post]').forEach(select => {
-            select.addEventListener('change', function(e) {
-                const duration = e.target.value;
-                if (duration) {
-                    const row = e.target.closest('tr');
-                    row.querySelector('td:nth-child(4)').textContent = 'Interview Invited';
-                    alert(`Invite sent for ${duration}`);
+        
+        // Clear selection
+        document.getElementById('clearSelection').addEventListener('click', clearSelection);
+        
+        function clearSelection() {
+            selectedCandidates = [];
+            document.querySelectorAll('.candidate-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateBulkActions();
+        }
+        
+        // Simulate HTMX interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modals when clicking outside
+            document.getElementById('inviteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
                 }
+            });
+            
+            document.getElementById('bulkInviteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            
+            // Simulate sending invitation
+            document.querySelector('#inviteModal button.bg-blue-600').addEventListener('click', function() {
+                alert('Interview invitation sent successfully!');
+                document.getElementById('inviteModal').classList.add('hidden');
             });
         });
     </script>

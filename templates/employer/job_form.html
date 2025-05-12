@@ -2,731 +2,846 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Posting Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        /* Reset and Base Styles */
-        *, *:before, *:after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Posting Form</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+    /* Form Section */
+    .form-section {
+        background: white;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        max-width: 950px; /* Decreased width */
+        margin-left: auto; /* Center align */
+        margin-right: auto; /* Center align */
+    }
+
+
+
+    /* Reset and Base Styles */
+    *, *:before, *:after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f5f6fa;
+        color: #2d3748;
+        line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+        background: linear-gradient(90deg, #4caf50, #2d9950);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    header nav a {
+        color: white;
+        margin-left: 1.5rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: opacity 0.2s;
+    }
+
+    header nav a:hover {
+        opacity: 0.8;
+    }
+
+    /* Container */
+    .container {
+        max-width: 720px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Form Section */
+    /* .form-section {
+        background: white;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    } */
+
+    .section-header {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        background: #f9fafb;
+        transition: background 0.2s;
+    }
+
+    .section-header:hover {
+        background: #f1f5f9;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #4caf50;
+    }
+
+    .toggle-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        transition: transform 0.3s;
+    }
+
+    .toggle-icon.expanded {
+        transform: rotate(180deg);
+    }
+
+    .section-content {
+        padding: 1.5rem;
+        display: none;
+    }
+
+    .section-content.expanded {
+        display: block;
+    }
+
+    /* Form Elements */
+    .styled-form label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+    }
+
+    .styled-form input,
+    .styled-form select,
+    .styled-form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .styled-form input:focus,
+    .styled-form select:focus,
+    .styled-form textarea:focus {
+        border-color: #4caf50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        outline: none;
+    }
+
+    .styled-form textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* Tooltip */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #4a5568;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        padding: 0.5rem;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.875rem;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* Buttons */
+    .btn {
+        background: #4caf50;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+        background: #3d8b40;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #4a5568;
+    }
+
+    .btn-secondary:hover {
+        background: #cbd5e0;
+    }
+
+    /* Skills */
+    .skills-container {
+        position: relative;
+    }
+
+    .selected-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .skill-tag {
+        background: #e6ffe6;
+        color: #2d9950;
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .skill-tag .remove {
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 10;
+    }
+
+    .suggestion-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .suggestion-item:hover {
+        background: #f7fafc;
+    }
+
+    /* Range Slider */
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(to right, #4caf50 0%, #4caf50 var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
+        border-radius: 3px;
+        outline: none;
+        margin: 1rem 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #4caf50;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #4caf50;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form Footer */
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 0 0 12px 12px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .grid-cols-2, .grid-cols-3 {
+            grid-template-columns: 1fr;
         }
 
-        body {
-            font-family: "Roboto", sans-serif;
-            background-color: #f5f6fa;
-            color: #2d3748;
-            line-height: 1.6;
-        }
-
-        /* Header */
         header {
-            background: linear-gradient(90deg, #4caf50, #2d9950);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        header .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        header nav a {
-            color: white;
-            margin-left: 1.5rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-
-        header nav a:hover {
-            opacity: 0.8;
-        }
-
-        /* Container */
-        .container {
-            max-width: 720px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        /* Form Section */
-        .form-section {
-            background: white;
-            margin-bottom: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            background: #f9fafb;
-            transition: background 0.2s;
-        }
-
-        .section-header:hover {
-            background: #f1f5f9;
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #4caf50;
-        }
-
-        .toggle-icon {
-            width: 1.25rem;
-            height: 1.25rem;
-            transition: transform 0.3s;
-        }
-
-        .toggle-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .section-content {
-            padding: 1.5rem;
-            display: none;
-        }
-
-        .section-content.expanded {
-            display: block;
-        }
-
-        /* Form Elements */
-        .styled-form label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #4a5568;
-        }
-
-        .styled-form input,
-        .styled-form select,
-        .styled-form textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .styled-form input:focus,
-        .styled-form select:focus,
-        .styled-form textarea:focus {
-            border-color: #4caf50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-            outline: none;
-        }
-
-        .styled-form textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Buttons */
-        .btn {
-            background: #4caf50;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .btn:hover {
-            background: #3d8b40;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .btn-secondary:hover {
-            background: #cbd5e0;
-        }
-
-        /* Skills */
-        .skills-container {
-            position: relative;
-        }
-
-        .selected-skills {
+        header nav {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+            gap: 0.75rem;
         }
 
-        .skill-tag {
-            background: #e6ffe6;
-            color: #2d9950;
-            padding: 0.5rem 0.75rem;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
+        .form-section {
+            padding: 0;
         }
+    }
 
-        .skill-tag .remove {
-            cursor: pointer;
-            font-weight: bold;
-        }
+    /* Error and Success Styles */
+    .error {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
 
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 10;
-        }
+    .success-message {
+        background: #e6ffe6;
+        color: #2d9950;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        display: none;
+    }
 
-        .suggestion-item {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .suggestion-item:hover {
-            background: #f7fafc;
-        }
-
-        /* Range Slider */
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(to right, #4caf50 0%, #4caf50 var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
-            border-radius: 3px;
-            outline: none;
-            margin: 1rem 0;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #4caf50;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: #4caf50;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Form Footer */
-        .form-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 0 0 12px 12px;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .grid-cols-2, .grid-cols-3 {
-                grid-template-columns: 1fr;
-            }
-
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            header nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.75rem;
-            }
-
-            .form-section {
-                padding: 0;
-            }
-        }
-
-        /* Error and Success Styles */
-        .error {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .success-message {
-            background: #e6ffe6;
-            color: #2d9950;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .input-error {
-            border-color: #dc2626;
-            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-        }
-    </style>
+    .input-error {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="logo">Post a New Job</div>
-        <nav>
-            <a href="#" aria-label="View profile for Jane Doe">Jane Doe</a>
-            <a href="#" aria-label="Go to profile">Profile</a>
-            <a href="#" aria-label="Log out">Logout</a>
-        </nav>
-    </header>
+<!-- Header -->
+<header>
+    <div class="logo">Post a New Job</div>
+    <nav>
+        <a href="#" aria-label="View profile for Jane Doe">Jane Doe</a>
+        <a href="#" aria-label="Go to profile">Profile</a>
+        <a href="#" aria-label="Log out">Logout</a>
+    </nav>
+</header>
 
-    <!-- Form Container -->
-    <div class="container">
-        <div id="success-message" class="success-message"></div>
-        <form action="{% url 'job_posting' %}" method="POST" class="styled-form" id="job-form" hx-post="{% url 'job_posting' %}" hx-target="#job-form" hx-swap="outerHTML">
-            {% csrf_token %}
-            <!-- Job Overview -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Job Overview</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="position-title">Position Title</label>
-                            <select id="position-title" name="job_details[position_title]" onchange="toggleNewInput(this, 'position-title-new')">
-                                <option value="Software Engineer">Software Engineer</option>
-                                <option value="Product Manager">Product Manager</option>
-                                <option value="Data Analyst">Data Analyst</option>
-                                <option value="add-new">Add New...</option>
-                            </select>
-                            <input type="text" id="position-title-new" name="job_details[position_title_new]" class="hidden mt-2" placeholder="Enter new title">
-                            <div id="position-title-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="department">Department</label>
-                            <select id="department" name="job_details[department]" onchange="toggleNewInput(this, 'department-new')">
-                                <option value="Engineering">Engineering</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Sales">Sales</option>
-                                <option value="add-new">Add New...</option>
-                            </select>
-                            <input type="text" id="department-new" name="job_details[department_new]" class="hidden mt-2" placeholder="Enter new department">
-                            <div id="department-error" class="error"></div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="job-description">Job Description</label>
-                            <textarea id="job-description" name="job_details[job_description]" placeholder="Describe the role in detail..."></textarea>
-                            <div id="job-description-error" class="error"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Skills & Threshold -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Skills & Match Threshold</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label>Technical Skills</label>
-                            <div class="skills-container" id="technical-skills-container">
-                                <div class="selected-skills" id="technical-skills"></div>
-                                <input type="text" id="technical-skills-input" placeholder="e.g., Python" oninput="showSkillSuggestions(this, 'technical')" aria-label="Add technical skill">
-                                <div class="suggestions hidden" id="technical-suggestions"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <label>Soft Skills</label>
-                            <div class="skills-container" id="soft-skills-container">
-                                <div class="selected-skills" id="soft-skills"></div>
-                                <input type="text" id="soft-skills-input" placeholder="e.g., Communication" oninput="showSkillSuggestions(this, 'soft')" aria-label="Add soft skill">
-                                <div class="suggestions hidden" id="soft-suggestions"></div>
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="threshold">Resume Match Threshold</label>
-                            <input type="range" id="threshold" name="requirements[threshold]" min="0" max="100" value="80" oninput="updateThreshold(this)">
-                            <div class="flex items-center gap-2 mt-2">
-                                <span id="threshold-value" class="text-lg font-semibold text-#4caf50">80%</span>
-                                <span class="text-sm text-gray-500">Candidates below this will be filtered out</span>
-                            </div>
-                            <div id="threshold-error" class="error"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Experience -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Experience</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div id="experience-container" class="space-y-6"></div>
-                    <button type="button" onclick="addExperience()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Experience
-                    </button>
-                </div>
-            </section>
-
-            <!-- Education & Certifications -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Education & Certifications</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div id="education-container" class="space-y-6"></div>
-                    <button type="button" onclick="addEducation()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Education
-                    </button>
-                    <div id="certification-container" class="space-y-6 mt-6"></div>
-                    <button type="button" onclick="addCertification()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Certification
-                    </button>
-                </div>
-            </section>
-
-            <!-- Job Logistics -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Job Logistics</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="job-type">Job Type</label>
-                            <select id="job-type" name="job_type[type]">
-                                <option value="Permanent">Permanent</option>
-                                <option value="Contract">Contract</option>
-                                <option value="Internship">Internship</option>
-                            </select>
-                            <div id="job-type-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="work-arrangement">Work Arrangement</label>
-                            <select id="work-arrangement" name="job_type[work_arrangement]" onchange="toggleLocation()">
-                                <option value="Remote">Remote</option>
-                                <option value="Hybrid">Hybrid</option>
-                                <option value="Onsite">Onsite</option>
-                            </select>
-                            <div id="work-arrangement-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="openings">Number of Openings</label>
-                            <input type="number" id="openings" name="job_type[openings]" min="1" placeholder="e.g., 2">
-                            <div id="openings-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="min-salary">Minimum Salary</label>
-                            <input type="number" id="min-salary" name="compensation[min_salary]" placeholder="e.g., 50000">
-                            <div id="salary-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="max-salary">Maximum Salary</label>
-                            <input type="number" id="max-salary" name="compensation[max_salary]" placeholder="e.g., 80000">
-                        </div>
-                        <div>
-                            <label for="currency">Currency</label>
-                            <select id="currency" name="compensation[currency]">
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                            </select>
-                            <div id="currency-error" class="error"></div>
-                        </div>
-                        <div id="location-container" class="hidden md:col-span-2">
-                            <label for="location">Location</label>
-                            <input type="text" id="location" name="compensation[location]" placeholder="e.g., New York, NY">
-                            <div id="location-error" class="error"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Additional Details -->
-            <section class="form-section">
-                <div class="section-header" onclick="toggleSection(this)">
-                    <h2>Additional Details</h2>
-                    <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div class="section-content expanded">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="start-date">Start Date</label>
-                            <input type="date" id="start-date" name="additional_info[start_date]">
-                            <div id="start-date-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="company-name">Company Name</label>
-                            <input type="text" id="company-name" name="company_details[name]" placeholder="e.g., TechCorp">
-                            <div id="company-name-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="company-website">Company Website</label>
-                            <input type="url" id="company-website" name="company_details[website]" placeholder="e.g., https://techcorp.com">
-                            <div id="company-website-error" class="error"></div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="company-overview">Company Overview</label>
-                            <textarea id="company-overview" name="company_details[overview]" placeholder="Tell us about your company..."></textarea>
-                            <div id="company-overview-error" class="error"></div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="benefits-offered">Benefits</label>
-                            <textarea id="benefits-offered" name="benefits[offered]" placeholder="e.g., Health insurance, Flexible hours..."></textarea>
-                            <div id="benefits-offered-error" class="error"></div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="contact-information">Contact Information</label>
-                            <input type="text" id="contact-information" name="additional_info[contact_information]" placeholder="e.g., hr@techcorp.com, (123) 456-7890">
-                            <div id="contact-information-error" class="error"></div>
-                        </div>
-                        <div>
-                            <label for="posting-status">Posting Status</label>
-                            <select id="posting-status" name="additional_info[posting_status]">
-                                <option value="Draft">Draft</option>
-                                <option value="Active">Active</option>
-                                <option value="Closed">Closed</option>
-                            </select>
-                            <div id="posting-status-error" class="error"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Form Footer -->
-            <div class="form-footer">
-                <button type="submit" class="btn" id="submit-btn">Post Job</button>
-                <a href="#" class="btn btn-secondary">Cancel</a>
+<!-- Form Container -->
+<div class="container">
+    <div id="success-message" class="success-message"></div>
+    <form action="{% url 'job_posting' %}" method="POST" class="styled-form" id="job-form" hx-post="{% url 'job_posting' %}" hx-target="#job-form" hx-swap="outerHTML">
+        {% csrf_token %}
+        <!-- Job Overview -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Job Overview</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
-        </form>
-    </div>
+            <div class="section-content expanded">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="position-title">Position Title</label>
+                        <select id="position-title" name="job_details[position_title]" onchange="toggleNewInput(this, 'position-title-new')">
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Product Manager">Product Manager</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="add-new">Add New...</option>
+                        </select>
+                        <input type="text" id="position-title-new" name="job_details[position_title_new]" class="hidden mt-2" placeholder="Enter new title">
+                        <div id="position-title-error" class="error"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="job-description">Job Description</label>
+                        <textarea id="job-description" name="job_details[job_description]" placeholder="Describe the role in detail..."></textarea>
+                        <div id="job-description-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label>Technical Skills</label>
+                        <div class="skills-container" id="technical-skills-container">
+                            <div class="selected-skills" id="technical-skills"></div>
+                            <input type="text" id="technical-skills-input" placeholder="e.g., Python" oninput="showSkillSuggestions(this, 'technical')" aria-label="Add technical skill">
+                            <div class="suggestions hidden" id="technical-suggestions"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Soft Skills</label>
+                        <div class="skills-container" id="soft-skills-container">
+                            <div class="selected-skills" id="soft-skills"></div>
+                            <input type="text" id="soft-skills-input" placeholder="e.g., Communication" oninput="showSkillSuggestions(this, 'soft')" aria-label="Add soft skill">
+                            <div class="suggestions hidden" id="soft-suggestions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- JavaScript -->
-    <script>
-        const technicalSkillsList = ['Python', 'Java', 'JavaScript', 'SQL', 'React'];
-        const softSkillsList = ['Communication', 'Teamwork', 'Leadership', 'Problem Solving'];
+        <!-- Evaluation Criteria -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Evaluation Criteria</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div class="section-content expanded">
+                <p class="text-sm text-gray-600 mb-4">Set the priority level for each component used to evaluate resumes. At least one component must be High.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="tooltip">
+                        <label for="skills-priority">Skills Priority</label>
+                        <select id="skills-priority" name="weights[skills]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Low">Low</option>
+                            <option value="None">None</option>
+                        </select>
+                        <span class="tooltiptext">Technical abilities like Python, JavaScript, etc.</span>
+                        <div id="skills-priority-error" class="error"></div>
+                    </div>
+                    <div class="tooltip">
+                        <label for="experience-priority">Experience Priority</label>
+                        <select id="experience-priority" name="weights[experience]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Low">Low</option>
+                            <option value="None">None</option>
+                        </select>
+                        <span class="tooltiptext">Relevant work history and years of experience.</span>
+                        <div id="experience-priority-error" class="error"></div>
+                    </div>
+                    <div class="tooltip">
+                        <label for="education-priority">Education Priority</label>
+                        <select id="education-priority" name="weights[education]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low" selected>Low</option>
+                            <option value="None">None</option>
+                        </select>
+                        <span class="tooltiptext">Degrees and academic qualifications.</span>
+                        <div id="education-priority-error" class="error"></div>
+                    </div>
+                    <div class="tooltip">
+                        <label for="projects-priority">Projects Priority</label>
+                        <select id="projects-priority" name="weights[projects]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low" selected>Low</option>
+                            <option value="None">None</option>
+                        </select>
+                        <span class="tooltiptext">Relevant projects or portfolios.</span>
+                        <div id="projects-priority-error" class="error"></div>
+                    </div>
+                    <div class="tooltip">
+                        <label for="soft-skills-priority">Soft Skills Priority</label>
+                        <select id="soft-skills-priority" name="weights[soft_skills]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                            <option value="None" selected>None</option>
+                        </select>
+                        <span class="tooltiptext">Interpersonal skills like communication, teamwork.</span>
+                        <div id="soft-skills-priority-error" class="error"></div>
+                    </div>
+                    <div class="tooltip">
+                        <label for="additional-info-priority">Additional Info Priority</label>
+                        <select id="additional-info-priority" name="weights[additional_info]" class="priority-select">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                            <option value="None" selected>None</option>
+                        </select>
+                        <span class="tooltiptext">Certifications, awards, or other relevant details.</span>
+                        <div id="additional-info-priority-error" class="error"></div>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label for="threshold">Resume Match Threshold</label>
+                        <input type="range" id="threshold" name="requirements[threshold]" min="0" max="100" value="80" oninput="updateThreshold(this)">
+                        <div class="flex items-center gap-2 mt-2">
+                            <span id="threshold-value" class="text-lg font-semibold text-#4caf50">80%</span>
+                            <span class="text-sm text-gray-500">Candidates below this will be filtered out</span>
+                        </div>
+                        <div id="threshold-error" class="error"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        function toggleSection(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.toggle-icon');
-            content.classList.toggle('expanded');
-            icon.classList.toggle('expanded');
-        }
+        <!-- Experience -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Experience</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div class="section-content expanded">
+                <div id="experience-container" class="space-y-6"></div>
+                <button type="button" onclick="addExperience()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add Experience
+                </button>
+            </div>
+        </section>
 
-        function toggleNewInput(select, inputId) {
-            const input = document.getElementById(inputId);
-            input.classList.toggle('hidden', select.value !== 'add-new');
-            if (select.value === 'add-new') input.focus();
-        }
+        <!-- Education & Certifications -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Education & Certifications</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div class="section-content expanded">
+                <div id="education-container" class="space-y-6"></div>
+                <button type="button" onclick="addEducation()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add Education
+                </button>
+                <div id="certification-container" class="space-y-6 mt-6"></div>
+                <button type="button" onclick="addCertification()" class="text-#4caf50 hover:text-#3d8b40 font-semibold flex items-center mt-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add Certification
+                </button>
+            </div>
+        </section>
 
-        function showSkillSuggestions(input, type) {
-            const container = input.closest('.skills-container');
-            const suggestionsDiv = container.querySelector('.suggestions');
-            const selectedSkillsDiv = container.querySelector('.selected-skills');
-            const value = input.value.trim().toLowerCase();
-            const skillsList = type === 'technical' ? technicalSkillsList : softSkillsList;
+        <!-- Job Logistics -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Job Logistics</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div class="section-content expanded">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="job-type">Job Type</label>
+                        <select id="job-type" name="job_type[type]">
+                            <option value="Permanent">Permanent</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                        <div id="job-type-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="work-arrangement">Work Arrangement</label>
+                        <select id="work-arrangement" name="job_type[work_arrangement]" onchange="toggleLocation()">
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="Onsite">Onsite</option>
+                        </select>
+                        <div id="work-arrangement-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="openings">Number of Openings</label>
+                        <input type="number" id="openings" name="job_type[openings]" min="1" placeholder="e.g., 2">
+                        <div id="openings-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="min-salary">Minimum Salary</label>
+                        <input type="number" id="min-salary" name="compensation[min_salary]" placeholder="e.g., 50000">
+                        <div id="salary-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="max-salary">Maximum Salary</label>
+                        <input type="number" id="max-salary" name="compensation[max_salary]" placeholder="e.g., 80000">
+                    </div>
+                    <div>
+                        <label for="currency">Currency</label>
+                        <select id="currency" name="compensation[currency]">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                        <div id="currency-error" class="error"></div>
+                    </div>
+                    <div id="location-container" class="hidden md:col-span-2">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="compensation[location]" placeholder="e.g., New York, NY">
+                        <div id="location-error" class="error"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            suggestionsDiv.innerHTML = '';
-            if (value.length > 0) {
-                const filteredSkills = skillsList.filter(skill => 
-                    skill.toLowerCase().includes(value) && 
-                    !Array.from(selectedSkillsDiv.children).some(child => child.dataset.skill === skill)
-                );
-                filteredSkills.forEach(skill => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = skill;
-                    div.onclick = () => addSkill(skill, type);
-                    suggestionsDiv.appendChild(div);
-                });
-                if (!filteredSkills.length && !skillsList.includes(value)) {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = `Add "${value}"`;
-                    div.onclick = () => addSkill(value, type);
-                    suggestionsDiv.appendChild(div);
-                }
-                suggestionsDiv.classList.remove('hidden');
-            } else {
-                suggestionsDiv.classList.add('hidden');
-            }
+        <!-- Additional Details -->
+        <section class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Additional Details</h2>
+                <svg class="toggle-icon expanded" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div class="section-content expanded">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="company-name">Company Name</label>
+                        <input type="text" id="company-name" name="company_details[name]" placeholder="e.g., TechCorp">
+                        <div id="company-name-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="company-website">Company Website</label>
+                        <input type="url" id="company-website" name="company_details[website]" placeholder="e.g., https://techcorp.com">
+                        <div id="company-website-error" class="error"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="company-overview">Company Overview</label>
+                        <textarea id="company-overview" name="company_details[overview]" placeholder="Tell us about your company..."></textarea>
+                        <div id="company-overview-error" class="error"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="benefits-offered">Benefits</label>
+                        <textarea id="benefits-offered" name="benefits[offered]" placeholder="e.g., Health insurance, Flexible hours..."></textarea>
+                        <div id="benefits-offered-error" class="error"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="contact-information">Contact Information</label>
+                        <input type="text" id="contact-information" name="additional_info[contact_information]" placeholder="e.g., hr@techcorp.com, (123) 456-7890">
+                        <div id="contact-information-error" class="error"></div>
+                    </div>
+                    <div>
+                        <label for="posting-status">Posting Status</label>
+                        <select id="posting-status" name="additional_info[posting_status]">
+                            <option value="Draft">Draft</option>
+                            <option value="Active">Active</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                        <div id="posting-status-error" class="error"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            input.onkeydown = e => {
-                if (e.key === 'Enter' && value) {
-                    e.preventDefault();
-                    addSkill(value, type);
-                }
-            };
-            document.addEventListener('click', e => {
-                if (!container.contains(e.target)) suggestionsDiv.classList.add('hidden');
+        <!-- Form Footer -->
+        <div class="form-footer">
+            <button type="submit" class="btn" id="submit-btn">Post Job</button>
+            <a href="#" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+    const technicalSkillsList = ['Python', 'Java', 'JavaScript', 'SQL', 'React'];
+    const softSkillsList = ['Communication', 'Teamwork', 'Leadership', 'Problem Solving'];
+
+    function toggleSection(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.toggle-icon');
+        content.classList.toggle('expanded');
+        icon.classList.toggle('expanded');
+    }
+
+    function toggleNewInput(select, inputId) {
+        const input = document.getElementById(inputId);
+        input.classList.toggle('hidden', select.value !== 'add-new');
+        if (select.value === 'add-new') input.focus();
+    }
+
+    function showSkillSuggestions(input, type) {
+        const container = input.closest('.skills-container');
+        const suggestionsDiv = container.querySelector('.suggestions');
+        const selectedSkillsDiv = container.querySelector('.selected-skills');
+        const value = input.value.trim().toLowerCase();
+        const skillsList = type === 'technical' ? technicalSkillsList : softSkillsList;
+
+        suggestionsDiv.innerHTML = '';
+        if (value.length > 0) {
+            const filteredSkills = skillsList.filter(skill => 
+                skill.toLowerCase().includes(value) && 
+                !Array.from(selectedSkillsDiv.children).some(child => child.dataset.skill === skill)
+            );
+            filteredSkills.forEach(skill => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = skill;
+                div.onclick = () => addSkill(skill, type);
+                suggestionsDiv.appendChild(div);
             });
-        }
-
-        function addSkill(skill, type) {
-            const container = document.getElementById(`${type}-skills-container`);
-            const selectedSkillsDiv = container.querySelector('.selected-skills');
-            const input = container.querySelector('input');
-            const suggestionsDiv = container.querySelector('.suggestions');
-            const skillsList = type === 'technical' ? technicalSkillsList : softSkillsList;
-
-            if (!Array.from(selectedSkillsDiv.children).some(child => child.dataset.skill === skill)) {
-                const tag = document.createElement('div');
-                tag.className = 'skill-tag';
-                tag.dataset.skill = skill;
-                tag.innerHTML = `${skill} <span class="remove" onclick="this.parentElement.remove()">✕</span>`;
-                selectedSkillsDiv.appendChild(tag);
-
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = `requirements[${type}_skills][]`;
-                hiddenInput.value = skill;
-                selectedSkillsDiv.appendChild(hiddenInput);
-
-                if (!skillsList.includes(skill)) skillsList.push(skill);
+            if (!filteredSkills.length && !skillsList.includes(value)) {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = `Add "${value}"`;
+                div.onclick = () => addSkill(value, type);
+                suggestionsDiv.appendChild(div);
             }
-
-            input.value = '';
+            suggestionsDiv.classList.remove('hidden');
+        } else {
             suggestionsDiv.classList.add('hidden');
         }
 
-        function updateThreshold(slider) {
-            const value = slider.value;
-            slider.style.setProperty('--value', `${value}%`);
-            document.getElementById('threshold-value').textContent = `${value}%`;
+        input.onkeydown = e => {
+            if (e.key === 'Enter' && value) {
+                e.preventDefault();
+                addSkill(value, type);
+            }
+        };
+        document.addEventListener('click', e => {
+            if (!container.contains(e.target)) suggestionsDiv.classList.add('hidden');
+        });
+    }
+
+    function addSkill(skill, type) {
+        const container = document.getElementById(`${type}-skills-container`);
+        const selectedSkillsDiv = container.querySelector('.selected-skills');
+        const input = container.querySelector('input');
+        const suggestionsDiv = container.querySelector('.suggestions');
+        const skillsList = type === 'technical' ? technicalSkillsList : softSkillsList;
+
+        if (!Array.from(selectedSkillsDiv.children).some(child => child.dataset.skill === skill)) {
+            const tag = document.createElement('div');
+            tag.className = 'skill-tag';
+            tag.dataset.skill = skill;
+            tag.innerHTML = `${skill} <span class="remove" onclick="this.parentElement.remove()">✕</span>`;
+            selectedSkillsDiv.appendChild(tag);
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `requirements[${type}_skills][]`;
+            hiddenInput.value = skill;
+            selectedSkillsDiv.appendChild(hiddenInput);
+
+            if (!skillsList.includes(skill)) skillsList.push(skill);
         }
 
-        function toggleLocation() {
-            const workArrangement = document.getElementById('work-arrangement').value;
-            const locationContainer = document.getElementById('location-container');
-            locationContainer.classList.toggle('hidden', workArrangement === 'Remote');
-        }
+        input.value = '';
+        suggestionsDiv.classList.add('hidden');
+    }
 
-        let expCount = 0;
-        function addExperience() {
-            const container = document.getElementById('experience-container');
-            const entry = document.createElement('div');
-            entry.className = 'experience-entry grid grid-cols-1 md:grid-cols-3 gap-4 relative';
-            entry.innerHTML = `
-                <div>
-                    <label>Role</label>
-                    <select name="experience[${expCount}][role]" onchange="toggleNewInput(this, 'role-new-${expCount}')">
-                        <option value="Developer">Developer</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Analyst">Analyst</option>
-                        <option value="add-new">Add New...</option>
-                    </select>
-                    <input type="text" id="role-new-${expCount}" name="experience[${expCount}][role_new]" class="hidden mt-2" placeholder="Enter new role">
-                </div>
-                <div>
-                    <label>Years</label>
-                    <input type="number" name="experience[${expCount}][years]" min="0" placeholder="e.g., 3">
-                </div>
-                <div>
-                    <label>Industry</label>
-                    <input type="text" name="experience[${expCount}][industry]" placeholder="e.g., Tech">
-                </div>
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove experience">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            `;
-            container.appendChild(entry);
-            expCount++;
-        }
+    function updateThreshold(slider) {
+        const value = slider.value;
+        slider.style.setProperty('--value', `${value}%`);
+        document.getElementById('threshold-value').textContent = `${value}%`;
+    }
 
-        let eduCount = 0;
-        function addEducation() {
-            const container = document.getElementById('education-container');
-            const entry = document.createElement('div');
-            entry.className = 'education-entry grid grid-cols-1 gap-4 relative';
-            entry.innerHTML = `
-                <div>
-                    <label>Degree</label>
-                    <select name="education[${eduCount}][degree]" onchange="toggleNewInput(this, 'degree-new-${eduCount}')">
-                        <option value="Bachelor's">Bachelor's</option>
-                        <option value="Master's">Master's</option>
-                        <option value="PhD">PhD</option>
-                        <option value="add-new">Add New...</option>
-                    </select>
-                    <input type="text" id="degree-new-${eduCount}" name="education[${eduCount}][degree_new]" class="hidden mt-2" placeholder="Enter new degree">
-                </div>
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove education">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            `;
-            container.appendChild(entry);
-            eduCount++;
-        }
+    function toggleLocation() {
+        const workArrangement = document.getElementById('work-arrangement').value;
+        const locationContainer = document.getElementById('location-container');
+        locationContainer.classList.toggle('hidden', workArrangement === 'Remote');
+    }
 
-        let certCount = 0;
-        function addCertification() {
-            const container = document.getElementById('certification-container');
-            const entry = document.createElement('div');
-            entry.className = 'certification-entry grid grid-cols-1 md:grid-cols-2 gap-4 relative';
-            entry.innerHTML = `
-                <div>
-                    <label>Certification</label>
-                    <input type="text" name="certifications[${certCount}][name]" placeholder="e.g., AWS Certified">
-                </div>
-                <div>
-                    <label>Issuer</label>
-                    <input type="text" name="certifications[${certCount}][issuer]" placeholder="e.g., Amazon">
-                </div>
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove certification">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            `;
-            container.appendChild(entry);
-            certCount++;
-        }
+    let expCount = 0;
+    function addExperience() {
+        const container = document.getElementById('experience-container');
+        const entry = document.createElement('div');
+        entry.className = 'experience-entry grid grid-cols-1 md:grid-cols-2 gap-4 relative';
+        entry.innerHTML = `
+            <div>
+                <label>Role</label>
+                <select name="experience[${expCount}][role]" onchange="toggleNewInput(this, 'role-new-${expCount}')">
+                    <option value="Developer">Developer</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Analyst">Analyst</option>
+                    <option value="add-new">Add New...</option>
+                </select>
+                <input type="text" id="role-new-${expCount}" name="experience[${expCount}][role_new]" class="hidden mt-2" placeholder="Enter new role">
+            </div>
+            <div>
+                <label>Years</label>
+                <input type="number" name="experience[${expCount}][years]" min="0" placeholder="e.g., 3">
+            </div>
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove experience">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        `;
+        container.appendChild(entry);
+        expCount++;
+    }
 
-        // Handle form submission and validation feedback
-        document.getElementById('job-form').addEventListener('htmx:afterRequest', function(event) {
-            const response = event.detail.xhr.response;
+    let eduCount = 0;
+    function addEducation() {
+        const container = document.getElementById('education-container');
+        const entry = document.createElement('div');
+        entry.className = 'education-entry grid grid-cols-1 gap-4 relative';
+        entry.innerHTML = `
+            <div>
+                <label>Degree</label>
+                <select name="education[${eduCount}][degree]" onchange="toggleNewInput(this, 'degree-new-${eduCount}')">
+                    <option value="Bachelor's">Bachelor's</option>
+                    <option value="Master's">Master's</option>
+                    <option value="PhD">PhD</option>
+                    <option value="add-new">Add New...</option>
+                </select>
+                <input type="text" id="degree-new-${eduCount}" name="education[${eduCount}][degree_new]" class="hidden mt-2" placeholder="Enter new degree">
+            </div>
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove education">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        `;
+        container.appendChild(entry);
+        eduCount++;
+    }
+
+    let certCount = 0;
+    function addCertification() {
+        const container = document.getElementById('certification-container');
+        const entry = document.createElement('div');
+        entry.className = 'certification-entry grid grid-cols-1 md:grid-cols-2 gap-4 relative';
+        entry.innerHTML = `
+            <div>
+                <label>Certification</label>
+                <input type="text" name="certifications[${certCount}][name]" placeholder="e.g., AWS Certified">
+            </div>
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Remove certification">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        `;
+        container.appendChild(entry);
+        certCount++;
+    }
+
+    // Validate Priority Selections
+    function validatePriorities() {
+        const selects = document.querySelectorAll('.priority-select');
+        let hasHigh = false;
+        selects.forEach(select => {
+            if (select.value === 'High') hasHigh = true;
+            // Reset error states
+            const errorDiv = document.getElementById(`${select.id}-error`);
+            errorDiv.textContent = '';
+            select.classList.remove('input-error');
+        });
+        if (!hasHigh) {
+            const errorDiv = document.getElementById('skills-priority-error');
+            errorDiv.textContent = 'At least one component must be set to High.';
+            document.getElementById('skills-priority').classList.add('input-error');
+            return false;
+        }
+        return true;
+    }
+
+    // Handle form submission
+    document.getElementById('job-form').addEventListener('submit', function(event) {
+        if (!validatePriorities()) {
+            event.preventDefault();
+        }
+    });
+
+    // Handle HTMX response
+    document.getElementById('job-form').addEventListener('htmx:afterRequest', function(event) {
+        const response = event.detail.xhr.response;
+        console.log('Response:', response); // Log the response for debugging
+        try {
             const data = JSON.parse(response);
 
             // Clear previous errors
@@ -752,23 +867,29 @@
                 addCertification();
                 setTimeout(() => successMsg.style.display = 'none', 5000);
             } else {
-                const errors = data.errors;
+                const errors = data.errors || {};
                 for (const [field, message] of Object.entries(errors)) {
                     const errorDiv = document.getElementById(`${field}-error`);
                     const input = document.getElementById(field) || document.querySelector(`[name*="${field}"]`);
                     if (errorDiv) errorDiv.textContent = message;
                     if (input) input.classList.add('input-error');
                 }
+                if (Object.keys(errors).length === 0) {
+                    console.error('No specific errors returned:', data);
+                }
             }
-        });
+        } catch (e) {
+            console.error('Failed to parse response:', e, response);
+        }
+    });
 
-        window.onload = () => {
-            updateThreshold(document.getElementById('threshold'));
-            toggleLocation();
-            addExperience();
-            addEducation();
-            addCertification();
-        };
-    </script>
+    window.onload = () => {
+        updateThreshold(document.getElementById('threshold'));
+        toggleLocation();
+        addExperience();
+        addEducation();
+        addCertification();
+    };
+</script>
 </body>
 </html>

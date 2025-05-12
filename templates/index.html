@@ -3,8 +3,9 @@
 
 {% block extra_css %}
 <style>
-body.no-scroll {
-        overflow: hidden; /* Prevent scrolling when modal is open */
+    body.no-scroll {
+        overflow: hidden;
+        /* Prevent scrolling when modal is open */
     }
 
     .modal-backdrop {
@@ -126,28 +127,54 @@ body.no-scroll {
     }
 
     .stage-item.active .stage-icon {
-    animation: pulse 1s infinite;
-}
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-.progress-bar {
-    transition: width 0.5s ease-in-out;
-}
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .progress-bar {
+        transition: width 0.5s ease-in-out;
+    }
 
     @keyframes scan {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(3rem); }
-        100% { transform: translateY(0); }
+        0% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(3rem);
+        }
+
+        100% {
+            transform: translateY(0);
+        }
     }
-    
+
     @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
 
     /* Modal styles */
     .modal-content {
@@ -245,18 +272,20 @@ body.no-scroll {
     } */
 
     @media (max-width: 576px) {
-    .modal-dialog {
-        margin: 0.5rem;
-        max-width: 100%;
+        .modal-dialog {
+            margin: 0.5rem;
+            max-width: 100%;
+        }
+
+        .stage-item {
+            width: 48%;
+        }
+
+        .btn {
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
     }
-    .stage-item {
-        width: 48%;
-    }
-    .btn {
-        padding: 0.75rem;
-        font-size: 1rem;
-    }
-}
 
     .badge {
         font-weight: 500;
@@ -352,7 +381,11 @@ body.no-scroll {
         color: var(--text-dark);
     }
 
-    h2, h3, h4, h5, h6 {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         color: var(--text-dark);
         font-weight: 600;
     }
@@ -409,10 +442,12 @@ body.no-scroll {
 {% endblock %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <div class="container-fluid py-4">
     <!-- Search and filters section -->
     <div class="row mb-4">
         <div class="col-12">
+
             <div class="card filter-box">
                 <div class="card-body py-2">
                     <form id="searchForm" class="search-filters" method="GET" action="{% url 'index' %}">
@@ -420,15 +455,17 @@ body.no-scroll {
                             <div class="col-md-5 form-group">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                    <input type="text" class="form-control" id="searchInput" name="search" value="{{ filters.search }}" placeholder="Search jobs by title, skills, or company...">
+                                    <input type="text" class="form-control" id="searchInput" name="search"
+                                        value="{{ filters.search }}"
+                                        placeholder="Search jobs by title, skills, or company...">
                                 </div>
                             </div>
                             <div class="col-md-2 form-group">
                                 <select class="form-select" id="jobType" name="jobType">
                                     <option value="">All Job Types</option>
                                     <option value="Full-time" {% if filters.jobType == "Full-time" %}selected{% endif %}>Full-time</option>
-                                    <option value="Part-time" {% if filters.jobType == "Part-time" %}selected{% endif %}>Part-time</option>
-                                    <option value="Contract" {% if filters.jobType == "Contract" %}selected{% endif %}>Contract</option>
+                                    <option value="Part-time" {% if filters.jobType == "Part-time" %}selected{% endif %}> Part-time</option>
+                                    <option value="Contract" {% if filters.jobType == "Contract" %}selected{% endif %}> Contract</option>
                                     <option value="Internship" {% if filters.jobType == "Internship" %}selected{% endif %}>Internship</option>
                                 </select>
                             </div>
@@ -441,7 +478,8 @@ body.no-scroll {
                                 </select>
                             </div>
                             <div class="col-md-2 form-group">
-                                <input type="text" class="form-control" id="location" name="location" value="{{ filters.location }}" placeholder="Any location">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    value="{{ filters.location }}" placeholder="Any location">
                             </div>
                             <div class="col-md-1 form-group">
                                 <button type="submit" class="btn btn-primary w-100">
@@ -462,24 +500,33 @@ body.no-scroll {
                                     </select>
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input type="number" class="form-control" id="salaryMin" name="salaryMin" value="{{ filters.salaryMin }}" placeholder="Min Salary">
+                                    <input type="number" class="form-control" id="salaryMin" name="salaryMin"
+                                        value="{{ filters.salaryMin }}" placeholder="Min Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
-                                    <input type="number" class="form-control" id="salaryMax" name="salaryMax" value="{{ filters.salaryMax }}" placeholder="Max Salary">
+                                    <input type="number" class="form-control" id="salaryMax" name="salaryMax"
+                                        value="{{ filters.salaryMax }}" placeholder="Max Salary">
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <select class="form-select" id="postedDate" name="postedDate">
                                         <option value="">Any Time</option>
-                                        <option value="1" {% if filters.postedDate == "1" %}selected{% endif %}>Last 24 hours</option>
-                                        <option value="7" {% if filters.postedDate == "7" %}selected{% endif %}>Last 7 days</option>
-                                        <option value="14" {% if filters.postedDate == "14" %}selected{% endif %}>Last 14 days</option>
-                                        <option value="30" {% if filters.postedDate == "30" %}selected{% endif %}>Last 30 days</option>
+                                        <option value="1" {% if filters.postedDate == "1" %}selected{% endif %}>Last 24
+                                            hours</option>
+                                        <option value="7" {% if filters.postedDate == "7" %}selected{% endif %}>Last 7
+                                            days</option>
+                                        <option value="14" {% if filters.postedDate == "14" %}selected{% endif %}>Last 14
+                                            days</option>
+                                        <option value="30" {% if filters.postedDate == "30" %}selected{% endif %}>Last 30
+                                            days</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
+                        
                         <div class="text-center mt-1">
-                            <button class="btn btn-link btn-sm text-decoration-none text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                            <button class="btn btn-link btn-sm text-decoration-none text-muted" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#advancedFilters">
                                 <span class="when-closed">Advanced Filters <i class="bi bi-chevron-down"></i></span>
                                 <span class="when-open">Hide Filters <i class="bi bi-chevron-up"></i></span>
                             </button>
@@ -496,14 +543,18 @@ body.no-scroll {
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0 fw-bold">{{ jobs|length }} Jobs Found</h5>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-sort-down me-1"></i> Newest
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                         <li><a class="dropdown-item active" href="#"><i class="bi bi-calendar me-2"></i>Newest</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-down me-2"></i>Salary (High to Low)</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-up me-2"></i>Salary (Low to High)</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-sort-alpha-down me-2"></i>Company Name (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-down me-2"></i>Salary (High to
+                                Low)</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-arrow-up me-2"></i>Salary (Low to
+                                High)</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-sort-alpha-down me-2"></i>Company Name
+                                (A-Z)</a></li>
                     </ul>
                 </div>
             </div>
@@ -511,7 +562,8 @@ body.no-scroll {
             {% if jobs %}
             <div class="job-list-items">
                 {% for job in jobs %}
-                <div class="job-list-item {% if forloop.first %}active{% endif %}" data-job-id="{{ job.id }}" onclick="showJobDetails('{{ job.id }}')">
+                <div class="job-list-item {% if forloop.first %}active{% endif %}" data-job-id="{{ job.id }}"
+                    onclick="showJobDetails('{{ job.id }}')">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h5 class="mb-1 fw-semibold">{{ job.job_details.position_title }}</h5>
@@ -529,9 +581,10 @@ body.no-scroll {
                     <div class="d-flex justify-content-between align-items-end">
                         <p class="mb-0 fw-medium text-success">
                             <i class="bi bi-currency-dollar"></i>
-                            {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                            {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{job.compensation.max_salary|floatformat:0 }}
                         </p>
-                        <button class="btn btn-sm btn-outline-primary d-md-none" onclick="showJobDetailsMobile('{{ job.id }}', event)">
+                        <button class="btn btn-sm btn-outline-primary d-md-none"
+                            onclick="showJobDetailsMobile('{{ job.id }}', event)">
                             View
                         </button>
                     </div>
@@ -555,7 +608,8 @@ body.no-scroll {
                             <button class="btn btn-sm btn-outline-secondary" onclick="showJobList()">
                                 <i class="bi bi-arrow-left"></i> Back
                             </button>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal"
+                                data-job-id="{{ job.id }}">
                                 <i class="bi bi-send me-1"></i> Apply Now
                             </button>
                         </div>
@@ -567,7 +621,8 @@ body.no-scroll {
                                 <h6 class="card-subtitle text-muted">{{ job.company_details.name }}</h6>
                             </div>
                             <div class="text-end d-none d-md-block">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal"
+                                    data-job-id="{{ job.id }}">
                                     <i class="bi bi-send me-1"></i> Apply Now
                                 </button>
                             </div>
@@ -582,7 +637,7 @@ body.no-scroll {
                             {% endif %}
                             <span class="badge bg-success">
                                 <i class="bi bi-currency-dollar"></i>
-                                {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{ job.compensation.max_salary|floatformat:0 }}
+                                {{ job.compensation.currency }} {{ job.compensation.min_salary|floatformat:0 }} - {{job.compensation.max_salary|floatformat:0 }}
                             </span>
                         </div>
 
@@ -595,7 +650,7 @@ body.no-scroll {
                                     </div>
                                     <div>
                                         <div class="text-muted small">Openings</div>
-                                        <div class="fw-medium">{{ job.job_type.openings }} position{{ job.job_type.openings|pluralize }}</div>
+                                        <div class="fw-medium">{{ job.job_type.openings }} position{{job.job_type.openings|pluralize }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -617,7 +672,8 @@ body.no-scroll {
                                     </div>
                                     <div>
                                         <div class="text-muted small">Location</div>
-                                        <div class="fw-medium">{{ job.compensation.location|default:"Any Location" }}</div>
+                                        <div class="fw-medium">{{ job.compensation.location|default:"Any Location" }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -715,7 +771,8 @@ body.no-scroll {
                                     <p>{{ job.company_details.overview|linebreaks }}</p>
                                     {% endif %}
                                     {% if job.company_details.website %}
-                                    <a href="{{ job.company_details.website }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ job.company_details.website }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-globe me-1"></i> Visit Website
                                     </a>
                                     {% endif %}
@@ -728,7 +785,8 @@ body.no-scroll {
                             <h5 class="fw-semibold mb-2">Interested in this position?</h5>
                             <p>{{ job.additional_info.contact_information|default:"Apply now to join our team and take the next step in your career!" }}</p>
                             <div class="d-grid gap-2 d-md-flex">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="{{ job.id }}">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal"
+                                    data-job-id="{{ job.id }}">
                                     <i class="bi bi-send me-1"></i> Apply Now
                                 </button>
                                 <button class="btn btn-outline-primary">
@@ -757,7 +815,7 @@ body.no-scroll {
         </div>
     </div>
 </div>
- 
+
 
 <!-- Apply Modal -->
 <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
@@ -785,7 +843,8 @@ body.no-scroll {
                     <form id="resumeUploadForm" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="resumeFile" class="form-label">Select Resume (PDF only)</label>
-                            <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf" required>
+                            <input type="file" class="form-control" id="resumeFile" name="resume" accept=".pdf"
+                                required>
                         </div>
                         <input type="hidden" id="jobIdForUpload" name="job_id">
                         <button type="submit" class="btn btn-primary w-100">Submit Application</button>
@@ -796,7 +855,8 @@ body.no-scroll {
                 <div id="existingResumesSection" class="hidden">
                     <h6 class="mb-3">Select a Resume:</h6>
                     <div id="resumeList"></div>
-                    <button class="btn btn-primary w-100 mt-3" id="submitExistingResume" disabled>Submit Application</button>
+                    <button class="btn btn-primary w-100 mt-3" id="submitExistingResume" disabled>Submit
+                        Application</button>
                 </div>
             </div>
         </div>
@@ -814,7 +874,8 @@ body.no-scroll {
                     <div class="progress-circle">
                         <svg width="100" height="100">
                             <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
-                            <circle class="circle-progress" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283" id="progressCircle"></circle>
+                            <circle class="circle-progress" cx="50" cy="50" r="45" stroke-dasharray="283"
+                                stroke-dashoffset="283" id="progressCircle"></circle>
                         </svg>
                         <span id="progressPercent">0%</span>
                     </div>
@@ -844,12 +905,21 @@ body.no-scroll {
 </div>
 
 
+
+
 {% endblock %}
-<!-- 
- block extra_js 
+
+{% block extra_js %}
+
+
+ 
+
+
+
+ 
 <script>
-    // Function to show job details based on id
-    function showJobDetails(jobId) {
+
+function showJobDetails(jobId) {
         document.querySelectorAll('.job-detail-content').forEach(function(el) {
             el.classList.add('hidden');
         });
@@ -860,476 +930,6 @@ body.no-scroll {
         document.querySelector('.job-list-item[data-job-id="' + jobId + '"]').classList.add('active');
         document.getElementById('jobDetailContainer').scrollTop = 0;
     }
-
-    // Mobile view functions
-    function showJobDetailsMobile(jobId, event) {
-        if (event) {
-            event.stopPropagation();
-        }
-        showJobDetails(jobId);
-        document.getElementById('jobListContainer').classList.add('mobile-hidden');
-        document.getElementById('jobDetailContainer').classList.remove('mobile-hidden');
-    }
-
-    function showJobList() {
-        document.getElementById('jobListContainer').classList.remove('mobile-hidden');
-        document.getElementById('jobDetailContainer').classList.add('mobile-hidden');
-    }
-
-    // Toggle advanced filters
-    document.querySelector('[data-bs-toggle="collapse"]').addEventListener('click', function() {
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        document.querySelectorAll('.when-closed').forEach(function(el) {
-            el.style.display = isExpanded ? 'inline-block' : 'none';
-        });
-        document.querySelectorAll('.when-open').forEach(function(el) {
-            el.style.display = isExpanded ? 'none' : 'inline-block';
-        });
-    });
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.when-open').forEach(function(el) {
-            el.style.display = 'none';
-        });
-
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.style.transition = 'all 0.2s ease';
-        });
-
-        // Form submission handler
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            // Form submits normally via GET request
-            // Filters are handled by Django view
-        });
-    });
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    const csrfToken = getCookie('csrftoken');
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.when-open').forEach(function(el) {
-            el.style.display = 'none';
-        });
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.style.transition = 'all 0.2s ease';
-        });
-
-        const applyModal = document.getElementById('applyModal');
-        const uploadNewResumeBtn = document.getElementById('uploadNewResumeBtn');
-        const useExistingResumeBtn = document.getElementById('useExistingResumeBtn');
-        const uploadResumeSection = document.getElementById('uploadResumeSection');
-        const existingResumesSection = document.getElementById('existingResumesSection');
-        const resumeUploadForm = document.getElementById('resumeUploadForm');
-        const submitExistingResumeBtn = document.getElementById('submitExistingResume');
-        let selectedResumeId = null;
-
-        applyModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const jobId = button.getAttribute('data-job-id');
-            document.getElementById('jobIdForUpload').value = jobId;
-            uploadResumeSection.classList.add('hidden');
-            existingResumesSection.classList.add('hidden');
-            submitExistingResumeBtn.disabled = true;
-            selectedResumeId = null;
-        });
-
-        uploadNewResumeBtn.addEventListener('click', function() {
-            uploadResumeSection.classList.remove('hidden');
-            existingResumesSection.classList.add('hidden');
-        });
-
-        useExistingResumeBtn.addEventListener('click', function() {
-            uploadResumeSection.classList.add('hidden');
-            existingResumesSection.classList.remove('hidden');
-
-            fetch('/candidate/resumes/', {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 302 || response.status === 403) {
-                        window.location.href = '/login/';
-                        return null;
-                    }
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                const resumeList = document.getElementById('resumeList');
-                resumeList.innerHTML = '';
-                if (data.success && data.resumes && data.resumes.length > 0) {
-                    data.resumes.forEach(resume => {
-                        const div = document.createElement('div');
-                        div.className = 'resume-list-item';
-                        div.innerHTML = `
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>${resume.name}</span>
-                                <small class="text-muted">${new Date(resume.uploaded_at).toLocaleDateString()}</small>
-                            </div>
-                        `;
-                        div.dataset.resumeId = resume.id;
-                        div.addEventListener('click', function() {
-                            document.querySelectorAll('.resume-list-item').forEach(item => {
-                                item.classList.remove('selected');
-                            });
-                            this.classList.add('selected');
-                            selectedResumeId = this.dataset.resumeId;
-                            submitExistingResumeBtn.disabled = false;
-                        });
-                        resumeList.appendChild(div);
-                    });
-                } else {
-                    resumeList.innerHTML = '<p class="text-muted">No resumes found.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching resumes:', error);
-                document.getElementById('resumeList').innerHTML = '<p class="text-muted">Error loading resumes.</p>';
-            });
-        });
-
-
-        // function showProgressModal() {
-        //     const progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
-        //         backdrop: 'static',
-        //         keyboard: false
-        //     });
-        //     progressModal.show();
-        //     return progressModal;
-        // }
-
-        
-        function showProgressModal() {
-        const progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
-            backdrop: 'static',
-            keyboard: false
-        });
-        document.body.classList.add('no-scroll');
-        progressModal.show();
-        return progressModal;
-        }
-
-
-        function updateProgress(stage, percentage, message) {
-            const progressBar = document.getElementById('progressBar');
-            const progressMessage = document.getElementById('progressMessage');
-            const stageItems = document.querySelectorAll('.stage-item');
-            const scanBeam = document.querySelector('.scan-beam');
-
-
-            const circumference = 283; // 2 * π * 45
-            const offset = circumference - (percentage / 100) * circumference;
-            progressCircle.style.strokeDashoffset = offset;
-            progressPercent.textContent = `${percentage}%`;
-            progressMessage.textContent = message;
-
-            stageItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.stage === stage) {
-                    item.classList.add('active');
-                }
-            });
-
-            scanBeam.classList.toggle('active', stage === 'scanning');
-        }
-
-         const progressModalInstance = null;
- 
-
-    // resumeUploadForm.addEventListener('submit', function(e) {
-    //     e.preventDefault();
-    //     const formData = new FormData(this);
-    //     const progressModal = showProgressModal();
-
-    //     fetch('/candidate/apply/', {
-    //         method: 'POST',
-    //         body: formData,
-    //         headers: {
-    //             'X-CSRFToken': csrfToken
-    //         }
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.success) {
-    //             const resumeId = data.resume_id;
-    //             const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
-
-    //             eventSource.onmessage = function(event) {
-    //                 const data = JSON.parse(event.data);
-    //                 if (data.error) {
-    //                     alert('Error: ' + data.error);
-    //                     eventSource.close();
-    //                     progressModal.hide();
-    //                     bootstrap.Modal.getInstance(applyModal).hide();
-    //                 } else if (data.complete) {
-    //                     eventSource.close();
-    //                     progressModal.hide();
-    //                     bootstrap.Modal.getInstance(applyModal).hide();
-    //                     window.location.href = `/candidate/process_resume/${data.resume_id}/`;
-    //                 } else {
-    //                     updateProgress(data.stage, data.progress, data.message);
-    //                 }
-    //             };
-
-    //             eventSource.onerror = function() {
-    //                 alert('An error occurred while processing your resume');
-    //                 eventSource.close();
-    //                 progressModal.hide();
-    //                 bootstrap.Modal.getInstance(applyModal).hide();
-    //             };
-    //         } else {
-    //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
-    //             progressModal.hide();
-    //             bootstrap.Modal.getInstance(applyModal).hide();
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error submitting resume:', error);
-    //         alert('Error submitting resume: ' + error.message);
-    //         progressModal.hide();
-    //         bootstrap.Modal.getInstance(applyModal).hide();
-    //     });
-    // });
-
-    // submitExistingResumeBtn.addEventListener('click', function() {
-    //     if (selectedResumeId) {
-    //         const jobId = document.getElementById('jobIdForUpload').value;
-    //         const progressModal = showProgressModal();
-
-    //         fetch('/candidate/apply/', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'X-CSRFToken': csrfToken
-    //             },
-    //             body: JSON.stringify({
-    //                 job_id: jobId,
-    //                 resume_id: selectedResumeId
-    //             })
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             if (data.success) {
-    //                 const resumeId = selectedResumeId;
-    //                 const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
-
-    //                 eventSource.onmessage = function(event) {
-    //                     const data = JSON.parse(event.data);
-    //                     if (data.error) {
-    //                         alert('Error: ' + data.error);
-    //                         eventSource.close();
-    //                         progressModal.hide();
-    //                         bootstrap.Modal.getInstance(applyModal).hide();
-    //                     } else if (data.complete) {
-    //                         eventSource.close();
-    //                         progressModal.hide();
-    //                         bootstrap.Modal.getInstance(applyModal).hide();
-    //                         window.location.href = `/candidate/process_resume/${data.resume_id}/`;
-    //                     } else {
-    //                         updateProgress(data.stage, data.progress, data.message);
-    //                     }
-    //                 };
-
-    //                 eventSource.onerror = function() {
-    //                     alert('An error occurred while processing your resume');
-    //                     eventSource.close();
-    //                     progressModal.hide();
-    //                     bootstrap.Modal.getInstance(applyModal).hide();
-    //                 };
-    //             } else {
-    //                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
-    //                 progressModal.hide();
-    //                 bootstrap.Modal.getInstance(applyModal).hide();
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error('Error submitting with existing resume:', error);
-    //             alert('Error: ' + error.message);
-    //             progressModal.hide();
-    //             bootstrap.Modal.getInstance(applyModal).hide();
-    //         });
-    //     }
-    // });
-   
-
-
-    resumeUploadForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    const progressModal = showProgressModal();
-
-    fetch('/candidate/apply/', {
-        method: 'POST',
-        body: formData,
-        headers: {'X-CSRFToken': csrfToken}
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            bootstrap.Modal.getInstance(applyModal).hide();
-            window.location.href = `/candidate/process_resume/${data.resume_id}/`;  // Redirect to processing page
-        } else {
-            alert('Error submitting application: ' + (data.error || 'Unknown error'));
-            progressModal.hide();
-            bootstrap.Modal.getInstance(applyModal).hide();
-        }
-    })
-    .catch(error => {
-        console.error('Error submitting resume:', error);
-        alert('Error submitting resume: ' + error.message);
-        progressModal.hide();
-        bootstrap.Modal.getInstance(applyModal).hide();
-    });
-});
-
-
-    // resumeUploadForm.addEventListener('submit', function(e) {
-    //     e.preventDefault();
-    //     const formData = new FormData(this);
-    //     const progressModal = showProgressModal();
-
-    //     fetch('/candidate/apply/', {
-    //         method: 'POST',
-    //         body: formData,
-    //         headers: {'X-CSRFToken': csrfToken}
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.success) {
-    //             const resumeId = data.resume_id;
-    //             bootstrap.Modal.getInstance(applyModal).hide(); // Close apply modal immediately
-    //             const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
-
-    //             eventSource.onmessage = function(event) {
-    //                 const data = JSON.parse(event.data);
-    //                 if (data.error) {
-    //                     alert('Error: ' + data.error);
-    //                     eventSource.close();
-    //                     progressModal.hide();
-    //                 } else if (data.complete) {
-    //                     eventSource.close();
-    //                     progressModal.hide();
-    //                     window.location.href = `/candidate/process_resume/${data.resume_id}/`; // Redirect instantly
-    //                 } else {
-    //                     updateProgress(data.stage, data.progress, data.message);
-    //                 }
-    //             };
-
-    //             eventSource.onerror = function() {
-    //                 alert('An error occurred while processing your resume');
-    //                 eventSource.close();
-    //                 progressModal.hide();
-    //             };
-    //         } else {
-    //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
-    //             progressModal.hide();
-    //             bootstrap.Modal.getInstance(applyModal).hide();
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error submitting resume:', error);
-    //         alert('Error submitting resume: ' + error.message);
-    //         progressModal.hide();
-    //         bootstrap.Modal.getInstance(applyModal).hide();
-    //     });
-    // });
-
-
-
-    
-    submitExistingResumeBtn.addEventListener('click', function() {
-        if (selectedResumeId) {
-            const jobId = document.getElementById('jobIdForUpload').value;
-            const progressModal = showProgressModal();
-
-            fetch('/candidate/apply/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const resumeId = selectedResumeId;
-                    bootstrap.Modal.getInstance(applyModal).hide(); // Close apply modal immediately
-                    const eventSource = new EventSource(`/candidate/process_resume/${resumeId}/`);
-
-                    eventSource.onmessage = function(event) {
-                        const data = JSON.parse(event.data);
-                        if (data.error) {
-                            alert('Error: ' + data.error);
-                            eventSource.close();
-                            progressModal.hide();
-                        } else if (data.complete) {
-                            eventSource.close();
-                            progressModal.hide();
-                            window.location.href = `/candidate/process_resume/${data.resume_id}/`; // Redirect instantly
-                        } else {
-                            updateProgress(data.stage, data.progress, data.message);
-                        }
-                    };
-
-                    eventSource.onerror = function() {
-                        alert('An error occurred while processing your resume');
-                        eventSource.close();
-                        progressModal.hide();
-                    };
-                } else {
-                    alert('Error submitting application: ' + (data.error || 'Unknown error'));
-                    progressModal.hide();
-                    bootstrap.Modal.getInstance(applyModal).hide();
-                }
-            })
-            .catch(error => {
-                console.error('Error submitting with existing resume:', error);
-                alert('Error: ' + error.message);
-                progressModal.hide();
-                bootstrap.Modal.getInstance(applyModal).hide();
-            });
-        }
-    });
-
-
-
-
-
-
-   });
-
- 
-
-
-</script>
-endblock  -->
-
-
-{% block extra_js %}
-<script>
     // Utility function to get CSRF token from cookies
     function getCookie(name) {
         let cookieValue = null;
@@ -1407,7 +1007,7 @@ endblock  -->
     }
 
     // Main event listeners
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Job navigation functions (unchanged from original)
         function showJobDetails(jobId) {
             document.querySelectorAll('.job-detail-content').forEach(el => el.classList.add('hidden'));
@@ -1430,7 +1030,7 @@ endblock  -->
         }
 
         // Toggle advanced filters (unchanged)
-        document.querySelector('[data-bs-toggle="collapse"]').addEventListener('click', function() {
+        document.querySelector('[data-bs-toggle="collapse"]').addEventListener('click', function () {
             const isExpanded = this.getAttribute('aria-expanded') === 'true';
             document.querySelectorAll('.when-closed').forEach(el => {
                 el.style.display = isExpanded ? 'inline-block' : 'none';
@@ -1455,7 +1055,7 @@ endblock  -->
         const submitExistingResumeBtn = document.getElementById('submitExistingResume');
         let selectedResumeId = null;
 
-        applyModal.addEventListener('show.bs.modal', function(event) {
+        applyModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const jobId = button.getAttribute('data-job-id');
             document.getElementById('jobIdForUpload').value = jobId;
@@ -1465,337 +1065,96 @@ endblock  -->
             selectedResumeId = null;
         });
 
-        uploadNewResumeBtn.addEventListener('click', function() {
+        uploadNewResumeBtn.addEventListener('click', function () {
             uploadResumeSection.classList.remove('hidden');
             existingResumesSection.classList.add('hidden');
         });
 
-        useExistingResumeBtn.addEventListener('click', function() {
-            uploadResumeSection.classList.add('hidden');
-            existingResumesSection.classList.remove('hidden');
-            fetch('/candidate/resumes/', {
-                method: 'GET',
-                headers: {'X-CSRFToken': csrfToken}
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 302 || response.status === 403) {
-                        window.location.href = '/login/';
-                        return null;
-                    }
-                    throw new Error('Network response was not ok');
+
+
+ 
+
+
+
+
+        useExistingResumeBtn.addEventListener('click', function () {
+    uploadResumeSection.classList.add('hidden');
+    existingResumesSection.classList.remove('hidden');
+    fetch('/candidate/resumes/', {
+        method: 'GET',
+        headers: { 'X-CSRFToken': csrfToken }
+    })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 302 || response.status === 403) {
+                    window.location.href = '/accounts/login/';
+                    return null;
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                const resumeList = document.getElementById('resumeList');
-                resumeList.innerHTML = '';
-                if (data.success && data.resumes && data.resumes.length > 0) {
-                    data.resumes.forEach(resume => {
-                        const div = document.createElement('div');
-                        div.className = 'resume-list-item';
-                        div.innerHTML = `
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>${resume.name}</span>
-                                <small class="text-muted">${new Date(resume.uploaded_at).toLocaleDateString()}</small>
-                            </div>
-                        `;
-                        div.dataset.resumeId = resume.id;
-                        div.addEventListener('click', function() {
-                            document.querySelectorAll('.resume-list-item').forEach(item => item.classList.remove('selected'));
-                            this.classList.add('selected');
-                            selectedResumeId = this.dataset.resumeId;
-                            submitExistingResumeBtn.disabled = false;
-                        });
-                        resumeList.appendChild(div);
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+            console.log('Resumes response:', data); // Debug full response
+            const resumeList = document.getElementById('resumeList');
+            resumeList.innerHTML = '';
+            if (data.success && data.resumes && data.resumes.length > 0) {
+                data.resumes.forEach(resume => {
+                    const div = document.createElement('div');
+                    div.className = 'resume-list-item';
+                    div.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>${resume.name}</span>
+                            <small class="text-muted">${new Date(resume.uploaded_at).toLocaleDateString()}</small>
+                        </div>
+                    `;
+                    // Try both _id and id, fallback to undefined
+                    div.dataset.resumeId = resume._id || resume.id;
+                    div.addEventListener('click', function () {
+                        document.querySelectorAll('.resume-list-item').forEach(item => item.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedResumeId = this.dataset.resumeId;
+                        submitExistingResumeBtn.disabled = !selectedResumeId || selectedResumeId === 'undefined';
+                        console.log('Selected resume ID:', selectedResumeId);
                     });
-                } else {
-                    resumeList.innerHTML = '<p class="text-muted">No resumes found.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching resumes:', error);
-                document.getElementById('resumeList').innerHTML = '<p class="text-muted">Error loading resumes.</p>';
-            });
+                    resumeList.appendChild(div);
+                });
+            } else {
+                resumeList.innerHTML = '<p class="text-muted">No resumes found.</p>';
+                submitExistingResumeBtn.disabled = true;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching resumes:', error);
+            document.getElementById('resumeList').innerHTML = '<p class="text-muted">Error loading resumes.</p>';
+            submitExistingResumeBtn.disabled = true;
         });
+});
 
 
-        // resumeUploadForm.addEventListener('submit', function(e) {
-        //     e.preventDefault();
-        //     const formData = new FormData(this);
-        //     const progressModal = showProgressModal();
-
-        //     fetch('/candidate/apply/', {
-        //         method: 'POST',
-        //         body: formData,
-        //         headers: {'X-CSRFToken': csrfToken}
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.success) {
-        //             bootstrap.Modal.getInstance(applyModal).hide();
-        //             pollTaskStatus(data.task_id, data.resume_id, progressModal);
-        //         } else {
-        //             alert('Error submitting application: ' + (data.error || 'Unknown error'));
-        //             progressModal.hide();
-        //             document.body.classList.remove('no-scroll');
-        //             bootstrap.Modal.getInstance(applyModal).hide();
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error submitting resume:', error);
-        //         alert('Error submitting resume: ' + error.message);
-        //         progressModal.hide();
-        //         document.body.classList.remove('no-scroll');
-        //         bootstrap.Modal.getInstance(applyModal).hide();
-        //     });
-        // });
-
-        // submitExistingResumeBtn.addEventListener('click', function() {
-        //     if (selectedResumeId) {
-        //         const jobId = document.getElementById('jobIdForUpload').value;
-        //         const progressModal = showProgressModal();
-
-        //         fetch('/candidate/apply/', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRFToken': csrfToken
-        //             },
-        //             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
-        //         })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.success) {
-        //                 bootstrap.Modal.getInstance(applyModal).hide();
-        //                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
-        //             } else {
-        //                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
-        //                 progressModal.hide();
-        //                 document.body.classList.remove('no-scroll');
-        //                 bootstrap.Modal.getInstance(applyModal).hide();
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error submitting with existing resume:', error);
-        //             alert('Error: ' + error.message);
-        //             progressModal.hide();
-        //             document.body.classList.remove('no-scroll');
-        //             bootstrap.Modal.getInstance(applyModal).hide();
-        //         });
-        //     }
-        // });
-  
+ 
 
 
-  
-//      resumeUploadForm.addEventListener('submit', function(e) {
-//     e.preventDefault();
-//     const formData = new FormData(this);
-//     const progressModal = showProgressModal();
-
-//     fetch('/candidate/apply/', {
-//         method: 'POST',
-//         body: formData,
-//         headers: {'X-CSRFToken': csrfToken}
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             return response.text().then(text => {
-//                 throw new Error(`Server returned ${response.status}: ${text}`);
-//             });
-//         }
-//         const contentType = response.headers.get('content-type');
-//         if (!contentType || !contentType.includes('application/json')) {
-//             return response.text().then(text => {
-//                 throw new Error('Invalid response format: Expected JSON, got ' + text);
-//             });
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         if (data.success) {
-//             bootstrap.Modal.getInstance(applyModal).hide();
-//             pollTaskStatus(data.task_id, data.resume_id, progressModal);
-//         } else {
-//             alert('Error submitting application: ' + (data.error || 'Unknown error'));
-//             progressModal.hide();
-//             document.body.classList.remove('no-scroll');
-//             bootstrap.Modal.getInstance(applyModal).hide();
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error submitting resume:', error);
-//         alert('Error submitting resume: ' + error.message);
-//         progressModal.hide();
-//         document.body.classList.remove('no-scroll');
-//         bootstrap.Modal.getInstance(applyModal).hide();
-//     });
-// });
-
-// submitExistingResumeBtn.addEventListener('click', function() {
-//     if (selectedResumeId) {
-//         const jobId = document.getElementById('jobIdForUpload').value;
-//         const progressModal = showProgressModal();
-
-//         fetch('/candidate/apply/', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': csrfToken
-//             },
-//             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 return response.text().then(text => {
-//                     throw new Error(`Server returned ${response.status}: ${text}`);
-//                 });
-//             }
-//             const contentType = response.headers.get('content-type');
-//             if (!contentType || !contentType.includes('application/json')) {
-//                 return response.text().then(text => {
-//                     throw new Error('Invalid response format: Expected JSON, got ' + text);
-//                 });
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             if (data.success) {
-//                 bootstrap.Modal.getInstance(applyModal).hide();
-//                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
-//             } else {
-//                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
-//                 progressModal.hide();
-//                 document.body.classList.remove('no-scroll');
-//                 bootstrap.Modal.getInstance(applyModal).hide();
-//             }
-//         })
-//         .catch(error => {
-//             console.error('Error submitting with existing resume:', error);
-//             alert('Error: ' + error.message);
-//             progressModal.hide();
-//             document.body.classList.remove('no-scroll');
-//             bootstrap.Modal.getInstance(applyModal).hide();
-//         });
-//     }
-// });
-  
-
-resumeUploadForm.addEventListener('submit', function(e) {
+resumeUploadForm.addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(this);
+    const jobId = formData.get('job_id');
+    const resumeFile = formData.get('resume');
+
+    // Log form data for debugging
+    console.log('Submitting new resume with data:', {
+        job_id: jobId,
+        resume: resumeFile ? resumeFile.name : null
+    });
+
     const progressModal = showProgressModal();
 
     fetch('/candidate/apply/', {
         method: 'POST',
         body: formData,
-        headers: {'X-CSRFToken': csrfToken}
+        headers: { 'X-CSRFToken': csrfToken }
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(`Server returned ${response.status}: ${text}`);
-            });
-        }
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            return response.text().then(text => {
-                throw new Error('Invalid response format: Expected JSON, got ' + text);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
-            document.activeElement.blur(); // Remove focus from any element in applyModal
-            applyModalInstance.hide();
-            pollTaskStatus(data.task_id, data.resume_id, progressModal);
-        } else {
-            alert('Error submitting application: ' + (data.error || 'Unknown error'));
-            progressModal.hide();
-            document.body.classList.remove('no-scroll');
-            bootstrap.Modal.getInstance(applyModal).hide();
-        }
-    })
-    .catch(error => {
-        console.error('Error submitting resume:', error);
-        alert('Error submitting resume: ' + error.message);
-        progressModal.hide();
-        document.body.classList.remove('no-scroll');
-        bootstrap.Modal.getInstance(applyModal).hide();
-    });
-});
-
-
-
-// submitExistingResumeBtn.addEventListener('click', function() {
-//     if (selectedResumeId) {
-//         const jobId = document.getElementById('jobIdForUpload').value;
-//         const progressModal = showProgressModal();
-
-//         fetch('/candidate/apply/', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': csrfToken
-//             },
-//             body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 return response.text().then(text => {
-//                     throw new Error(`Server returned ${response.status}: ${text}`);
-//                 });
-//             }
-//             const contentType = response.headers.get('content-type');
-//             if (!contentType || !contentType.includes('application/json')) {
-//                 return response.text().then(text => {
-//                     throw new Error('Invalid response format: Expected JSON, got ' + text);
-//                 });
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             if (data.success) {
-//                 const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
-//                 document.activeElement.blur(); // Remove focus before hiding
-//                 applyModalInstance.hide();
-//                 pollTaskStatus(data.task_id, data.resume_id, progressModal);
-//             } else {
-//                 alert('Error submitting application: ' + (data.error || 'Unknown error'));
-//                 progressModal.hide();
-//                 document.body.classList.remove('no-scroll');
-//                 bootstrap.Modal.getInstance(applyModal).hide();
-//             }
-//         })
-//         .catch(error => {
-//             console.error('Error submitting with existing resume:', error);
-//             alert('Error: ' + error.message);
-//             progressModal.hide();
-//             document.body.classList.remove('no-scroll');
-//             bootstrap.Modal.getInstance(applyModal).hide();
-//         });
-//     }
-// });
-
-
-
-submitExistingResumeBtn.addEventListener('click', function() {
-    if (selectedResumeId) {
-        const jobId = document.getElementById('jobIdForUpload').value;
-        const progressModal = showProgressModal();
-
-        fetch('/candidate/apply/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({job_id: jobId, resume_id: selectedResumeId})
-        })
         .then(response => {
             if (!response.ok) {
                 return response.text().then(text => {
@@ -1815,11 +1174,71 @@ submitExistingResumeBtn.addEventListener('click', function() {
                 const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
                 document.activeElement.blur();
                 applyModalInstance.hide();
+                pollTaskStatus(data.task_id, data.resume_id, progressModal);
+            } else {
+                alert('Error submitting application: ' + (data.error || 'Unknown error'));
+                progressModal.hide();
+                document.body.classList.remove('no-scroll');
+                bootstrap.Modal.getInstance(applyModal).hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting resume:', error);
+            alert('Error submitting resume: ' + error.message);
+            progressModal.hide();
+            document.body.classList.remove('no-scroll');
+            bootstrap.Modal.getInstance(applyModal).hide();
+        });
+});
+
+
+
+
+// For submitExistingResumeBtn (already included above, but repeated for clarity)
+submitExistingResumeBtn.addEventListener('click', function () {
+    if (!selectedResumeId || selectedResumeId === 'undefined') {
+        alert('Please select a valid resume.');
+        return;
+    }
+    const jobId = document.getElementById('jobIdForUpload').value;
+    const progressModal = showProgressModal();
+
+    const formData = new FormData();
+    formData.append('job_id', jobId);
+    formData.append('resume_id', selectedResumeId);
+    formData.append('csrfmiddlewaretoken', csrfToken);
+
+    console.log('Submitting existing resume with data:', {
+        job_id: jobId,
+        resume_id: selectedResumeId
+    });
+
+    fetch('/candidate/apply/', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned ${response.status}: ${text}`);
+                });
+            }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    throw new Error('Invalid response format: Expected JSON, got ' + text);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const applyModalInstance = bootstrap.Modal.getInstance(applyModal);
+                document.activeElement.blur(); // Remove focus
+                applyModalInstance.hide();
                 if (data.task_id) {
-                    // Resume needs processing
                     pollTaskStatus(data.task_id, data.resume_id, progressModal);
                 } else {
-                    // Resume already processed, skip to result
                     progressModal.hide();
                     document.body.classList.remove('no-scroll');
                     window.location.href = `/candidate/process_resume/${data.resume_id}/`;
@@ -1838,12 +1257,13 @@ submitExistingResumeBtn.addEventListener('click', function() {
             document.body.classList.remove('no-scroll');
             bootstrap.Modal.getInstance(applyModal).hide();
         });
-    }
 });
+    });
 
-
-
-  
-  });
 </script>
+
+
+
+
+
 {% endblock %}

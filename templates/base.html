@@ -5,428 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerConnect | Find Your Dream Job</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4CAF50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
-        }
-        
         body {
             font-family: 'Poppins', sans-serif;
-            color: #333;
-            background-color: #f8f9fa;
         }
-        
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 12px 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        html {
+            scroll-behavior: smooth;
         }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: 0.5px;
+        .custom-gradient {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
         }
-        
-        .nav-link {
-            font-weight: 500;
+        .nav-link-underline {
             position: relative;
-            margin: 0 10px;
-            transition: all 0.3s ease;
         }
-        
-        .nav-link:after {
+        .nav-link-underline::after {
             content: '';
             position: absolute;
+            bottom: 0;
+            left: 0;
             width: 0;
             height: 2px;
             background-color: white;
-            left: 0;
-            bottom: -5px;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
-        
-        .nav-link:hover:after {
+        .nav-link-underline:hover::after {
             width: 100%;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-outline-light {
-            border-width: 2px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-outline-light:hover {
-            background-color: rgba(255,255,255,0.1);
-        }
-        
-        .search-bar {
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 25px;
-            background-color: white;
-            margin-top: -30px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .search-bar input, .search-bar select {
-            border-radius: 30px;
-            padding: 10px 20px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .search-btn {
-            border-radius: 30px;
-            padding: 10px 25px;
-            font-weight: 500;
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 120px 0 100px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section h1 {
-            font-weight: 700;
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-        }
-        
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background-color: #f8f9fa;
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-        }
-        
-        .job-card {
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border: none;
-            margin-bottom: 20px;
-        }
-        
-        .job-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .job-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            object-fit: contain;
-            background-color: #f8f9fa;
-            padding: 8px;
-        }
-        
-        .job-tag {
-            font-size: 0.75rem;
-            padding: 3px 12px;
-            border-radius: 30px;
-            font-weight: 500;
-        }
-        
-        .footer {
-            background-color: #2b2d42;
-            color: white;
-            padding: 60px 0 30px;
-            margin-top: 80px;
-        }
-        
-        .footer h5 {
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        
-        .footer-links {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-            text-decoration: underline;
-        }
-        
-        .social-icon {
-            width: 36px;
-            height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 50%;
-            margin-right: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .social-icon:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-3px);
-        }
-        
-        .category-card {
-            text-align: center;
-            padding: 25px 15px;
-            border-radius: 12px;
-            background-color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-        
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .category-icon {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(67, 97, 238, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-        
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 50px;
-            font-weight: 700;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 3px;
-            background-color: var(--primary-color);
-            bottom: -15px;
-            left: 0;
-        }
-        
-        .profile-dropdown .dropdown-menu {
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: none;
-            padding: 15px;
-        }
-        
-        .profile-dropdown .dropdown-item {
-            padding: 8px 15px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        
-        .profile-dropdown .dropdown-item:hover {
-            background-color: rgba(67, 97, 238, 0.1);
-        }
-        
-        .profile-dropdown .dropdown-item i {
-            margin-right: 10px;
-            color: var(--primary-color);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="bg-light text-dark">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">
-                <i class="bi bi-briefcase-fill me-2"></i>CareerConnect
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'jobs' ">Find Jobs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'companies' ">Companies</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' ">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' ">Contact</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center">
-
-                    <!-- <a href=" url 'post_job' " class="btn btn-light me-3">
-                        <i class="bi bi-plus-circle me-2"></i>Post a Job
-                    </a> -->
-                    {% if request.session.mongo_session_id %}
-                    <div class="dropdown profile-dropdown">
-                        <a href="#" class="text-white dropdown-toggle d-flex align-items-center" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-5 me-2"></i>
-                            <span class="d-none d-md-inline">My Account</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="{% url 'candidate_profile' %}"><i class="bi bi-person"></i>My Profile</a></li>
-                            
-                            <li><a class="dropdown-item" href=" url 'my_applications' "><i class="bi bi-file-earmark-text"></i>My Applications</a></li>
-                            <li><a class="dropdown-item" href=" url 'saved_jobs' "><i class="bi bi-bookmark"></i>Saved Jobs</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
-                        </ul>
+    <nav class="custom-gradient shadow-lg sticky-top z-3">
+        <div class="container mx-auto px-1 py-1">
+            <div class="d-flex align-items-center justify-content-between">
+                <a class="text-white fs-4 fw-bold d-flex align-items-center text-decoration-none" href="{% url 'index' %}">
+                    <i class="bi bi-briefcase-fill me-2"></i>SmartHire
+                </a>
+                <button class="d-lg-none text-white border-0 bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+                <div class="collapse-lg d-lg-flex align-items-center" id="navbarNav">
+                    <div class="d-flex flex-column flex-lg-row ms-lg-auto gap-3">
+                        <a class="text-white text-decoration-none nav-link-underline" href="{% url 'jobs' %}">Find Jobs</a>
+                        <a class="text-white text-decoration-none nav-link-underline" href="{% url 'companies' %}">Companies</a>
+                        <a class="text-white text-decoration-none nav-link-underline" href="{% url 'about' %}">About Us</a>
+                        <a class="text-white text-decoration-none nav-link-underline" href="{% url 'contact' %}">Contact</a>
                     </div>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
-                    <!-- <a href="{% url 'register' %}" class="btn btn-light">Sign Up</a> -->
-                    {% endif %}
+                    <div class="d-flex align-items-center mt-3 mt-lg-0 ms-lg-3">
+                        {% if request.session.mongo_session_id %}
+                        <div class="dropdown">
+                            <a href="#" class="text-white d-flex align-items-center text-decoration-none" id="profileDropdown" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle fs-5 me-2"></i>
+                                <span class="d-none d-md-inline">My Account</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end mt-2 w-auto bg-white rounded-3 shadow-lg">
+                                <a class="dropdown-item px-4 py-2 hover-bg-primary d-flex align-items-center" href="{% url 'candidate_profile' %}">
+                                    <i class="bi bi-person me-2 text-primary"></i>My Profile
+                                </a>
+                                <a class="dropdown-item px-4 py-2 hover-bg-primary d-flex align-items-center" href="{% url 'my_applications' %}">
+                                    <i class="bi bi-file-earmark-text me-2 text-primary"></i>My Applications
+                                </a>
+                                <a class="dropdown-item px-4 py-2 hover-bg-primary d-flex align-items-center" href="{% url 'saved_jobs' %}">
+                                    <i class="bi bi-bookmark me-2 text-primary"></i>Saved Jobs
+                                </a>
+                                <hr class="my-2">
+                                <a class="dropdown-item px-4 py-2 hover-bg-primary d-flex align-items-center" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2 text-primary"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light px-4 py-2 rounded-pill">Login</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
+
     <!-- Main content -->
     {% block content %}
-   
-    
-
-    
-
-     
- 
- 
-   
     {% endblock %}
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="bg-dark text-white py-5 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">CareerConnect</h5>
-                    <p class="mt-3">Finding the perfect job match for candidates and helping companies discover top talent.</p>
-                    <div class="mt-4">
-                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                <div class="col-md-3">
+                    <h5 class="fs-5 fw-bold mb-4">CareerConnect</h5>
+                    <p class="text-muted">Finding the perfect job match for candidates and helping companies discover top talent.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5>For Job Seekers</h5>
-                    <ul class="footer-links">
-                        <li><a href=" url 'jobs' ">Browse Jobs</a></li>
-                        <li><a href=" url 'companies' ">Browse Companies</a></li>
-                        <li><a href=" url 'salaries' ">Salary Information</a></li>
-                        <li><a href=" url 'resources' ">Career Resources</a></li>
-                        <li><a href=" url 'faq' ">FAQ</a></li>
+                <div class="col-md-3">
+                    <h5 class="fs-5 fw-bold mb-4">For Job Seekers</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'jobs' %}" class="text-muted text-decoration-none">Browse Jobs</a></li>
+                        <li><a href="{% url 'companies' %}" class="text-muted text-decoration-none">Browse Companies</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Salary Information</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Career Resources</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">FAQ</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5>For Employers</h5>
-                    <ul class="footer-links">
-                        <li><a href=" url 'post_job' ">Post a Job</a></li>
-                        <li><a href=" url 'pricing' ">Pricing</a></li>
-                        <li><a href=" url 'resources_employers' ">Employer Resources</a></li>
-                        <li><a href=" url 'testimonials' ">Testimonials</a></li>
-                        <li><a href=" url 'contact' ">Contact Sales</a></li>
+                <div class="col-md-3">
+                    <h5 class="fs-5 fw-bold mb-4">For Employers</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Post a Job</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Pricing</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Employer Resources</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Testimonials</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-muted text-decoration-none">Contact Sales</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5>Company</h5>
-                    <ul class="footer-links">
-                        <li><a href=" url 'about' ">About Us</a></li>
-                        <li><a href=" url 'contact' ">Contact Us</a></li>
-                        <li><a href=" url 'blog' ">Blog</a></li>
-                        <li><a href=" url 'privacy' ">Privacy Policy</a></li>
-                        <li><a href=" url 'terms' ">Terms of Service</a></li>
+                <div class="col-md-3">
+                    <h5 class="fs-5 fw-bold mb-4">Company</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'about' %}" class="text-muted text-decoration-none">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Blog</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
-            <hr class="my-4 bg-white opacity-25">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; {% now "Y" %} CareerConnect. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                    <div class="d-flex justify-content-md-end justify-content-center">
-                        <a href=" url 'privacy' " class="text-white-50 me-3">Privacy</a>
-                        <a href=" url 'terms' " class="text-white-50 me-3">Terms</a>
-                        <a href=" url 'sitemap' " class="text-white-50">Sitemap</a>
-                    </div>
+            <hr class="my-4 border-secondary">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <p class="text-muted">© {% now "Y" %} CareerConnect. All rights reserved.</p>
+                <div class="d-flex gap-3 mt-3 mt-md-0">
+                    <a href="#" class="text-muted text-decoration-none">Privacy</a>
+                    <a href="#" class="text-muted text-decoration-none">Terms</a>
+                    <a href="#" class="text-muted text-decoration-none">Sitemap</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Back to top button -->
-    <a href="#" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 mb-4 me-4 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 999;">
+    <a href="#" class="btn btn-primary btn-floating position-fixed bottom-0 end-0 m-4 rounded-circle shadow">
         <i class="bi bi-arrow-up"></i>
     </a>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
     <script>
-        // Back to top button visibility
         window.addEventListener('scroll', function() {
-            const backToTopButton = document.querySelector('.btn-primary.rounded-circle');
-            if (window.scrollY > 300) {
-                backToTopButton.style.opacity = '1';
-            } else {
-                backToTopButton.style.opacity = '0';
-            }
-        });
-        
-        // Initialize tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
+            const backToTopButton = document.querySelector('.btn-floating');
+            backToTopButton.style.opacity = window.scrollY > 300 ? '1' : '0';
         });
     </script>
     

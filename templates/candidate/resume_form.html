@@ -1,4 +1,4 @@
-also this:{% extends 'navbar.html' %}
+{% extends 'navbar.html' %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -82,8 +82,10 @@ also this:{% extends 'navbar.html' %}
 <body>
   <div class="container">
     <form action="/candidate/submit_resume/" method="POST">
+      
       {% csrf_token %}
-
+      <input type="hidden" name="pdf_id" value="{{ pdf_id }}">
+      <input type="hidden" name="job_id" value="{{ job_id }}">
       <!-- Tabs Navigation -->
       <ul class="nav nav-pills mb-4" id="resumeTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -259,8 +261,9 @@ also this:{% extends 'navbar.html' %}
 
       <!-- Sticky Footer -->
       <div class="sticky-footer">
-        <button type="submit" class="btn btn-primary">Save Resume</button>
+        <button type="submit" class="btn btn-primary">Submit Application</button>
       </div>
+
     </form>
   </div>
 
