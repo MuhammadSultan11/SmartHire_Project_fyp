@@ -372,8 +372,6 @@ AI-powered interview system:
 | **Muhammad Sultan** | Team Lead / Full Stack Developer |
 | **Asghar Abbasi** | AI Integration / Backend Developer |
 
-**Supervisor:** [Your Supervisor's Name]  
-**Institution:** [Your University Name]  
 **Program:** BS Computer Science  
 **Year:** 2025
 
