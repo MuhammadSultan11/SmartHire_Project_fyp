@@ -11,9 +11,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
+ 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Place API keys directly for reliability
+DEEPGRAM_API_KEY = 'a686195d738500abcfcc384dbee46936bfbaad21'
+# GEMINI_API_KEY = os.getenv('GOOGLE_API_KEY', 'AIzaSyD-4zyapn9l_qoFmfOjvWABsi3F_0wvaTc')
+GEMINI_API_KEY = 'AIzaSyD-4zyapn9l_qoFmfOjvWABsi3F_0wvaTc'
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,6 +52,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'django_htmx',
     'channels',
+    # 'interview_app',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -190,19 +199,24 @@ MONGO_URI = "mongodb+srv://smarthireu1:Devilai075907@smarthirecluster.ldebi.mong
 # MONGO_URI = "mongodb+srv://smarthireuser:Devilai075907@smarthirecluster.ldebi.mongodb.net/?retryWrites=true&w=majority&appName=SmartHireCluster&readPreference=primary"
 
 
-MONGO_CLIENT = pymongo.MongoClient(
-    MONGO_URI,
-    maxPoolSize=50,  # Maximum number of connections
-    minPoolSize=5,   # Minimum number of connections
-    serverSelectionTimeoutMS=5000,  # Reduce timeout to fail fast
-    connectTimeoutMS=30000  # Increase connection timeout
-)
+try:
+    MONGO_CLIENT = pymongo.MongoClient(
+        MONGO_URI,
+        maxPoolSize=50,  # Maximum number of connections
+        minPoolSize=5,   # Minimum number of connections
+        serverSelectionTimeoutMS=2000,  # Reduce timeout to fail fast
+        connectTimeoutMS=5000  # Increase connection timeout
+    )
+    # Ping to check if connection works
+    MONGO_CLIENT.admin.command('ping')
+    print("Connected to MongoDB Atlas successfully.")
+except Exception as e:
+    print(f"MongoDB connection failed: {e}. Falling back to mongomock.")
+    import mongomock
+    MONGO_CLIENT = mongomock.MongoClient()
 
-# MONGO_CLIENT = pymongo.MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT['smarthireDB']  # Database name
 USERS_COLLECTION = MONGO_DB['users']  # Collection name
- 
-# db = client["job_postings_db"]
 jobs_collection = MONGO_DB["jobs"]
 
 

@@ -1,0 +1,1066 @@
+{% extends 'navbar.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Editor | Craft Your Perfect Resume</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-light: #eef2ff;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --dark-color: #1a1a2e;
+      --light-color: #f8f9fa;
+      --success-color: #4bb543;
+      --danger-color: #f72585;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    body {
+      background-color: #f5f7ff;
+      font-family: 'Inter', sans-serif;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    /* Header */
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .editor-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark-color);
+      margin: 0;
+    }
+    
+    .progress-container {
+      width: 200px;
+      background-color: #e9ecef;
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary-color);
+      transition: width 0.4s ease;
+    }
+    
+    /* Tabs */
+    .nav-tabs {
+      border-bottom: none;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    .nav-tabs::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #e9ecef;
+      z-index: 1;
+    }
+    
+    .nav-tabs .nav-item {
+      margin-right: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      color: #6c757d;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      transition: var(--transition);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      color: var(--primary-color);
+      background-color: var(--primary-light);
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      background-color: white;
+      border-bottom: 3px solid var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .nav-tabs .nav-link i {
+      font-size: 1.1rem;
+    }
+    
+    /* Tab Content */
+    .tab-content {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 4rem;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .section-title i {
+      color: var(--primary-color);
+    }
+    
+    /* Form Elements */
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    /* Cards for Sections */
+    .section-card {
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+    
+    .section-card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .card-header {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--primary-light);
+    }
+    
+    /* Scrollable Sections */
+    .scrollable-section {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Custom Scrollbar */
+    .scrollable-section::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scrollable-section::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .scrollable-section::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+    
+    .scrollable-section::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+    }
+    
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #dee2e6;
+    }
+    
+    /* Sticky Footer */
+    .sticky-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+    }
+    
+    .save-btn {
+      min-width: 200px;
+      font-weight: 600;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .nav-tabs .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .tab-content {
+        padding: 1.5rem;
+      }
+      
+      .editor-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .progress-container {
+        width: 100%;
+      }
+    }
+    
+    /* Animation for tab switching */
+    .tab-pane {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Floating action button for mobile */
+    .fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+      z-index: 1000;
+      display: none;
+    }
+    
+    @media (max-width: 576px) {
+      .fab {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form action="/candidate/submit_resume/" method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="pdf_id" value="{{ pdf_id }}">
+      <input type="hidden" name="job_id" value="{{ job_id }}">
+      
+      <!-- Header with Progress -->
+      <div class="editor-header">
+        <h1 class="editor-title">Resume Editor</h1>
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar" style="width: 14%"></div>
+        </div>
+      </div>
+      
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs" id="resumeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">
+            <i class="bi bi-person-fill"></i> Personal
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">
+            <i class="bi bi-file-earmark-text"></i> Summary
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab">
+            <i class="bi bi-tools"></i> Skills
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">
+            <i class="bi bi-briefcase-fill"></i> Experience
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">
+            <i class="bi bi-mortarboard-fill"></i> Education
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">
+            <i class="bi bi-folder-fill"></i> Projects
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="additional-tab" data-bs-toggle="tab" data-bs-target="#additional" type="button" role="tab">
+            <i class="bi bi-info-circle-fill"></i> More
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content" id="resumeTabContent">
+
+        <!-- Personal Information -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-person-lines-fill"></i> Personal Information</h3>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" name="Personal_Information[Name]" 
+                     value="{{ resume.Personal_Information.Name|default:'' }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="role" class="form-label">Professional Role</label>
+              <input type="text" class="form-control" id="role" name="Personal_Information[Role]" 
+                     value="{{ resume.Personal_Information.Role|default:'' }}" placeholder="e.g., Software Engineer">
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" name="Personal_Information[Email]" 
+                     value="{{ resume.Personal_Information.Email|default:'' }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="phone" name="Personal_Information[Phone_number]" 
+                     value="{{ resume.Personal_Information.Phone_number|default:'' }}" placeholder="+1 123 456 7890">
+            </div>
+            <div class="col-12">
+              <label for="linkedin" class="form-label">LinkedIn Profile</label>
+              <input type="url" class="form-control" id="linkedin" name="Personal_Information[LinkedIn]" 
+                     value="{{ resume.Personal_Information.LinkedIn|default:'' }}" placeholder="https://linkedin.com/in/username">
+            </div>
+            <div class="col-md-6">
+              <label for="github" class="form-label">GitHub Profile</label>
+              <input type="url" class="form-control" id="github" name="Personal_Information[GitHub]" 
+                     value="{{ resume.Personal_Information.GitHub|default:'' }}" placeholder="https://github.com/username">
+            </div>
+            <div class="col-md-6">
+              <label for="portfolio" class="form-label">Portfolio Website</label>
+              <input type="url" class="form-control" id="portfolio" name="Personal_Information[Portfolio]" 
+                     value="{{ resume.Personal_Information.Portfolio|default:'' }}" placeholder="https://yourportfolio.com">
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional Summary -->
+        <div class="tab-pane fade" id="summary" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-file-earmark-text-fill"></i> Professional Summary</h3>
+          <div class="mb-3">
+            <label for="summary" class="form-label">Write a compelling summary that highlights your experience and skills</label>
+            <textarea class="form-control" id="summary" name="Professional_Summary" rows="6" 
+                      placeholder="Experienced [Your Profession] with [X] years of experience in [Your Skills/Industry]. Specialized in [Your Specialization]. Proven track record of [Your Achievements]. Passionate about [What Motivates You]. Seeking to leverage my skills in [What You're Looking For].">{{ resume.Professional_Summary|default:'' }}</textarea>
+          </div>
+          <div class="alert alert-info">
+            <i class="bi bi-lightbulb-fill me-2"></i> Tip: Keep your summary concise (3-5 sentences) and focus on your unique value proposition.
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="tab-pane fade" id="skills" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-tools"></i> Skills & Expertise</h3>
+          <div class="mb-3">
+            <label for="skills" class="form-label">List your key skills (separate with commas)</label>
+            <textarea class="form-control" id="skills" name="Skills" rows="6" 
+                      placeholder="JavaScript, Python, React, Project Management, Agile Methodologies, Data Analysis">{{ resume.Skills|default:'' }}</textarea>
+          </div>
+          
+          <!-- Skill Categories -->
+          <!-- <div class="card section-card">
+            <div class="card-header">
+              <span>Skill Categories</span>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="technical-skills" class="form-label">Technical Skills</label>
+                  <input type="text" class="form-control" id="technical-skills" 
+                         placeholder="Programming languages, frameworks, tools">
+                </div>
+                <div class="col-md-6">
+                  <label for="soft-skills" class="form-label">Soft Skills</label>
+                  <input type="text" class="form-control" id="soft-skills" 
+                         placeholder="Communication, leadership, teamwork">
+                </div>
+                <div class="col-md-6">
+                  <label for="languages" class="form-label">Languages</label>
+                  <input type="text" class="form-control" id="languages" 
+                         placeholder="English (Fluent), Spanish (Intermediate)">
+                </div>
+                <div class="col-md-6">
+                  <label for="certifications" class="form-label">Certifications</label>
+                  <input type="text" class="form-control" id="certifications" 
+                         placeholder="AWS Certified, PMP, etc.">
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+
+        </div>
+
+        <!-- Experience -->
+        <div class="tab-pane fade" id="experience" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-briefcase-fill"></i> Work Experience</h3>
+          
+          <div class="scrollable-section" id="experience-container">
+            {% if resume.Experience %}
+              {% for experience in resume.Experience %}
+              <div class="card section-card mb-3">
+                <div class="card-header">
+                  <span>Experience #{{ forloop.counter }}</span>
+                  <button type="button" class="btn btn-sm btn-danger remove-experience">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="job_title_{{ forloop.counter }}" class="form-label">Job Title</label>
+                      <input type="text" class="form-control" id="job_title_{{ forloop.counter }}" 
+                             name="Experience[{{ forloop.counter0 }}][Job_Title]" value="{{ experience.Job_Title|default:'' }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="company_name_{{ forloop.counter }}" class="form-label">Company</label>
+                      <input type="text" class="form-control" id="company_name_{{ forloop.counter }}" 
+                             name="Experience[{{ forloop.counter0 }}][Company_Name]" value="{{ experience.Company_Name|default:'' }}">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="dates_duration_{{ forloop.counter }}" class="form-label">Duration</label>
+                      <input type="text" class="form-control" id="dates_duration_{{ forloop.counter }}" 
+                             name="Experience[{{ forloop.counter0 }}][Dates_Duration]" value="{{ experience.Dates_Duration|default:'' }}" 
+                             placeholder="e.g., Jan 2020 - Present">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="location_{{ forloop.counter }}" class="form-label">Location</label>
+                      <input type="text" class="form-control" id="location_{{ forloop.counter }}" 
+                             name="Experience[{{ forloop.counter0 }}][Location]" value="{{ experience.Location|default:'' }}" 
+                             placeholder="City, Country">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="employment_type_{{ forloop.counter }}" class="form-label">Employment Type</label>
+                      <select class="form-select" id="employment_type_{{ forloop.counter }}" 
+                              name="Experience[{{ forloop.counter0 }}][Employment_Type]">
+                        <option value="">Select type</option>
+                        <option value="Full-time" {% if experience.Employment_Type == "Full-time" %}selected{% endif %}>Full-time</option>
+                        <option value="Part-time" {% if experience.Employment_Type == "Part-time" %}selected{% endif %}>Part-time</option>
+                        <option value="Contract" {% if experience.Employment_Type == "Contract" %}selected{% endif %}>Contract</option>
+                        <option value="Freelance" {% if experience.Employment_Type == "Freelance" %}selected{% endif %}>Freelance</option>
+                        <option value="Internship" {% if experience.Employment_Type == "Internship" %}selected{% endif %}>Internship</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="job_description_{{ forloop.counter }}" class="form-label">Responsibilities & Achievements</label>
+                      <textarea class="form-control" id="job_description_{{ forloop.counter }}" 
+                                name="Experience[{{ forloop.counter0 }}][Job_Description]" rows="4">{{ experience.Job_Description|default:'' }}</textarea>
+                      <div class="form-text">Use bullet points for better readability. Start with action verbs.</div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <i class="bi bi-briefcase"></i>
+                <p>No work experience added yet</p>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-success" id="add-experience">
+              <i class="bi bi-plus-circle"></i> Add Experience
+            </button>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="tab-pane fade" id="education" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-mortarboard-fill"></i> Education</h3>
+          
+          <div class="scrollable-section" id="education-container">
+            {% if resume.Education %}
+              {% for education in resume.Education %}
+              <div class="card section-card mb-3">
+                <div class="card-header">
+                  <span>Education #{{ forloop.counter }}</span>
+                  <button type="button" class="btn btn-sm btn-danger remove-education">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="degree_{{ forloop.counter }}" class="form-label">Degree</label>
+                      <input type="text" class="form-control" id="degree_{{ forloop.counter }}" 
+                             name="Education[{{ forloop.counter0 }}][Degree]" value="{{ education.Degree_Name|default:'' }}" 
+                             placeholder="e.g., Bachelor of Science in Computer Science">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="institution_{{ forloop.counter }}" class="form-label">Institution</label>
+                      <input type="text" class="form-control" id="institution_{{ forloop.counter }}" 
+                             name="Education[{{ forloop.counter0 }}][Institution]" value="{{ education.Institution_Name|default:'' }}" 
+                             placeholder="University Name">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="dates_{{ forloop.counter }}" class="form-label">Graduation Date</label>
+                      <input type="text" class="form-control" id="dates_{{ forloop.counter }}" 
+                             name="Education[{{ forloop.counter0 }}][Dates]" value="{{ education.Years_of_Study|default:'' }}" 
+                             placeholder="e.g., May 2020">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="location_{{ forloop.counter }}" class="form-label">Location</label>
+                      <input type="text" class="form-control" id="location_{{ forloop.counter }}" 
+                             name="Education[{{ forloop.counter0 }}][Location]" value="{{ education.Location|default:'' }}" 
+                             placeholder="City, Country">
+                    </div>
+                    <div class="col-md-4">
+                      <label for="gpa_{{ forloop.counter }}" class="form-label">GPA/Score</label>
+                      <input type="text" class="form-control" id="gpa_{{ forloop.counter }}" 
+                             name="Education[{{ forloop.counter0 }}][GPA]" value="{{ education.GPA|default:'' }}" 
+                             placeholder="e.g., 3.8/4.0">
+                    </div>
+<!-- 
+                    <div class="col-12">
+                      <label for="achievements_{{ forloop.counter }}" class="form-label">Notable Achievements</label>
+                      <textarea class="form-control" id="achievements_{{ forloop.counter }}" 
+                                name="Education[{{ forloop.counter0 }}][Achievements]" rows="2">{{ education.Achievements|default:'' }}</textarea>
+                    </div> -->
+
+
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <i class="bi bi-mortarboard"></i>
+                <p>No education entries added yet</p>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-success" id="add-education">
+              <i class="bi bi-plus-circle"></i> Add Education
+            </button>
+          </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="tab-pane fade" id="projects" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-folder-fill"></i> Projects</h3>
+          
+          <div class="scrollable-section" id="projects-container">
+            {% if resume.Projects %}
+              {% for project in resume.Projects %}
+              <div class="card section-card mb-3">
+                <div class="card-header">
+                  <span>Project #{{ forloop.counter }}</span>
+                  <button type="button" class="btn btn-sm btn-danger remove-project">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="project_name_{{ forloop.counter }}" class="form-label">Project Name</label>
+                      <input type="text" class="form-control" id="project_name_{{ forloop.counter }}" 
+                             name="Projects[{{ forloop.counter0 }}][Name]" value="{{ project.Project_Title|default:'' }}">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="project_url_{{ forloop.counter }}" class="form-label">Project URL</label>
+                      <input type="url" class="form-control" id="project_url_{{ forloop.counter }}" 
+                             name="Projects[{{ forloop.counter0 }}][URL]" value="{{ project.URL|default:'' }}" 
+                             placeholder="https://github.com/yourproject">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="project_technologies_{{ forloop.counter }}" class="form-label">Technologies Used</label>
+                      <input type="text" class="form-control" id="project_technologies_{{ forloop.counter }}" 
+                             name="Projects[{{ forloop.counter0 }}][Technologies]" value="{{ project.Technologies|default:'' }}" 
+                             placeholder="React, Node.js, MongoDB">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="project_date_{{ forloop.counter }}" class="form-label">Project Date</label>
+                      <input type="text" class="form-control" id="project_date_{{ forloop.counter }}" 
+                             name="Projects[{{ forloop.counter0 }}][Date]" value="{{ project.Date|default:'' }}" 
+                             placeholder="e.g., Jan 2022 - Mar 2022">
+                    </div>
+                    <div class="col-12">
+                      <label for="project_description_{{ forloop.counter }}" class="form-label">Project Description</label>
+                      <textarea class="form-control" id="project_description_{{ forloop.counter }}" 
+                                name="Projects[{{ forloop.counter0 }}][Description]" rows="4">{{ project.Project_Description|default:'' }}</textarea>
+                      <div class="form-text">Describe the project, your role, technologies used, and outcomes.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <i class="bi bi-folder"></i>
+                <p>No projects added yet</p>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-success" id="add-project">
+              <i class="bi bi-plus-circle"></i> Add Project
+            </button>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="tab-pane fade" id="additional" role="tabpanel">
+          <h3 class="section-title"><i class="bi bi-info-circle-fill"></i> Additional Information</h3>
+          
+          <div class="mb-4">
+            <label for="additional_info" class="form-label">Additional Notes</label>
+            <textarea class="form-control" id="additional_info" name="Additional_Information" rows="5" 
+                      placeholder="Any other information you'd like to include (certifications, volunteer work, hobbies, etc.)">{{ resume.Additional_Information|default:'' }}</textarea>
+          </div>
+           
+
+          
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sticky Footer -->
+  <div class="sticky-footer">
+    <div class="footer-content">
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="bi bi-eye"></i> Preview Resume
+      </button>
+      <button type="submit" class="btn btn-primary save-btn">
+        <i class="bi bi-check-circle"></i> Submit Application
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating Action Button (Mobile) -->
+  <button class="fab">
+    <i class="bi bi-check-lg"></i>
+  </button>
+
+  <!-- Templates for Dynamic Addition -->
+  <div id="experience-template" style="display: none;">
+    <div class="card section-card mb-3">
+      <div class="card-header">
+        <span>Experience #<span class="job-number"></span></span>
+        <button type="button" class="btn btn-sm btn-danger remove-experience">
+          <i class="bi bi-trash"></i> Remove
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="job_title_" class="form-label">Job Title</label>
+            <input type="text" class="form-control" id="job_title_" name="Experience[][Job_Title]">
+          </div>
+          <div class="col-md-6">
+            <label for="company_name_" class="form-label">Company</label>
+            <input type="text" class="form-control" id="company_name_" name="Experience[][Company_Name]">
+          </div>
+          <div class="col-md-4">
+            <label for="dates_duration_" class="form-label">Duration</label>
+            <input type="text" class="form-control" id="dates_duration_" name="Experience[][Dates_Duration]" placeholder="e.g., Jan 2020 - Present">
+          </div>
+          <div class="col-md-4">
+            <label for="location_" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location_" name="Experience[][Location]" placeholder="City, Country">
+          </div>
+          <div class="col-md-4">
+            <label for="employment_type_" class="form-label">Employment Type</label>
+            <select class="form-select" id="employment_type_" name="Experience[][Employment_Type]">
+              <option value="">Select type</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Internship">Internship</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label for="job_description_" class="form-label">Responsibilities & Achievements</label>
+            <textarea class="form-control" id="job_description_" name="Experience[][Job_Description]" rows="4"></textarea>
+            <div class="form-text">Use bullet points for better readability. Start with action verbs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="education-template" style="display: none;">
+    <div class="card section-card mb-3">
+      <div class="card-header">
+        <span>Education #<span class="education-number"></span></span>
+        <button type="button" class="btn btn-sm btn-danger remove-education">
+          <i class="bi bi-trash"></i> Remove
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="degree_" class="form-label">Degree</label>
+            <input type="text" class="form-control" id="degree_" name="Education[][Degree]" placeholder="e.g., Bachelor of Science in Computer Science">
+          </div>
+          <div class="col-md-6">
+            <label for="institution_" class="form-label">Institution</label>
+            <input type="text" class="form-control" id="institution_" name="Education[][Institution]" placeholder="University Name">
+          </div>
+          <div class="col-md-4">
+            <label for="dates_" class="form-label">Graduation Date</label>
+            <input type="text" class="form-control" id="dates_" name="Education[][Dates]" placeholder="e.g., May 2020">
+          </div>
+          <div class="col-md-4">
+            <label for="location_" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location_" name="Education[][Location]" placeholder="City, Country">
+          </div>
+          <div class="col-md-4">
+            <label for="gpa_" class="form-label">GPA/Score</label>
+            <input type="text" class="form-control" id="gpa_" name="Education[][GPA]" placeholder="e.g., 3.8/4.0">
+          </div>
+          <div class="col-12">
+            <label for="achievements_" class="form-label">Notable Achievements</label>
+            <textarea class="form-control" id="achievements_" name="Education[][Achievements]" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="project-template" style="display: none;">
+    <div class="card section-card mb-3">
+      <div class="card-header">
+        <span>Project #<span class="project-number"></span></span>
+        <button type="button" class="btn btn-sm btn-danger remove-project">
+          <i class="bi bi-trash"></i> Remove
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="project_name_" class="form-label">Project Name</label>
+            <input type="text" class="form-control" id="project_name_" name="Projects[][Name]">
+          </div>
+          <div class="col-md-6">
+            <label for="project_url_" class="form-label">Project URL</label>
+            <input type="url" class="form-control" id="project_url_" name="Projects[][URL]" placeholder="https://github.com/yourproject">
+          </div>
+          <div class="col-md-6">
+            <label for="project_technologies_" class="form-label">Technologies Used</label>
+            <input type="text" class="form-control" id="project_technologies_" name="Projects[][Technologies]" placeholder="React, Node.js, MongoDB">
+          </div>
+          <div class="col-md-6">
+            <label for="project_date_" class="form-label">Project Date</label>
+            <input type="text" class="form-control" id="project_date_" name="Projects[][Date]" placeholder="e.g., Jan 2022 - Mar 2022">
+          </div>
+          <div class="col-12">
+            <label for="project_description_" class="form-label">Project Description</label>
+            <textarea class="form-control" id="project_description_" name="Projects[][Description]" rows="4"></textarea>
+            <div class="form-text">Describe the project, your role, technologies used, and outcomes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update progress bar as user moves through tabs
+      const tabs = document.querySelectorAll('#resumeTabs .nav-link');
+      const progressBar = document.getElementById('progress-bar');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const activeTabIndex = Array.from(tabs).findIndex(t => t.classList.contains('active'));
+          const progress = ((activeTabIndex + 1) / tabs.length) * 100;
+          progressBar.style.width = `${progress}%`;
+        });
+      });
+      
+      // Initialize with first tab progress
+      progressBar.style.width = `${(1 / tabs.length) * 100}%`;
+      
+      // Experience Section
+      let experienceIndex = {{ resume.Experience|length }};
+      const addExperienceBtn = document.querySelector('#add-experience');
+      const experienceContainer = document.querySelector('#experience-container');
+      
+      addExperienceBtn.addEventListener('click', function() {
+        const template = document.querySelector('#experience-template').cloneNode(true);
+        template.style.display = 'block';
+        const jobNumber = experienceIndex + 1;
+        template.querySelector('.job-number').textContent = jobNumber;
+        
+        template.querySelectorAll('input, select, textarea').forEach(input => {
+          input.id = input.id.replace('_', `_${experienceIndex}`);
+          input.name = input.name.replace('[]', `[${experienceIndex}]`);
+        });
+        
+        template.querySelector('.remove-experience').addEventListener('click', function() {
+          template.remove();
+          experienceIndex--;
+        });
+        
+        // Remove empty state if it exists
+        const emptyState = experienceContainer.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        experienceContainer.appendChild(template);
+        experienceIndex++;
+      });
+      
+      // Initialize existing remove buttons
+      document.querySelectorAll('#experience-container .remove-experience').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+          experienceIndex--;
+          
+          // Show empty state if no experiences left
+          if (experienceContainer.querySelectorAll('.card').length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+              <i class="bi bi-briefcase"></i>
+              <p>No work experience added yet</p>
+            `;
+            experienceContainer.appendChild(emptyState);
+          }
+        });
+      });
+      
+      // Education Section
+      let educationIndex = {{ resume.Education|length }};
+      const addEducationBtn = document.querySelector('#add-education');
+      const educationContainer = document.querySelector('#education-container');
+      
+      addEducationBtn.addEventListener('click', function() {
+        const template = document.querySelector('#education-template').cloneNode(true);
+        template.style.display = 'block';
+        const educationNumber = educationIndex + 1;
+        template.querySelector('.education-number').textContent = educationNumber;
+        
+        template.querySelectorAll('input, textarea').forEach(input => {
+          input.id = input.id.replace('_', `_${educationIndex}`);
+          input.name = input.name.replace('[]', `[${educationIndex}]`);
+        });
+        
+        template.querySelector('.remove-education').addEventListener('click', function() {
+          template.remove();
+          educationIndex--;
+        });
+        
+        // Remove empty state if it exists
+        const emptyState = educationContainer.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        educationContainer.appendChild(template);
+        educationIndex++;
+      });
+      
+      document.querySelectorAll('#education-container .remove-education').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+          educationIndex--;
+          
+          // Show empty state if no education left
+          if (educationContainer.querySelectorAll('.card').length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+              <i class="bi bi-mortarboard"></i>
+              <p>No education entries added yet</p>
+            `;
+            educationContainer.appendChild(emptyState);
+          }
+        });
+      });
+      
+      // Projects Section
+      let projectIndex = {{ resume.Projects|length }};
+      const addProjectBtn = document.querySelector('#add-project');
+      const projectContainer = document.querySelector('#projects-container');
+      
+      addProjectBtn.addEventListener('click', function() {
+        const template = document.querySelector('#project-template').cloneNode(true);
+        template.style.display = 'block';
+        const projectNumber = projectIndex + 1;
+        template.querySelector('.project-number').textContent = projectNumber;
+        
+        template.querySelectorAll('input, textarea').forEach(input => {
+          input.id = input.id.replace('_', `_${projectIndex}`);
+          input.name = input.name.replace('[]', `[${projectIndex}]`);
+        });
+        
+        template.querySelector('.remove-project').addEventListener('click', function() {
+          template.remove();
+          projectIndex--;
+        });
+        
+        // Remove empty state if it exists
+        const emptyState = projectContainer.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        projectContainer.appendChild(template);
+        projectIndex++;
+      });
+      
+      document.querySelectorAll('#projects-container .remove-project').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.card').remove();
+          projectIndex--;
+          
+          // Show empty state if no projects left
+          if (projectContainer.querySelectorAll('.card').length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+              <i class="bi bi-folder"></i>
+              <p>No projects added yet</p>
+            `;
+            projectContainer.appendChild(emptyState);
+          }
+        });
+      });
+      
+      // References checkbox toggle
+      const referencesCheckbox = document.getElementById('references_available');
+      const referencesContainer = document.getElementById('references-container');
+      
+      referencesCheckbox.addEventListener('change', function() {
+        referencesContainer.style.display = this.checked ? 'block' : 'none';
+      });
+      
+      // Floating action button for mobile
+      const fab = document.querySelector('.fab');
+      fab.addEventListener('click', function() {
+        document.querySelector('.sticky-footer .btn-primary').click();
+      });
+    });
+  </script>
+</body>
+</html>
+{% endblock %}

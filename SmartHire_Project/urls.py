@@ -27,7 +27,9 @@ urlpatterns = [
     # path('', include('candidate.urls')),  # Handles /api/apply/, /api/resumes/
     path('candidate/', include('candidate.urls')),  # Prefix candidate app URLs
 
-    path('', include('employer.urls')),
+    path('employer/', include('employer.urls')),
+    path('interview/', include('interview_app.urls')),
+
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

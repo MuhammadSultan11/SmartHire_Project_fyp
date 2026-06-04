@@ -10,6 +10,7 @@ import bcrypt
 from .forms import RegisterForm, LoginForm
 from django.conf import settings
 from bson import ObjectId
+from django.urls import reverse
  
 
 # MongoDB Collection
@@ -92,7 +93,7 @@ def user_login(request):
                 logger.info(f"User logged in: {user['email']}, Session ID: {session_id}, User ID: {str(user['_id'])}")
                 
                 if session_data.get('role') == 'hr':
-                    return JsonResponse({'success': True, 'redirect': '/dashboard/'})
+                    return JsonResponse({'success': True, 'redirect': reverse('hr_dashboard')})
                 return JsonResponse({'success': True, 'redirect': '/index/'})
             else:
                 messages.error(request, "Invalid credentials")
@@ -233,4 +234,3 @@ def job_detail(request, job_id):
     except Exception as e:
         logger.error(f"Error fetching job {job_id}: {str(e)}")
         return render(request, 'partials/_job_detail.html', {'error': str(e)}, status=500)
-

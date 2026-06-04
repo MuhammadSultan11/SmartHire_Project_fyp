@@ -26,7 +26,9 @@ def get_genai_response(input_text):
         genai.configure(api_key=GOOGLE_API_KEY)
         
         print("Creating GenerativeModel instance...")
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        # model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        # model = genai.GenerativeModel('gemini-2.0-flash-lite')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         
         print("Generating response...")
         response = model.generate_content(input_text)

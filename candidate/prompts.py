@@ -45,7 +45,7 @@ resume_data_template = {
 
     "Skills": [
         # Example: "C++", "Java", "Android Studio", "MySQL"
-        ],
+    ],
 
     "Certifications_and_Licenses": [
         # Example: "Certified Android Developer"

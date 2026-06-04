@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interviewer - Interview Session</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    <style>
+        body { background: #f8f9fa; }
+        .chat-container { max-width: 700px; margin: 2rem auto; background: #fff; border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2rem; }
+        .chat-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .ai-avatar, .user-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; position: relative; }
+        .ai-avatar { background: #e7f1ff; color: #0d6efd; }
+        .user-avatar { background: #fce4ec; color: #d63384; }
+        .speaking-dot { position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; border-radius: 50%; background: #0d6efd; border: 2px solid #fff; display: none; }
+        .user-avatar .speaking-dot { background: #d63384; }
+        .chat-bubble { padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; max-width: 80%; }
+        .ai-bubble { background: #e7f1ff; align-self: flex-start; }
+        .user-bubble { background: #fce4ec; align-self: flex-end; margin-left: auto; }
+        .intro-bubble { background: #e8f5e9; border-left: 4px solid #4caf50; }
+        .chat-area { display: flex; flex-direction: column; gap: 0.5rem; min-height: 180px; margin-bottom: 1rem; }
+        .typing-indicator { font-style: italic; color: #888; }
+        .video-box { width: 120px; height: 90px; background: #222; border-radius: 0.5rem; overflow: hidden; margin-left: auto; margin-bottom: 1rem; }
+        .video-box video { width: 100%; height: 100%; object-fit: cover; }
+        .analytics-panel { background: #f1f3f4; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; font-size: 0.95rem; }
+        .listening-wave { display: inline-block; width: 32px; height: 16px; vertical-align: middle; }
+        .listening-wave span { display: inline-block; width: 4px; height: 100%; margin: 0 1px; background: #0d6efd; border-radius: 2px; animation: wave 1s infinite linear; }
+        .listening-wave span:nth-child(2) { animation-delay: 0.2s; }
+        .listening-wave span:nth-child(3) { animation-delay: 0.4s; }
+        .listening-wave span:nth-child(4) { animation-delay: 0.6s; }
+        .listening-wave span:nth-child(5) { animation-delay: 0.8s; }
+        @keyframes wave { 0%,100%{height:16px;} 50%{height:4px;} }
+        .answer-timer { font-size: 0.95rem; color: #888; margin-left: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container chat-container">
+        <div class="chat-header">
+            <div class="ai-avatar" id="aiAvatar">🤖<span class="speaking-dot" id="aiSpeakingDot"></span></div>
+            <div>
+                <h4 class="mb-0">AI Interviewer</h4>
+                <small class="text-muted">Job: {{ session.job_description.job_role }}</small>
+            </div>
+            <div class="ms-auto video-box">
+                <video id="candidateVideo" autoplay muted></video>
+            </div>
+        </div>
+        <div class="analytics-panel" id="analyticsPanel">
+            <b>Analytics:</b> <span id="analyticsText">Loading...</span>
+            <div class="text-danger small mt-1">Tip: For best accuracy, use a good microphone and speak clearly. If the transcript is wrong, you can pause and try again.</div>
+        </div>
+        <div class="chat-area" id="chatArea">
+            <!-- Show full chat transcript here -->
+        </div>
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <div id="listeningAnim" style="display:none;">
+                <span class="me-1">Listening</span>
+                <span class="listening-wave">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </span>
+            </div>
+            <span id="answerTimer" class="answer-timer"></span>
+            <span id="candidateSpeakingDot" class="speaking-dot user-avatar" style="display:none;"></span>
+        </div>
+        <div class="mt-2 text-end">
+            <button id="doneBtn" class="btn btn-success btn-sm" onclick="submitAnswer()" disabled>Done</button>
+        </div>
+        <div class="mt-3 text-end">
+            <button class="btn btn-outline-secondary btn-sm" onclick="startVideo()">Enable Camera</button>
+            <button class="btn btn-outline-info btn-sm" onclick="startDeepgramSTT()">Deepgram STT Fallback</button>
+        </div>
+    </div>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        const sessionId = '{{ session.id }}';
+        let currentQuestionId = null;
+        let lastAnswer = '';
+        let chatHistory = [];
+        let lastFeedback = '';
+        let lastScores = null;
+        const chatArea = document.getElementById('chatArea');
+        const aiSpeakingDot = document.getElementById('aiSpeakingDot');
+        const candidateSpeakingDot = document.getElementById('candidateSpeakingDot');
+        const listeningAnim = document.getElementById('listeningAnim');
+        const answerTimer = document.getElementById('answerTimer');
+        let recognition = null;
+        let recognizing = false;
+        let transcriptBuffer = '';
+        let interimTranscript = '';
+        let timerInterval = null;
+        let answerStartTime = null;
+        let analytics = { total: 0, answered: 0 };
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStream = null;
+        let recordingStarted = false;
+        let uploadInProgress = false;
+        let animationId = null;
+        let stream = null;
+        let waveformCanvas = null;
+        let mimeType = 'audio/webm';
+        let sessionComplete = false;
+        let sessionSummary = '';
+        let sessionAnalytics = null;
+        let pendingSupportiveMessage = '';
+        let evaluationReport = null;
+        let autoSubmitTimeout = null;
+        if (MediaRecorder.isTypeSupported('audio/wav')) {
+            mimeType = 'audio/wav';
+        } else if (MediaRecorder.isTypeSupported('audio/mp3')) {
+            mimeType = 'audio/mp3';
+        }
+        console.log('Using MediaRecorder mimeType:', mimeType);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchNextQuestion();
+            updateAnalytics();
+            startMic();
+            startRecording();
+        });
+
+        function renderChatHistory() {
+            chatArea.innerHTML = '';
+            for (const entry of chatHistory) {
+                if (entry.type === 'question') {
+                    const qDiv = document.createElement('div');
+                    const isIntro = chatHistory.indexOf(entry) < 4; // First 4 messages are intro
+                    const bubbleClass = isIntro ? 'chat-bubble ai-bubble intro-bubble' : 'chat-bubble ai-bubble';
+                    qDiv.innerHTML = `<div class="${bubbleClass}">${entry.text}</div>`;
+                    chatArea.appendChild(qDiv);
+                } else if (entry.type === 'answer') {
+                    const aDiv = document.createElement('div');
+                    aDiv.className = 'd-flex flex-column';
+                    aDiv.innerHTML = `<div class="chat-bubble user-bubble">${entry.text}</div>`;
+                    chatArea.appendChild(aDiv);
+                    if (entry.scores) {
+                        const sDiv = document.createElement('div');
+                        sDiv.className = 'mb-1';
+                        sDiv.style.maxWidth = '80%';
+                        sDiv.style.marginLeft = 'auto';
+                        sDiv.innerHTML = `
+                            <span class='badge bg-success me-1'>Completeness: ${entry.scores.completeness ?? '-'}</span>
+                            <span class='badge bg-primary me-1'>Relevance: ${entry.scores.relevance ?? '-'}</span>
+                            <span class='badge bg-warning text-dark'>Clarity: ${entry.scores.clarity ?? '-'}</span>
+                        `;
+                        chatArea.appendChild(sDiv);
+                    }
+                    if (entry.feedback) {
+                        const fDiv = document.createElement('div');
+                        fDiv.className = 'alert alert-info py-1 px-2 mt-1 mb-2';
+                        fDiv.style.maxWidth = '80%';
+                        fDiv.style.marginLeft = 'auto';
+                        fDiv.innerText = entry.feedback;
+                        chatArea.appendChild(fDiv);
+                    }
+                }
+            }
+            // Show pending supportive message as interviewer bubble
+            if (pendingSupportiveMessage) {
+                const sDiv = document.createElement('div');
+                sDiv.className = 'd-flex flex-column';
+                sDiv.innerHTML = `<div class=\"chat-bubble ai-bubble\">${pendingSupportiveMessage}</div>`;
+                chatArea.appendChild(sDiv);
+            }
+            // Show live transcript if answering
+            if (recognizing && (transcriptBuffer || interimTranscript) && !sessionComplete) {
+                const liveDiv = document.createElement('div');
+                liveDiv.className = 'd-flex flex-column';
+                liveDiv.innerHTML = `<div class=\"chat-bubble user-bubble\" style=\"opacity:0.7;\">${transcriptBuffer + interimTranscript}</div>`;
+                chatArea.appendChild(liveDiv);
+            }
+            // Show session summary and analytics if complete
+            if (sessionComplete && sessionSummary) {
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'card mt-4 mb-2 shadow';
+                let analyticsHtml = '';
+                if (sessionAnalytics) {
+                    analyticsHtml = `
+                        <hr>
+                        <h6>Session Analytics</h6>
+                        <ul class='mb-0'>
+                            <li><b>Average answer length:</b> ${sessionAnalytics.avg_words} words (${sessionAnalytics.avg_chars} chars)</li>
+                            <li><b>Average time per question:</b> ${sessionAnalytics.avg_time_per_question} sec</li>
+                            <li><b>Number of detected pauses:</b> ${sessionAnalytics.num_pauses}</li>
+                            <li><b>Average speaking speed:</b> ${sessionAnalytics.avg_speaking_speed_wpm ?? '-'} words/min</li>
+                        </ul>
+                    `;
+                }
+                let downloadBtnHtml = `
+                    <form id='csvExportForm' method='POST' action='/api/export_csv/' style='display:none;'>
+                        <input type='hidden' name='session_id' value='${sessionId}'>
+                    </form>
+                    <button class='btn btn-outline-success btn-sm mt-3' onclick='downloadCSV()'>Download CSV</button>
+                `;
+                summaryDiv.innerHTML = `<div class='card-body'><h5 class='card-title'>Session Summary</h5><div class='card-text' style='white-space:pre-line;'>${sessionSummary}</div>${analyticsHtml}${downloadBtnHtml}</div>`;
+                chatArea.appendChild(summaryDiv);
+            }
+            // Show evaluation report if available
+            if (sessionComplete && evaluationReport) {
+                chatArea.innerHTML += renderEvaluationReport();
+                setTimeout(renderScoreChart, 100); // Render chart after DOM update
+            }
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function fetchNextQuestion() {
+            fetch('/api/ask/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `session_id=${sessionId}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    currentQuestionId = data.question_id;
+                    chatHistory.push({type: 'question', text: data.question});
+                    renderChatHistory();
+                    speakQuestion(data.question);
+                    analytics.total++;
+                    updateAnalytics();
+                    lastAnswer = '';
+                    startAnswerTimer();
+                    transcriptBuffer = '';
+                    interimTranscript = '';
+                    document.getElementById('doneBtn').disabled = true;
+                } else if (data.status === 'done') {
+                    chatHistory.push({type: 'question', text: 'Interview complete. Thank you!'});
+                    sessionComplete = true;
+                    renderChatHistory();
+                    stopMic();
+                    // Fetch and show session summary
+                    fetch('/session_summary/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `session_id=${sessionId}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        sessionSummary = data.summary || '';
+                        renderChatHistory();
+                    });
+                    // Fetch and show analytics
+                    fetch('/session_analytics/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `session_id=${sessionId}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        sessionAnalytics = data.analytics || null;
+                        renderChatHistory();
+                    });
+                    // Fetch and show evaluation report
+                    fetch('/evaluation_report/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `session_id=${sessionId}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        evaluationReport = data.report || null;
+                        renderChatHistory();
+                    });
+                }
+            });
+        }
+        // --- Mic/Voice Answer Logic ---
+        function startMic() {
+            if (sessionComplete) return; // Don't start if interview is done
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                alert('Browser STT not supported.');
+                return;
+            }
+            if (recognition && recognizing) {
+                // Already running, don't start again
+                return;
+            }
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            transcriptBuffer = '';
+            interimTranscript = '';
+            recognizing = true;
+            candidateSpeakingDot.style.display = 'block';
+            listeningAnim.style.display = 'inline-block';
+            recognition.onresult = function(event) {
+                interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        transcriptBuffer += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                renderChatHistory();
+                document.getElementById('doneBtn').disabled = transcriptBuffer.trim().length === 0;
+                // Auto-submit after 6 seconds if not already submitted
+                if (transcriptBuffer.trim().length > 0 && !sessionComplete) {
+                    if (autoSubmitTimeout) clearTimeout(autoSubmitTimeout);
+                    autoSubmitTimeout = setTimeout(() => {
+                        if (transcriptBuffer.trim().length > 0 && !sessionComplete) {
+                            submitAnswer();
+                        }
+                    }, 6000);
+                }
+            };
+            recognition.onend = function() {
+                if (recognizing && !sessionComplete) {
+                    // Restart STT for more input after a short pause
+                    setTimeout(() => recognition.start(), 400);
+                } else {
+                    candidateSpeakingDot.style.display = 'none';
+                    listeningAnim.style.display = 'none';
+                }
+            };
+            recognition.start();
+            document.getElementById('doneBtn').disabled = true;
+            console.log('Browser STT started');
+        }
+        function stopMic() {
+            recognizing = false;
+            if (recognition) recognition.stop();
+            candidateSpeakingDot.style.display = 'none';
+            listeningAnim.style.display = 'none';
+            stopWaveform();
+            if (autoSubmitTimeout) clearTimeout(autoSubmitTimeout);
+        }
+        function submitAnswer() {
+            stopMic();
+            lastAnswer = transcriptBuffer.trim();
+            if (lastAnswer.length === 0) return;
+            renderChatHistory();
+            analytics.answered++;
+            updateAnalytics();
+            stopAnswerTimer();
+            document.getElementById('doneBtn').disabled = true;
+            fetch('/api/answer/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `session_id=${sessionId}&question_id=${currentQuestionId}&answer=${encodeURIComponent(lastAnswer)}`
+            })
+            .then(res => res.json())
+            .then(data2 => {
+                transcriptBuffer = '';
+                interimTranscript = '';
+                lastFeedback = data2.feedback || '';
+                lastScores = data2.scores || null;
+                chatHistory.push({type: 'answer', text: lastAnswer, feedback: lastFeedback, scores: lastScores});
+                renderChatHistory();
+
+                // Handle early termination
+                if (data2.status === 'complete') {
+                    sessionComplete = true;
+                    stopMic();
+                    stopRecording(); // Stop and upload recording
+                    
+                    // Show closing message
+                    if (data2.closing_message) {
+                        chatHistory.push({type: 'question', text: data2.closing_message});
+                        renderChatHistory();
+                        speakQuestion(data2.closing_message);
+                    }
+                    
+                    // Wait for closing message to finish before showing summary
+                    setTimeout(() => {
+                        // Fetch and show session summary
+                        fetch('/session_summary/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `session_id=${sessionId}`
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            sessionSummary = data.summary || '';
+                            renderChatHistory();
+                        })
+                        .catch(err => console.error('Error fetching summary:', err));
+                        
+                        // Fetch and show analytics
+                        fetch('/session_analytics/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `session_id=${sessionId}`
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            sessionAnalytics = data.analytics || null;
+                            renderChatHistory();
+                        })
+                        .catch(err => console.error('Error fetching analytics:', err));
+                        
+                        // Fetch and show evaluation report
+                        fetch('/evaluation_report/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `session_id=${sessionId}`
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            evaluationReport = data.report || null;
+                            renderChatHistory();
+                        })
+                        .catch(err => console.error('Error fetching evaluation:', err));
+                    }, 2000); // Wait 2 seconds after closing message
+                    return;
+                }
+
+                if (data2.status === 'followup') {
+                    setTimeout(() => {
+                        chatHistory.push({type: 'question', text: data2.followup});
+                        renderChatHistory();
+                        speakQuestion(data2.followup);
+                        lastAnswer = '';
+                        startAnswerTimer();
+                        startMic();
+                    }, 500);
+                } else if (data2.status === 'ok') {
+                    setTimeout(() => {
+                        fetchNextQuestion();
+                        startMic();
+                    }, 500);
+                }
+            });
+        }
+        // --- TTS for Agent Questions (prepare for Deepgram backend) ---
+        function speakQuestion(text) {
+            showSpeaking('ai', true);
+            stopMic(); // Pause candidate STT while agent is speaking
+            console.log('Calling TTS for:', text);
+            fetch('/api/tts/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `text=${encodeURIComponent(text)}`
+            })
+            .then(response => {
+                console.log('TTS response status:', response.status);
+                return response.ok ? response.blob() : null;
+            })
+            .then(blob => {
+                if (blob) {
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audio.onended = () => {
+                        showSpeaking('ai', false);
+                        if (!sessionComplete) startMic(); // Resume candidate STT only if interview not complete
+                    };
+                    audio.play();
+                } else {
+                    showSpeaking('ai', false);
+                    if (!sessionComplete) startMic();
+                }
+            })
+            .catch((err) => { console.log('TTS error:', err); showSpeaking('ai', false); if (!sessionComplete) startMic(); });
+        }
+        function showSpeaking(who, on) {
+            if (who === 'ai') aiSpeakingDot.style.display = on ? 'block' : 'none';
+        }
+        // --- Answer Timing ---
+        function startAnswerTimer() {
+            stopAnswerTimer();
+            answerStartTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - answerStartTime) / 1000);
+                answerTimer.innerText = `Time: ${elapsed}s`;
+            }, 500);
+        }
+        function stopAnswerTimer() {
+            clearInterval(timerInterval);
+            answerTimer.innerText = '';
+        }
+        // --- Waveform Visual ---
+        function startWaveform(str) {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (!analyser) analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaStreamSource(str);
+            source.connect(analyser);
+            waveformCanvas = document.createElement('canvas');
+            waveformCanvas.width = 120;
+            waveformCanvas.height = 24;
+            listeningAnim.appendChild(waveformCanvas);
+            drawWaveform();
+        }
+        function drawWaveform() {
+            if (!analyser || !waveformCanvas) return;
+            const ctx = waveformCanvas.getContext('2d');
+            const data = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteTimeDomainData(data);
+            ctx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+            ctx.beginPath();
+            for (let i = 0; i < data.length; i += 4) {
+                const x = (i / data.length) * waveformCanvas.width;
+                const y = (data[i] / 255.0) * waveformCanvas.height;
+                ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#0d6efd';
+            ctx.stroke();
+            animationId = requestAnimationFrame(drawWaveform);
+        }
+        function stopWaveform() {
+            if (animationId) cancelAnimationFrame(animationId);
+            if (waveformCanvas && waveformCanvas.parentNode) waveformCanvas.parentNode.removeChild(waveformCanvas);
+            waveformCanvas = null;
+        }
+        // --- Analytics ---
+        function updateAnalytics() {
+            const text = `Questions: ${analytics.total}, Answered: ${analytics.answered}`;
+            document.getElementById('analyticsText').innerText = text;
+            if (analytics.total > 0 && analytics.answered === analytics.total) {
+                document.getElementById('analyticsText').innerText += ' | Interview complete!';
+            }
+        }
+        // Video capture (camera)
+        function startVideo() {
+            const video = document.getElementById('candidateVideo');
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function(err) {
+                        alert('Could not access camera: ' + err);
+                    });
+            } else {
+                alert('Camera not supported in this browser.');
+            }
+        }
+        // --- Deepgram STT Fallback (manual button) ---
+        function startDeepgramSTT() {
+            alert('Deepgram STT fallback is not enabled by default.');
+        }
+        function downloadCSV() {
+            document.getElementById('csvExportForm').submit();
+        }
+        function renderEvaluationReport() {
+            if (!evaluationReport) return '';
+            let html = `<div class='card mt-4 mb-2 shadow' id='evalReportCard'>`;
+            html += `<div class='card-body'>`;
+            html += `<h4 class='card-title mb-3'>Detailed Interview Evaluation Report</h4>`;
+            html += `<h6>Executive Summary</h6><p>${evaluationReport.executive_summary || ''}</p>`;
+            if (evaluationReport.skills && evaluationReport.skills.length) {
+                html += `<h6>Skill-by-Skill Evaluation</h6><table class='table table-sm'><thead><tr><th>Skill</th><th>Score</th><th>Comments</th></tr></thead><tbody>`;
+                for (const s of evaluationReport.skills) {
+                    html += `<tr><td>${s.skill}</td><td>${s.score}</td><td>${s.comments}</td></tr>`;
+                }
+                html += `</tbody></table>`;
+            }
+            html += `<h6>Strengths</h6><ul>`;
+            (evaluationReport.strengths || []).forEach(x => html += `<li>${x}</li>`);
+            html += `</ul><h6>Weaknesses</h6><ul>`;
+            (evaluationReport.weaknesses || []).forEach(x => html += `<li>${x}</li>`);
+            html += `</ul><h6>Areas for Improvement</h6><ul>`;
+            (evaluationReport.improvement || []).forEach(x => html += `<li>${x}</li>`);
+            html += `</ul><h6>Plagiarism/Integrity</h6><p>${evaluationReport.plagiarism || ''}</p>`;
+            html += `<h6>Recommended Next Steps</h6><p>${evaluationReport.next_steps || ''}</p>`;
+            // Analytics
+            if (evaluationReport.analytics) {
+                html += `<hr><h6>Session Analytics</h6><ul>`;
+                html += `<li><b>Average answer length:</b> ${evaluationReport.analytics.avg_words} words (${evaluationReport.analytics.avg_chars} chars)</li>`;
+                html += `<li><b>Average time per question:</b> ${evaluationReport.analytics.avg_time_per_question} sec</li>`;
+                html += `<li><b>Number of detected pauses:</b> ${evaluationReport.analytics.num_pauses}</li>`;
+                html += `<li><b>Average speaking speed:</b> ${evaluationReport.analytics.avg_speaking_speed_wpm ?? '-'} words/min</li>`;
+                html += `</ul>`;
+            }
+            // Charts
+            html += `<div class='my-3'><canvas id='scoreChart' height='120'></canvas></div>`;
+            html += `<button class='btn btn-outline-primary btn-sm mt-2' onclick='printEvalReport()'>Download PDF</button>`;
+            html += `</div></div>`;
+            return html;
+        }
+        function renderScoreChart() {
+            if (!evaluationReport || !evaluationReport.score_chart) return;
+            const ctx = document.getElementById('scoreChart');
+            if (!ctx) return;
+            const chartData = evaluationReport.score_chart;
+            const labels = chartData.questions;
+            const data1 = chartData.completeness;
+            const data2 = chartData.relevance;
+            const data3 = chartData.clarity;
+            if (window.scoreChartInstance) window.scoreChartInstance.destroy();
+            window.scoreChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Completeness', data: data1, backgroundColor: 'rgba(40,167,69,0.7)' },
+                        { label: 'Relevance', data: data2, backgroundColor: 'rgba(0,123,255,0.7)' },
+                        { label: 'Clarity', data: data3, backgroundColor: 'rgba(255,193,7,0.7)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { x: { stacked: true }, y: { beginAtZero: true, max: 5 } }
+                }
+            });
+        }
+        function printEvalReport() {
+            const el = document.getElementById('evalReportCard');
+            if (!el) return;
+            const win = window.open('', '', 'width=900,height=700');
+            win.document.write('<html><head><title>Interview Evaluation Report</title>');
+            win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+            win.document.write('</head><body>');
+            win.document.write(el.outerHTML);
+            win.document.write('</body></html>');
+            win.document.close();
+            setTimeout(() => { win.print(); win.close(); }, 500);
+        }
+        function startRecording() {
+            if (recordingStarted) return;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                console.warn('MediaDevices API not supported.');
+                return;
+            }
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(function(stream) {
+                    recordingStream = stream;
+                    mediaRecorder = new MediaRecorder(stream);
+                    recordedChunks = [];
+                    mediaRecorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) recordedChunks.push(e.data);
+                    };
+                    mediaRecorder.onstop = function() {
+                        saveRecording();
+                    };
+                    mediaRecorder.start();
+                    recordingStarted = true;
+                    // Show video preview
+                    const video = document.getElementById('candidateVideo');
+                    if (video) video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.error('Could not start video/audio recording:', err);
+                });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && recordingStarted) {
+                mediaRecorder.stop();
+                recordingStarted = false;
+                if (recordingStream) {
+                    recordingStream.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+
+        function saveRecording() {
+            if (uploadInProgress) return;
+            uploadInProgress = true;
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const formData = new FormData();
+            formData.append('session_id', sessionId);
+            formData.append('recording', blob, 'interview_recording.webm');
+            fetch('/api/upload_recording/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Recording uploaded:', data);
+            })
+            .catch(err => {
+                console.error('Error uploading recording:', err);
+            });
+        }
+    </script>
+</body>
+</html> 

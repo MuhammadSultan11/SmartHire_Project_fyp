@@ -1,7 +1,113 @@
 {% extends 'candidate/P_navbar.html' %}
-{% load static %}
+
 
 {% block content %}
+
+<style>
+
+        /* Profile-specific styles */
+        .skill-badge {
+            background-color: #f0f2f5;
+            color: #495057;
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .skill-badge:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.93rem;
+            top: 1rem;
+            width: 2px;
+            height: calc(100% - 1rem);
+            background: #e9ecef;
+        }
+
+        .scrollable-container {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .profile-picture {
+            width: 160px;
+            height: 160px;
+            border: 5px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.05);
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #fff;
+            transform: skewY(-2deg);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+    
+</style>
+
 <section class="container mt-5">
     <div class="row gx-5">
         <div class="col-lg-8">
@@ -17,9 +123,9 @@
                                     class="fas fa-camera"></i> Upload</button>
                         </div>
                         <div class="col-md-9">
-                            <h1 class="mb-1 fw-bold" id="profile-name">{{ profile.name|default:"John Doe" }}</h1>
+                            <h1 class="mb-1 fw-bold" id="profile-name">{{ profile.name|default:"Asghar Abbasi" }}</h1>
                             <p class="mb-2 opacity-90" id="profile-title">{{ profile.title|default:"Software Engineer | AI Enthusiast" }}</p>
-                            <p class="mb-3" id="profile-location"><i class="fas fa-map-marker-alt me-2"></i>{{ profile.location|default:"Lahore, Pakistan" }}</p>
+                            <p class="mb-3" id="profile-location"><i class="fas fa-map-marker-alt me-2"></i>{{ profile.location|default:"Karachi, Pakistan" }}</p>
                             <div class="social-links mt-2" id="profile-social-links">
                                 {% for link in profile.social_links %}
                                 <a href="{{ link }}" target="_blank" class="me-3">
@@ -172,8 +278,10 @@
             </div>
         </div>
 
+
         <div class="col-lg-4">
-            <div class="card fade-in-up">
+
+            <!-- <div class="card fade-in-up">
                 <h2 class="card-header">Application Status</h2>
                 <div class="card-body p-4 scrollable-container">
                     <div class="mb-4">
@@ -182,9 +290,63 @@
                         <p class="small mb-0"><strong>Status:</strong> <span class="text-warning">Pending</span></p>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="card fade-in-up">
+            
+
+            <!-- <div class="col-lg-4"> -->
+
+                
+                <div class="card fade-in-up">
+                    <h2 class="card-header">Application Status</h2>
+                    <div class="card-body p-4 scrollable-container">
+                        <!-- Regular Application -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold">Data Engineer - I</h6>
+                            <p class="small mb-1">Applied: March 5, 2025</p>
+                            <p class="small mb-0"><strong>Status:</strong> <span class="text-warning">Pending</span></p>
+                        </div>
+            
+                        <!-- Application with Interview Round -->
+                        <div class="mb-4 border-start border-4 border-primary ps-3">
+                            <h6 class="fw-semibold">Senior Python Developer</h6>
+                            <p class="small mb-1">Applied: April 15, 2025</p>
+                            <p class="small mb-1"><strong>Status:</strong> <span class="text-success">Interview Stage</span></p>
+                            <p class="small mb-2"><strong>Next Round:</strong> Technical Interview (Video Call)</p>
+                            
+                            <!-- Interview Deadline & Button -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="small mb-0 text-danger">
+                                    <i class="fas fa-clock me-1"></i> Deadline: May 20, 2025 (2 days left)
+                                </p>
+                                <button class="btn btn-sm btn-success" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#interviewModal"
+                                        data-job="Senior Python Developer"
+                                        data-round="Technical Interview">
+                                    <i class="fas fa-video me-1"></i> Start Interview
+                                </button>
+                            </div>
+                        </div>
+            
+                        <!-- Completed Interview Example -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold">ML Engineer</h6>
+                            <p class="small mb-1">Applied: March 28, 2025</p>
+                            <p class="small mb-1"><strong>Status:</strong> <span class="text-info">Interview Completed</span></p>
+                            <p class="small text-muted"><i class="fas fa-check-circle text-success me-1"></i> Technical Interview submitted on May 10, 2025</p>
+                        </div>
+                    </div>
+                </div>
+            
+
+
+                <!-- Rest of the sidebar content... -->
+            <!-- </div> -->
+
+
+
+            <!-- <div class="card fade-in-up">
                 <h2 class="card-header">Recommended Jobs</h2>
                 <div class="card-body p-4">
                     <div class="mb-4">
@@ -195,10 +357,14 @@
                                 data-bs-target="#jobModal" data-job="Data Engineer - I" data-company="Amazon">View Details</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
+
+
         </div>
     </div>
 </section>
+
+ 
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel">

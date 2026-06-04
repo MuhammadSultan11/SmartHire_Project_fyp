@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparing Interview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    <style>
+        body { background: #f8f9fa; }
+        .centered { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .prep-box { background: #fff; padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+        .ai-logo { font-size: 3rem; color: #0d6efd; margin-bottom: 1rem; }
+        .countdown { font-size: 2.5rem; color: #0d6efd; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container centered">
+        <div class="prep-box">
+            <div class="ai-logo">🤖</div>
+            <h2 class="mb-3">Preparing your interview...</h2>
+            <p class="lead">Generating questions and setting up your session. Please wait.</p>
+            <div class="countdown" id="countdown">5</div>
+        </div>
+    </div>
+    <script>
+        let seconds = 5;
+        const countdownEl = document.getElementById('countdown');
+        const sessionId = '{{ session.id }}';
+        const timer = setInterval(() => {
+            seconds--;
+            countdownEl.innerText = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = `/session/${sessionId}/`;
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
@@ -94,35 +93,35 @@
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</h3>
                     <ul class="space-y-2">
                         <li>
-                            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg">
+                            <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition" data-section="candidates">
                                 <i class="fas fa-users w-5 text-center"></i>
                                 <span>Candidates</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                            <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition" data-section="jobs">
                                 <i class="fas fa-briefcase w-5 text-center"></i>
                                 <span>Jobs</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <!-- <li>
+                            <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition" data-section="reports">
                                 <i class="fas fa-file-alt w-5 text-center"></i>
                                 <span>Reports</span>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 
                 <div class="p-3 bg-gray-50 rounded-lg">
                     <h4 class="text-sm font-medium mb-2">Post New Job</h4>
-                    
                     <p class="text-xs text-gray-500 mb-3">Create job with AI filtering criteria</p>
-                    <a  href="{% url 'job_posting' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center justify-center transition">
+                    <a href="{% url 'job_posting' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center justify-center transition">
                         <i class="fas fa-plus mr-2"></i> New Job
                     </a>
                 </div>
             </nav>
+            
         </div>
         
         <!-- Main Content -->
@@ -131,18 +130,7 @@
             <header class="bg-white border-b border-gray-200">
                 <div class="flex justify-between items-center px-6 py-4">
                     <div class="flex items-center space-x-4">
-                        <h2 class="text-xl font-semibold">Candidate Interview Management</h2>
-                        <div class="relative">
-                            <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                <option>All Jobs</option>
-                                <option>Senior Developer</option>
-                                <option>Marketing Lead</option>
-                                <option>UX Designer</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <i class="fas fa-chevron-down text-xs"></i>
-                            </div>
-                        </div>
+                        <h2 class="text-xl font-semibold section-title">Candidate Interview Management</h2>
                     </div>
                     
                     <div class="flex items-center space-x-4">
@@ -167,413 +155,407 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Candidate Tabs -->
-                <div class="flex border-b border-gray-200 px-6">
-                    <button id="resumeTab" class="tab-active px-4 py-3 text-sm font-medium">AI-Filtered Resumes (48)</button>
-                    <button id="interviewTab" class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700">Interview-Completed (15)</button>
-                </div>
             </header>
             
-            <!-- Bulk Actions Bar -->
-            <div id="bulkActions" class="bulk-actions bg-blue-50 border-b border-blue-200 px-6 py-3 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <span id="selectedCount" class="text-sm font-medium text-blue-700">0 candidates selected</span>
-                </div>
-                <div class="flex space-x-3">
-                    <button id="bulkInvite" class="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
-                        <i class="fas fa-calendar-plus mr-2"></i> Invite Selected
-                    </button>
-                    <button id="bulkReject" class="text-sm px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition flex items-center">
-                        <i class="fas fa-times mr-2"></i> Reject Selected
-                    </button>
-                    <button id="clearSelection" class="text-sm px-4 py-2 text-gray-500 hover:text-gray-700 transition flex items-center">
-                        <i class="fas fa-times-circle mr-2"></i> Clear
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Dashboard Content -->
+            <!-- Main Content Sections -->
             <main class="p-6">
-                <!-- AI-Filtered Resumes Section -->
-                <div id="resumeSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-center mb-5">
-                        <div>
-                            <h3 class="font-semibold">AI-Filtered Candidates</h3>
-                            <p class="text-sm text-gray-500">Candidates whose resumes match job requirements</p>
+                <!-- Candidates Section -->
+                <div id="candidatesSection" class="section-content">
+                    <!-- Candidate Tabs -->
+                    <div class="flex border-b border-gray-200 mb-6">
+                        <button id="resumeTab" class="tab-active px-4 py-3 text-sm font-medium">AI-Filtered Resumes</button>
+                        <button id="interviewTab" class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700">Interview-Completed</button>
+                    </div>
+
+                    <!-- Bulk Actions Bar -->
+                    <div id="bulkActions" class="hidden bg-blue-50 border-b border-blue-200 px-6 py-3 flex justify-between items-center mb-6">
+                        <div class="flex items-center space-x-4">
+                            <span id="selectedCount" class="text-sm font-medium text-blue-700">0 candidates selected</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="relative">
-                                <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                    <option>Sort by: Match Score</option>
-                                    <option>Sort by: Experience</option>
-                                    <option>Sort by: Education</option>
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            <button class="text-sm text-blue-600 hover:underline">Export List</button>
+                        <div class="flex space-x-3">
+                            <button id="bulkInvite" class="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+                                <i class="fas fa-calendar-plus mr-2"></i> Invite Selected
+                            </button>
+                            <button id="bulkReject" class="text-sm px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition flex items-center">
+                                <i class="fas fa-times mr-2"></i> Reject Selected
+                            </button>
+                            <button id="clearSelection" class="text-sm px-4 py-2 text-gray-500 hover:text-gray-700 transition flex items-center">
+                                <i class="fas fa-times-circle mr-2"></i> Clear
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Candidate Card 1 -->
-                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
-                            <div class="checkbox-container">
-                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="123">
+
+                    <!-- AI-Filtered Resumes Section -->
+                    <div id="resumeSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-5">
+                            <h3 class="text-lg font-semibold">AI-Filtered Resumes</h3>
+                            <div class="flex space-x-3">
+                                <button class="text-sm px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
+                                    <i class="fas fa-filter mr-2"></i> Filter
+                                </button>
+                                <button class="text-sm px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
+                                    <i class="fas fa-sort mr-2"></i> Sort
+                                </button>
                             </div>
-                            <div class="flex items-start space-x-4">
-                                <div class="relative">
-                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
-                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-excellent">89</div>
+                        </div>
+                        
+                        {% if error %}
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <strong class="font-bold">Error:</strong>
+                            <span class="block sm:inline">{{ error }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if candidates %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for candidate in candidates %}
+                            <div class="candidate-card relative bg-white rounded-xl border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg">
+                                <div class="checkbox-container">
+                                    <input type="checkbox" class="candidate-checkbox" data-id="{{ candidate.id }}">
                                 </div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-start">
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                                        {{ candidate.Name|slice:":2"|upper }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900">{{ candidate.Name }}</h4>
+                                        <p class="text-sm text-gray-500">{{ candidate.Email }}</p>
+                                        <div class="mt-2 flex items-center space-x-2">
+                                            <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full">
+                                                Score: {{ candidate.Score }}
+                                            </span>
+                                            <span class="px-2 py-1 bg-{% if candidate.Recommendation == 'Recommended' %}green{% else %}yellow{% endif %}-50 text-{% if candidate.Recommendation == 'Recommended' %}green{% else %}yellow{% endif %}-600 text-xs rounded-full">
+                                                {{ candidate.Recommendation }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Feedback Section -->
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <button class="feedback-toggle w-full text-left flex items-center justify-between text-sm font-medium text-gray-700 hover:text-gray-900">
+                                        <span>View Feedback</span>
+                                        <i class="fas fa-chevron-down text-xs transition-transform"></i>
+                                    </button>
+                                    <div class="feedback-content hidden mt-3 space-y-2">
+                                        <div class="text-sm">
+                                            <span class="font-medium text-gray-700">Skills:</span>
+                                            <p class="text-gray-600">{{ candidate.Feedback.Skills }}</p>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-gray-700">Experience:</span>
+                                            <p class="text-gray-600">{{ candidate.Feedback.Experience }}</p>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-gray-700">Education:</span>
+                                            <p class="text-gray-600">{{ candidate.Feedback.Education }}</p>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-gray-700">Projects:</span>
+                                            <p class="text-gray-600">{{ candidate.Feedback.Projects }}</p>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-gray-700">Soft Skills:</span>
+                                            <p class="text-gray-600">{{ candidate.Feedback.Soft_Skills }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex space-x-2">
+                                            <button class="text-sm px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition">
+                                                View Resume
+                                            </button>
+                                            <button class="text-sm px-3 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100 transition">
+                                                Schedule
+                                            </button>
+                                        </div>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">No candidates found in the database.</p>
+                            <p class="text-sm text-gray-400 mt-2">Please check if the resumes_evaluation collection has data.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Interview-Completed Section -->
+                    <div id="interviewSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hidden">
+                        <div class="flex justify-between items-center mb-5">
+                            <div>
+                                <h3 class="font-semibold">Interview-Completed Candidates</h3>
+                                <p class="text-sm text-gray-500">Candidates who have completed AI interviews</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="relative">
+                                    <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <option>Sort by: Interview Score</option>
+                                        <option>Sort by: Completion Date</option>
+                                        <option>Sort by: Resume Match</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                                <button class="text-sm text-blue-600 hover:underline">Export Reports</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Interview Report 1 -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="p-4 bg-gray-50 flex justify-between items-center cursor-pointer interview-header">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
                                         <div>
                                             <h4 class="font-medium">Jane Doe</h4>
                                             <p class="text-sm text-gray-500">Senior Frontend Developer</p>
                                         </div>
-                                        <span class="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">New</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-t border-gray-100">
-                                <div class="text-xs mb-2">
-                                    <span class="font-medium text-gray-700">Score: 89.35%</span>
-                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
-                                </div>
-                                <div class="text-xs space-y-2">
-                                    <p><span class="font-medium">Skills:</span> All required skills (Python, JavaScript, SQL, Django) matched. Strong technical fit.</p>
-                                    <p><span class="font-medium">Experience:</span> 1 year of highly relevant, recent experience. Meets job requirements.</p>
-                                    <p><span class="font-medium">Education:</span> Bachelor's in Computer Science. Perfect field relevance.</p>
-                                    <p><span class="font-medium">Projects:</span> Django/JavaScript project aligns well. Demonstrates key skills.</p>
-                                    <p><span class="font-medium">Soft skills:</span> No soft skills listed. Add Communication, Teamwork to improve.</p>
-                                    <p><span class="font-medium">Additional info:</span> Python certification adds value. Relevant to role.</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex justify-between">
-                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> View Resume
-                                </button>
-                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
-                                        data-candidate-id="123"
-                                        data-candidate-name="Jane Doe"
-                                        data-candidate-position="Senior Frontend Developer">
-                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Candidate Card 2 -->
-                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
-                            <div class="checkbox-container">
-                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="124">
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <div class="relative">
-                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">AS</div>
-                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-good">85</div>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <h4 class="font-medium">Alex Smith</h4>
-                                            <p class="text-sm text-gray-500">Marketing Lead</p>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-center">
+                                            <div class="text-xs text-gray-500">Overall Score</div>
+                                            <div class="text-lg font-bold text-green-600">89%</div>
                                         </div>
-                                        <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-full">Profile</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-t border-gray-100">
-                                <div class="text-xs mb-2">
-                                    <span class="font-medium text-gray-700">Score: 85.20%</span>
-                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
-                                </div>
-                                <div class="text-xs space-y-2">
-                                    <p><span class="font-medium">Skills:</span> Strong match with required marketing skills (SEO, PPC, Content Strategy).</p>
-                                    <p><span class="font-medium">Experience:</span> 2 years in similar role. Agency background adds value.</p>
-                                    <p><span class="font-medium">Education:</span> Marketing degree from top university. Excellent academic record.</p>
-                                    <p><span class="font-medium">Projects:</span> Successful campaign examples provided. Demonstrated ROI.</p>
-                                    <p><span class="font-medium">Soft skills:</span> Leadership and communication skills evident in work history.</p>
-                                    <p><span class="font-medium">Additional info:</span> Google Ads certified. Active in marketing communities.</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex justify-between">
-                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> View Resume
-                                </button>
-                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
-                                        data-candidate-id="124"
-                                        data-candidate-name="Alex Smith"
-                                        data-candidate-position="Marketing Lead">
-                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Candidate Card 3 -->
-                        <div class="candidate-card p-4 border border-gray-200 rounded-lg transition relative">
-                            <div class="checkbox-container">
-                                <input type="checkbox" class="candidate-checkbox" data-candidate-id="125">
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <div class="relative">
-                                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-medium">MR</div>
-                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white match-good">87</div>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <h4 class="font-medium">Michael Rodriguez</h4>
-                                            <p class="text-sm text-gray-500">UX Designer</p>
+                                        <div class="text-center">
+                                            <div class="text-xs text-gray-500">Completed</div>
+                                            <div class="text-sm font-medium">May 15, 2023</div>
                                         </div>
-                                        <span class="text-xs px-2 py-1 bg-yellow-50 text-yellow-600 rounded-full">Pending</span>
+                                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-t border-gray-100">
-                                <div class="text-xs mb-2">
-                                    <span class="font-medium text-gray-700">Score: 87.15%</span>
-                                    <span class="inline-block ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded">Recommended</span>
-                                </div>
-                                <div class="text-xs space-y-2">
-                                    <p><span class="font-medium">Skills:</span> Excellent UX/UI skills (Figma, Sketch, Adobe XD). Strong portfolio.</p>
-                                    <p><span class="font-medium">Experience:</span> 3 years at reputable tech company. Worked on major products.</p>
-                                    <p><span class="font-medium">Education:</span> Design degree with focus on human-computer interaction.</p>
-                                    <p><span class="font-medium">Projects:</span> Case studies show thorough design process and measurable impact.</p>
-                                    <p><span class="font-medium">Soft skills:</span> Collaborative approach evident from references.</p>
-                                    <p><span class="font-medium">Additional info:</span> Active in design community. Conference speaker.</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex justify-between">
-                                <button class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> View Resume
-                                </button>
-                                <button class="invite-btn text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center"
-                                        data-candidate-id="125"
-                                        data-candidate-name="Michael Rodriguez"
-                                        data-candidate-position="UX Designer">
-                                    <i class="fas fa-calendar-plus mr-1"></i> Invite to Interview
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 flex justify-center">
-                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
-                            Load More Candidates
-                        </button>
-                    </div>
-                </div>
-
-                 <!-- Interview-Completed Section (Hidden by default) -->
-                 <div id="interviewSection" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hidden">
-                    <div class="flex justify-between items-center mb-5">
-                        <div>
-                            <h3 class="font-semibold">Interview-Completed Candidates</h3>
-                            <p class="text-sm text-gray-500">Candidates who have completed AI interviews</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="relative">
-                                <select class="appearance-none bg-gray-100 border-0 pl-3 pr-8 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                    <option>Sort by: Interview Score</option>
-                                    <option>Sort by: Completion Date</option>
-                                    <option>Sort by: Resume Match</option>
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            <button class="text-sm text-blue-600 hover:underline">Export Reports</button>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <!-- Interview Report 1 -->
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <div class="p-4 bg-gray-50 flex justify-between items-center cursor-pointer interview-header">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">JD</div>
-                                    <div>
-                                        <h4 class="font-medium">Jane Doe</h4>
-                                        <p class="text-sm text-gray-500">Senior Frontend Developer</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="text-center">
-                                        <div class="text-xs text-gray-500">Overall Score</div>
-                                        <div class="text-lg font-bold text-green-600">89%</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-xs text-gray-500">Completed</div>
-                                        <div class="text-sm font-medium">May 15, 2023</div>
-                                    </div>
-                                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="interview-report">
-                                <div class="p-4 border-t border-gray-200">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                                        <div class="bg-gray-50 p-4 rounded-lg">
-                                            <h5 class="font-medium text-sm mb-3">Technical Skills Evaluation</h5>
-                                            <div class="space-y-3">
-                                                <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>JavaScript</span>
-                                                        <span>92%</span>
+                                
+                                <div class="interview-report">
+                                    <div class="p-4 border-t border-gray-200">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-medium text-sm mb-3">Technical Skills Evaluation</h5>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>JavaScript</span>
+                                                            <span>92%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 92%"></div>
+                                                        </div>
                                                     </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 92%"></div>
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>React</span>
+                                                            <span>88%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 88%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>CSS/HTML</span>
+                                                            <span>85%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: 85%"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>React</span>
-                                                        <span>88%</span>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-medium text-sm mb-3">Behavioral Assessment</h5>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>Communication</span>
+                                                            <span>87%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 87%"></div>
+                                                        </div>
                                                     </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 88%"></div>
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>Problem Solving</span>
+                                                            <span>91%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 91%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="flex justify-between text-xs mb-1">
+                                                            <span>Teamwork</span>
+                                                            <span>83%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: 83%"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>CSS/HTML</span>
-                                                        <span>85%</span>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-medium text-sm mb-3">AI Recommendations</h5>
+                                                <div class="space-y-2">
+                                                    <div class="flex items-start">
+                                                        <div class="flex-shrink-0 mt-0.5">
+                                                            <i class="fas fa-check-circle text-green-500"></i>
+                                                        </div>
+                                                        <p class="ml-2 text-xs">Strong technical skills match with job requirements</p>
                                                     </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 85%"></div>
+                                                    <div class="flex items-start">
+                                                        <div class="flex-shrink-0 mt-0.5">
+                                                            <i class="fas fa-check-circle text-green-500"></i>
+                                                        </div>
+                                                        <p class="ml-2 text-xs">Excellent problem-solving abilities demonstrated</p>
                                                     </div>
+                                                    <div class="flex items-start">
+                                                        <div class="flex-shrink-0 mt-0.5">
+                                                            <i class="fas fa-info-circle text-blue-500"></i>
+                                                        </div>
+                                                        <p class="ml-2 text-xs">Could improve on knowledge of newer React features</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-4 pt-3 border-t border-gray-200">
+                                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Strong Hire</span>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 p-4 rounded-lg">
-                                            <h5 class="font-medium text-sm mb-3">Behavioral Assessment</h5>
-                                            <div class="space-y-3">
-                                                <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>Communication</span>
-                                                        <span>87%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 87%"></div>
-                                                    </div>
+                                        <div class="mb-4">
+                                            <h5 class="font-medium text-sm mb-2">Interview Transcript Highlights</h5>
+                                            <div class="bg-gray-50 p-3 rounded-lg text-xs">
+                                                <div class="mb-2">
+                                                    <p class="font-medium">AI Interviewer:</p>
+                                                    <p class="text-gray-700">Can you describe your approach to optimizing React component performance?</p>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <p class="font-medium">Candidate:</p>
+                                                    <p class="text-gray-700">I prioritize using React.memo for components that don't need to re-render often, implement useCallback for event handlers, and leverage useMemo for expensive calculations. I also analyze performance with React DevTools...</p>
                                                 </div>
                                                 <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>Problem Solving</span>
-                                                        <span>91%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 91%"></div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="flex justify-between text-xs mb-1">
-                                                        <span>Teamwork</span>
-                                                        <span>83%</span>
-                                                    </div>
-                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 83%"></div>
-                                                    </div>
+                                                    <p class="font-medium">AI Analysis:</p>
+                                                    <p class="text-gray-700">Candidate demonstrated deep understanding of React optimization techniques (Score: 94%)</p>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        <div class="bg-gray-50 p-4 rounded-lg">
-                                            <h5 class="font-medium text-sm mb-3">AI Recommendations</h5>
-                                            <div class="space-y-2">
-                                                <div class="flex items-start">
-                                                    <div class="flex-shrink-0 mt-0.5">
-                                                        <i class="fas fa-check-circle text-green-500"></i>
-                                                    </div>
-                                                    <p class="ml-2 text-xs">Strong technical skills match with job requirements</p>
-                                                </div>
-                                                <div class="flex items-start">
-                                                    <div class="flex-shrink-0 mt-0.5">
-                                                        <i class="fas fa-check-circle text-green-500"></i>
-                                                    </div>
-                                                    <p class="ml-2 text-xs">Excellent problem-solving abilities demonstrated</p>
-                                                </div>
-                                                <div class="flex items-start">
-                                                    <div class="flex-shrink-0 mt-0.5">
-                                                        <i class="fas fa-info-circle text-blue-500"></i>
-                                                    </div>
-                                                    <p class="ml-2 text-xs">Could improve on knowledge of newer React features</p>
-                                                </div>
-                                            </div>
-                                            <div class="mt-4 pt-3 border-t border-gray-200">
-                                                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Strong Hire</span>
-                                            </div>
+                                        <div class="flex justify-end space-x-3">
+                                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
+                                                <i class="fas fa-download mr-2"></i> Download Full Report
+                                            </button>
+                                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+                                                <i class="fas fa-user-check mr-2"></i> Move to Next Round
+                                            </button>
                                         </div>
                                     </div>
-                                    
-                                    <div class="mb-4">
-                                        <h5 class="font-medium text-sm mb-2">Interview Transcript Highlights</h5>
-                                        <div class="bg-gray-50 p-3 rounded-lg text-xs">
-                                            <div class="mb-2">
-                                                <p class="font-medium">AI Interviewer:</p>
-                                                <p class="text-gray-700">Can you describe your approach to optimizing React component performance?</p>
-                                            </div>
-                                            <div class="mb-2">
-                                                <p class="font-medium">Candidate:</p>
-                                                <p class="text-gray-700">I prioritize using React.memo for components that don't need to re-render often, implement useCallback for event handlers, and leverage useMemo for expensive calculations. I also analyze performance with React DevTools...</p>
-                                            </div>
-                                            <div>
-                                                <p class="font-medium">AI Analysis:</p>
-                                                <p class="text-gray-700">Candidate demonstrated deep understanding of React optimization techniques (Score: 94%)</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex justify-end space-x-3">
-                                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition">
-                                            <i class="fas fa-download mr-2"></i> Download Full Report
-                                        </button>
-                                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
-                                            <i class="fas fa-user-check mr-2"></i> Move to Next Round
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Interview Report 2 -->
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <div class="p-4 bg-gray-50 flex justify-between items-center cursor-pointer interview-header">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">AS</div>
-                                    <div>
-                                        <h4 class="font-medium">Alex Smith</h4>
-                                        <p class="text-sm text-gray-500">Marketing Lead</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="text-center">
-                                        <div class="text-xs text-gray-500">Overall Score</div>
-                                        <div class="text-lg font-bold text-blue-600">76%</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-xs text-gray-500">Completed</div>
-                                        <div class="text-sm font-medium">May 14, 2023</div>
-                                    </div>
-                                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="interview-report">
-                                <!-- Similar report content structure as above -->
-                                <div class="p-4 border-t border-gray-200">
-                                    <p class="text-sm text-gray-500">Detailed interview report would appear here...</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
-                
+
+                <!-- Jobs Section -->
+                <div id="jobsSection" class="section-content hidden">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-5">
+                            <h3 class="text-lg font-semibold">Posted Jobs</h3>
+                            <a href="{% url 'job_posting' %}" class="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Post New Job
+                            </a>
+                        </div>
+                        
+                        {% if jobs %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for job in jobs %}
+                            <div class="job-card bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition-all duration-300">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">{{ job.job_details.position_title }}</h4>
+                                        <p class="text-sm text-gray-500">{{ job.company_details.name }}</p>
+                                    </div>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">
+                                        {{ job.job_type.type }}
+                                    </span>
+                                </div>
+                                
+                                <div class="mt-3 space-y-2">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-map-marker-alt w-5 text-gray-400"></i>
+                                        {{ job.compensation.location }}
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-briefcase w-5 text-gray-400"></i>
+                                        {{ job.job_type.work_arrangement }}
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-money-bill-wave w-5 text-gray-400"></i>
+                                        ${{ job.compensation.min_salary }} - ${{ job.compensation.max_salary }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-500">
+                                            <i class="fas fa-users mr-1"></i>
+                                            {{ job.applications_count|default:"0" }} Applicants
+                                        </span>
+                                        <span class="text-sm text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            Posted {{ job.created_at|timesince }} ago
+                                        </span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <a href="{% url 'edit_job' job.id %}" class="text-sm px-3 py-1 bg-gray-50 text-gray-600 rounded hover:bg-gray-100 transition">
+                                            Edit
+                                        </a>
+                                        {% if job.status != 'closed' %}
+                                        <form method="post" action="{% url 'close_job' job.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-sm px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition">
+                                                Close Applications
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <span class="text-xs px-3 py-1 bg-gray-200 text-gray-600 rounded-full font-semibold">Hiring Closed</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">No jobs posted yet.</p>
+                            <a href="{% url 'job_posting' %}" class="text-blue-600 hover:text-blue-700 mt-2 inline-block">
+                                Post your first job
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reportsSection" class="section-content hidden">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-5">Reports</h3>
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">Reports section coming soon.</p>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -688,6 +670,39 @@
             document.getElementById('interviewSection').classList.remove('hidden');
             document.getElementById('resumeSection').classList.add('hidden');
         });
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    l.classList.remove('bg-blue-50', 'text-blue-600');
+                    l.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('bg-blue-50', 'text-blue-600');
+                
+                // Show selected section
+                const section = this.getAttribute('data-section');
+                document.querySelectorAll('.section-content').forEach(s => {
+                    s.classList.add('hidden');
+                });
+                document.getElementById(section + 'Section').classList.remove('hidden');
+                
+                // Update section title
+                const titles = {
+                    'candidates': 'Candidate Interview Management',
+                    'jobs': 'Job Management',
+                    'reports': 'Reports & Analytics'
+                };
+                document.querySelector('.section-title').textContent = titles[section];
+            });
+        });
+
+        // Set initial active state
+        document.querySelector('[data-section="candidates"]').click();
         
         // Interview invite modal
         document.querySelectorAll('.invite-btn').forEach(btn => {
@@ -723,7 +738,7 @@
         
         document.querySelectorAll('.candidate-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
-                const candidateId = this.getAttribute('data-candidate-id');
+                const candidateId = this.getAttribute('data-id');
                 
                 if (this.checked) {
                     if (!selectedCandidates.includes(candidateId)) {
@@ -745,9 +760,9 @@
             selectedCount.textContent = `${count} candidate${count !== 1 ? 's' : ''} selected`;
             
             if (count > 0) {
-                bulkActions.classList.add('show');
+                bulkActions.classList.remove('hidden');
             } else {
-                bulkActions.classList.remove('show');
+                bulkActions.classList.add('hidden');
             }
         }
         
@@ -811,6 +826,17 @@
             document.querySelector('#inviteModal button.bg-blue-600').addEventListener('click', function() {
                 alert('Interview invitation sent successfully!');
                 document.getElementById('inviteModal').classList.add('hidden');
+            });
+        });
+
+        // Feedback toggle functionality
+        document.querySelectorAll('.feedback-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
             });
         });
     </script>
